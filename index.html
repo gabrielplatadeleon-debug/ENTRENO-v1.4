@@ -3,13 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ENTRENO PRO 2026 - HUD & Drive Sync</title>
+  <title>ENTRENO PRO 2026 - CyberHUD Edition</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
     * { font-family: 'Inter', system-ui, sans-serif; box-sizing: border-box; margin: 0; padding: 0; }
-    body { background-color: #0b111e; color: #f1f5f9; min-height: 100vh; -webkit-tap-highlight-color: transparent; }
+    body { background-color: #030712; color: #f8fafc; min-height: 100vh; -webkit-tap-highlight-color: transparent; background-image: radial-gradient(circle at 50% 0%, rgba(16,185,129,0.06) 0%, transparent 40%); }
     .focus-mode header, .focus-mode .tabs-bar { display: none !important; }
     .focus-mode main { padding-top: 12px !important; }
+    
+    /* Animación de destello al guardar */
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 20px rgba(16,185,129,0.6); }
+      100% { box-shadow: 0 0 5px rgba(16,185,129,0.2); }
+    }
+    .saved-flash { animation: pulseGlow 0.6s ease-out; }
   </style>
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
@@ -36,7 +43,6 @@
             repeticiones: "4 a 6",
             rir: "2",
             descanso: "2.5-3 min",
-            tempo: "2-1-1-0",
             como: ["Retrae escápulas y pies firmes en el suelo", "Baja controlado al pecho medio, codos 45°", "Presiona vertical sin rebotar, bloquea arriba"],
             errores: ["Arquear lumbar excesivo o rebotar barra", "Codos totalmente abiertos a 90°"]
           },
@@ -47,7 +53,6 @@
             repeticiones: "5 a 7",
             rir: "2",
             descanso: "2.5 min",
-            tempo: "2-1-1-0",
             como: ["Bisagra cadera, torso 30-45° estable", "Rema hacia ombligo bajo, barra pegada", "Aprieta dorsales 1s arriba, baja lento"],
             errores: ["Tirar con impulso de lumbar", "Encoger hombros hacia orejas"]
           },
@@ -58,7 +63,6 @@
             repeticiones: "6 a 8",
             rir: "2",
             descanso: "2 min",
-            tempo: "2-1-1-0",
             como: ["Banco 30°, muñecas neutras arriba", "Baja hasta estiramiento pecho sin chocar", "Sube sin juntar mancuernas bruscamente"],
             errores: ["Banco demasiado vertical", "Arco dorsal inestable"]
           },
@@ -69,7 +73,6 @@
             repeticiones: "8 a 10",
             rir: "2",
             descanso: "2 min",
-            tempo: "2-1-1-0",
             como: ["Agarre neutro cerrado, pecho alto", "Tira codos hacia costillas, no hacia atrás", "Estira completo sin perder tensión"],
             errores: ["Inclinarse mucho hacia atrás", "Usar solo bíceps sin deprimir escápulas"]
           },
@@ -80,7 +83,6 @@
             repeticiones: "12 a 15",
             rir: "1-2",
             descanso: "75s",
-            tempo: "2-0-1-0",
             como: ["Mancuernas a lados, codo semi flexionado", "Eleva hasta altura hombro liderando codo", "Baja 2s sin balanceo"],
             errores: ["Usar trapecio para subir", "Balancear tronco para impulso"]
           }
@@ -98,7 +100,6 @@
             repeticiones: "4 a 6",
             rir: "2",
             descanso: "3 min",
-            tempo: "2-1-1-0",
             como: ["Barra media-trapecio, pies ancho hombros", "Rodillas hacia afuera, rompe paralelo", "Sube empujando suelo, cadera y hombros a la vez"],
             errores: ["Talones se levantan o rodillas colapsan dentro", "Perder tensión lumbar abajo"]
           },
@@ -109,7 +110,6 @@
             repeticiones: "6 a 8",
             rir: "2",
             descanso: "2.5 min",
-            tempo: "2-1-1-0",
             como: ["Barra pegada a piernas, bisagra profunda", "Espalda neutra, glúteos atrás hasta estiramiento", "Sube empujando cadera adelante"],
             errores: ["Flexionar rodillas como sentadilla", "Redondear espalda baja"]
           },
@@ -120,7 +120,6 @@
             repeticiones: "8 a 10",
             rir: "2",
             descanso: "2 min",
-            tempo: "2-1-1-0",
             como: ["Pies medios plataforma, lumbar apoyada", "Baja controlado hasta 90° rodilla", "Empuja sin bloquear rodillas violento"],
             errores: ["Glúteo se despega abajo", "Bajar muy corto por ego"]
           },
@@ -131,7 +130,6 @@
             repeticiones: "8 a 10",
             rir: "1-2",
             descanso: "90s",
-            tempo: "2-1-1-0",
             como: ["Cadera pegada al banco, agarre firme", "Flexiona hasta tope sin levantar cadera", "Baja lento 2s"],
             errores: ["Elevar cadera para trampear", "Rango parcial constante"]
           },
@@ -142,7 +140,6 @@
             repeticiones: "8 a 12",
             rir: "1",
             descanso: "90s",
-            tempo: "2-1-1-1",
             como: ["Apoyo antepié, estira abajo completo", "Pausa 1s arriba contrayendo fuerte", "Rodilla extendida sin bloqueo"],
             errores: ["Rebotar sin control", "No estirar abajo"]
           }
@@ -160,7 +157,6 @@
             repeticiones: "6 a 8",
             rir: "2",
             descanso: "2 min",
-            tempo: "2-1-1-0",
             como: ["Glúteo apretado, costillas abajo", "Barra de clavícula a sobre cabeza recto", "Cabeza pasa al frente al final"],
             errores: ["Arquear lumbar excesivo", "Barra se va muy al frente"]
           },
@@ -171,7 +167,6 @@
             repeticiones: "10 a 12",
             rir: "1-2",
             descanso: "90s",
-            tempo: "2-1-1-1",
             como: ["Torso vertical, agarre medio", "Codos atrás, pausa 1s contra abdomen", "Estira dorsal sin encorvar"],
             errores: ["Jalar con impulso de tronco", "No retraer escápula"]
           },
@@ -182,7 +177,6 @@
             repeticiones: "8 a 10",
             rir: "2",
             descanso: "2 min",
-            tempo: "2-1-1-0",
             como: ["Hombros deprimidos, leve inclinación", "Baja hasta 90° codo, pecho estirado", "Sube bloqueando sin encoger"],
             errores: ["Hombros hacia orejas", "Rango muy corto"]
           },
@@ -193,7 +187,6 @@
             repeticiones: "10 a 12",
             rir: "1-2",
             descanso: "90s",
-            tempo: "2-0-1-1",
             como: ["Banco 60°, hombros atrás", "Curl sin mover hombro, supina completo", "Baja lento estirando bíceps"],
             errores: ["Balancear mancuerna con hombro", "No extender abajo"]
           },
@@ -204,7 +197,6 @@
             repeticiones: "12 a 15",
             rir: "1",
             descanso: "60s",
-            tempo: "2-1-1-0",
             como: ["Pecho apoyado, agarre neutro", "Abre codos atrás hasta línea hombro", "Aprieta deltoide posterior arriba"],
             errores: ["Usar trapecio superior", "Rango excesivo hiperextendiendo"]
           },
@@ -215,7 +207,6 @@
             repeticiones: "15 a 20",
             rir: "2",
             descanso: "60s",
-            tempo: "2-1-1-1",
             como: ["Polea alta, cuerda a cara", "Codos altos, rota externo al final", "Pausa 1s apretando"],
             errores: ["Tirar hacia pecho bajo", "Codos bajos tipo remo"]
           }
@@ -233,7 +224,6 @@
             repeticiones: "8 a 10",
             rir: "2",
             descanso: "2.5 min",
-            tempo: "2-1-1-0",
             como: ["Espalda pegada, pies medio-altos", "Baja profundo controlado", "Empuja con talón sin despegar lumbar"],
             errores: ["Rodillas dentro o talones arriba", "Descenso a medias"]
           },
@@ -244,7 +234,6 @@
             repeticiones: "8 a 10",
             rir: "1-2",
             descanso: "2 min",
-            tempo: "2-1-1-1",
             como: ["Escápulas en banco, barbilla neutra", "Sube cadera hasta línea rodilla-hombro", "Aprieta glúteo 1s arriba"],
             errores: ["Hiperextender lumbar arriba", "Pies muy lejos/cerca"]
           },
@@ -255,7 +244,6 @@
             repeticiones: "10 a 12 por pierna",
             rir: "2",
             descanso: "90s",
-            tempo: "2-1-1-0",
             como: ["Pie trasero en banco, tronco recto", "Baja rodilla trasera casi al suelo", "Sube con pierna delantera sin impulso"],
             errores: ["Tronco se inclina excesivo", "Rodilla delantera colapsa dentro"]
           },
@@ -266,7 +254,6 @@
             repeticiones: "12 a 15",
             rir: "1",
             descanso: "75s",
-            tempo: "2-1-1-1",
             como: ["Ajuste rodilla alineada eje máquina", "Flexiona completo sin levantar muslo", "Controla excéntrica"],
             errores: ["Levantar glúteo del asiento", "Pesos con inercia"]
           },
@@ -277,7 +264,6 @@
             repeticiones: "12 a 15",
             rir: "1",
             descanso: "60s",
-            tempo: "2-1-1-1",
             como: ["Respaldo firme, punta pie neutra", "Extiende hasta casi bloqueo controlado", "Baja 2s sin dejar caer"],
             errores: ["Arrancar con tirón de cadera", "Dejar caer el peso en la bajada"]
           }
@@ -295,8 +281,8 @@
       const [inputs, setInputs] = React.useState({});
       const [syncStatus, setSyncStatus] = React.useState("Desconectado de Drive");
       const [accessToken, setAccessToken] = React.useState(null);
+      const [flashExId, setFlashExId] = React.useState(null);
 
-      // Cargar logs locales por perfil
       React.useEffect(() => {
         const saved = localStorage.getItem(`entreno_logs_${currentProfile}`);
         if (saved) {
@@ -306,7 +292,6 @@
         }
       }, [currentProfile]);
 
-      // Función para autenticar con Google Drive (OAuth 2.0 / GIS)
       const handleGoogleLogin = () => {
         const client = google.accounts.oauth2.initTokenClient({
           client_id: '743772639737-jrf3qhna3putebqeve97i7p1krftd6j3.apps.googleusercontent.com',
@@ -322,7 +307,6 @@
         client.requestAccessToken();
       };
 
-      // Sincronización automática a Google Drive en segundo plano
       const syncToDriveCloud = async (updatedLogs) => {
         if (!accessToken) return;
         setSyncStatus("Sincronizando con Drive...");
@@ -360,7 +344,6 @@
         }
       };
 
-      // Alternar Modo FOCUS
       const toggleFocus = () => {
         const newFocus = !isFocus;
         setIsFocus(newFocus);
@@ -409,6 +392,10 @@
         
         localStorage.setItem(`entreno_logs_${currentProfile}`, JSON.stringify(newLogs));
         syncToDriveCloud(newLogs);
+
+        // Disparar destello visual
+        setFlashExId(exId);
+        setTimeout(() => setFlashExId(null), 600);
       };
 
       const handleAddProfile = () => {
@@ -420,36 +407,56 @@
         }
       };
 
+      // Calculadora auxiliar de discos por lado (Asumiendo barra estándar de 20kg)
+      const getPlateBreakdown = (totalKg) => {
+        const bar = 20;
+        if (!totalKg || totalKg <= bar) return "Solo barra (20kg)";
+        let rem = (totalKg - bar) / 2;
+        if (rem <= 0) return "Solo barra (20kg)";
+        const plates = [25, 20, 15, 10, 5, 2.5, 1.25];
+        let res = [];
+        for (let p of plates) {
+          while (rem >= p - 0.001) {
+            res.push(p);
+            rem = Math.round((rem - p) * 100) / 100;
+          }
+        }
+        const counts = {};
+        res.forEach(v => { counts[v] = (counts[v] || 0) + 1; });
+        const txt = Object.keys(counts).sort((a, b) => b - a).map(k => `${counts[k]}x${k}k`).join(' + ');
+        return `${txt} por lado`;
+      };
+
       const currentDay = ROUTINE_DATA.find(d => d.id === activeTab);
 
       return (
-        <div className="min-h-screen bg-[#0b111e] text-slate-100 flex flex-col">
-          {/* Header */}
-          <header className="border-b border-slate-800 bg-[#0f172a] px-4 py-3 sticky top-0 z-30">
+        <div className="min-h-screen bg-[#030712] text-slate-100 flex flex-col">
+          {/* Header CyberHUD */}
+          <header className="border-b border-slate-800/80 bg-[#030712]/90 backdrop-blur-md px-4 py-3 sticky top-0 z-30">
             <div className="max-w-4xl mx-auto flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
-                <span className="text-emerald-400 font-extrabold text-lg tracking-wider">ENTRENO</span>
-                <span className="bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded border border-emerald-500/20">PRO 2026</span>
+                <span className="text-emerald-400 font-black text-base tracking-tighter">ENTRENO</span>
+                <span className="bg-emerald-500/10 text-emerald-400 text-[10px] font-black px-2 py-0.5 rounded-md border border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.15)]">PRO 2026</span>
               </div>
 
               <div className="flex items-center gap-2">
                 <select 
                   value={currentProfile}
                   onChange={(e) => setCurrentProfile(e.target.value)}
-                  className="bg-slate-800 border border-slate-700 text-xs rounded px-2 py-1 text-slate-200"
+                  className="bg-slate-900 border border-slate-800 text-xs font-semibold rounded-lg px-2.5 py-1.5 text-slate-200 outline-none focus:border-emerald-500/50"
                 >
                   {profiles.map(p => <option key={p} value={p}>{p}</option>)}
                 </select>
                 <button 
                   onClick={handleAddProfile}
-                  className="bg-slate-800 border border-slate-700 text-xs px-2 py-1 rounded hover:bg-slate-700"
+                  className="bg-slate-900 border border-slate-800 text-xs px-2.5 py-1.5 rounded-lg hover:bg-slate-800 text-emerald-400 font-bold"
                 >
                   +
                 </button>
 
                 <button 
                   onClick={toggleFocus}
-                  className={`text-xs font-bold px-3 py-1.5 rounded transition ${isFocus ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 border border-slate-700 text-slate-200'}`}
+                  className={`text-[11px] font-black px-3 py-1.5 rounded-lg transition tracking-wide ${isFocus ? 'bg-emerald-400 text-slate-950 shadow-[0_0_15px_rgba(16,185,129,0.4)]' : 'bg-slate-900 border border-slate-800 text-slate-300 hover:border-slate-700'}`}
                 >
                   {isFocus ? 'SALIR FOCUS' : 'FOCUS'}
                 </button>
@@ -458,20 +465,20 @@
           </header>
 
           {/* Navegación por Días / Progreso */}
-          <div className="tabs-bar bg-[#0f172a]/80 border-b border-slate-800/80 px-4 py-2 sticky top-[53px] z-20 backdrop-blur">
-            <div className="max-w-4xl mx-auto flex gap-1.5 overflow-x-auto pb-1">
+          <div className="tabs-bar bg-[#030712]/80 border-b border-slate-800/50 px-4 py-2.5 sticky top-[53px] z-20 backdrop-blur">
+            <div className="max-w-4xl mx-auto flex gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
               {ROUTINE_DATA.map(day => (
                 <button
                   key={day.id}
                   onClick={() => { setActiveTab(day.id); }}
-                  className={`px-3 py-1.5 rounded text-xs font-bold whitespace-nowrap transition ${activeTab === day.id ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800/60 text-slate-400 hover:bg-slate-800'}`}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold whitespace-nowrap transition ${activeTab === day.id ? 'bg-emerald-400 text-slate-950 shadow-[0_0_12px_rgba(16,185,129,0.3)]' : 'bg-slate-900/80 border border-slate-800/80 text-slate-400 hover:bg-slate-800'}`}
                 >
-                  {day.label} <span className="opacity-60 text-[10px]">{day.sub.split(' ')[1]}</span>
+                  {day.label} <span className="opacity-70 text-[10px] font-medium">{day.sub.split(' ')[1]}</span>
                 </button>
               ))}
               <button
                 onClick={() => setActiveTab("progreso")}
-                className={`px-3 py-1.5 rounded text-xs font-bold whitespace-nowrap ml-auto transition ${activeTab === "progreso" ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800/60 text-slate-400'}`}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold whitespace-nowrap ml-auto transition ${activeTab === "progreso" ? 'bg-emerald-400 text-slate-950 shadow-[0_0_12px_rgba(16,185,129,0.3)]' : 'bg-slate-900/80 border border-slate-800/80 text-slate-400'}`}
               >
                 ☁ PROGRESO / DRIVE
               </button>
@@ -479,39 +486,39 @@
           </div>
 
           {/* Contenido Principal */}
-          <main className="max-w-4xl mx-auto w-full px-4 py-6 flex-1">
+          <main className="max-w-4xl mx-auto w-full px-4 py-5 flex-1">
             {activeTab === "progreso" ? (
-              <div className="space-y-6">
-                <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-emerald-400 mb-2">Sincronización Automática en Google Drive</h3>
+              <div className="space-y-5">
+                <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 backdrop-blur-sm shadow-xl">
+                  <h3 className="text-xs font-black uppercase tracking-widest text-emerald-400 mb-2">Sincronización en la Nube</h3>
                   <p className="text-xs text-slate-400 mb-4">
-                    Estado actual: <strong className="text-emerald-400">{syncStatus}</strong>
+                    Estado actual: <strong className="text-slate-200 font-semibold">{syncStatus}</strong>
                   </p>
                   {!accessToken ? (
                     <button 
                       onClick={handleGoogleLogin}
-                      className="bg-sky-500 text-slate-950 font-bold text-xs px-4 py-2 rounded shadow hover:bg-sky-400"
+                      className="bg-sky-500 text-slate-950 font-extrabold text-xs px-4 py-2.5 rounded-xl shadow-lg shadow-sky-500/20 hover:bg-sky-400 transition"
                     >
                       Conectar cuenta de Google Drive
                     </button>
                   ) : (
-                    <p className="text-xs text-emerald-300">¡Tu cuenta está vinculada! Cada vez que guardes una serie, los datos se actualizarán automáticamente en tu Drive.</p>
+                    <p className="text-xs text-emerald-300 font-medium">¡Conectado! Tus registros de entrenamiento se actualizan en tiempo real.</p>
                   )}
                 </div>
 
-                <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-slate-300 mb-4">Historial de Registros - {currentProfile}</h3>
+                <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 backdrop-blur-sm shadow-xl">
+                  <h3 className="text-xs font-black uppercase tracking-widest text-slate-300 mb-4">Historial de Registros ({currentProfile})</h3>
                   {Object.keys(logs).length === 0 ? (
-                    <p className="text-xs text-slate-500">No hay series registradas aún para este perfil.</p>
+                    <p className="text-xs text-slate-500 italic">No hay series registradas aún para este perfil.</p>
                   ) : (
                     <div className="space-y-4">
                       {Object.entries(logs).map(([exId, entries]) => (
-                        <div key={exId} className="border-b border-slate-800 pb-3">
-                          <div className="text-xs font-bold text-emerald-400 uppercase">{exId.replace('-', ' ')}</div>
-                          <div className="mt-1 space-y-1">
+                        <div key={exId} className="border-b border-slate-800/60 pb-3 last:border-0">
+                          <div className="text-xs font-black text-emerald-400 uppercase tracking-wider">{exId.replace('-', ' ')}</div>
+                          <div className="mt-1.5 space-y-1.5">
                             {entries.map((e, idx) => (
-                              <div key={idx} className="text-xs text-slate-300 flex justify-between font-mono bg-slate-950/40 px-2 py-1 rounded">
-                                <span>{e.fecha} {e.hora}</span>
+                              <div key={idx} className="text-xs text-slate-300 flex justify-between font-mono bg-slate-950/60 px-3 py-1.5 rounded-lg border border-slate-800/40">
+                                <span className="text-slate-400">{e.fecha} {e.hora}</span>
                                 <span className="font-bold text-emerald-400">{e.peso} kg × {e.reps} reps (RIR {e.rir})</span>
                               </div>
                             ))}
@@ -526,105 +533,112 @@
               currentDay && (
                 <div className="space-y-4">
                   <div className="flex items-baseline justify-between px-1">
-                    <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400">
-                      {currentDay.label} · {currentDay.sub}
+                    <h2 className="text-[11px] font-black uppercase tracking-widest text-slate-400">
+                      {currentDay.label} · <span className="text-emerald-400">{currentDay.sub}</span>
                     </h2>
-                    <span className="text-xs text-slate-500">{currentDay.ejercicios.length} ejercicios</span>
+                    <span className="text-[11px] font-bold text-slate-500">{currentDay.ejercicios.length} ejercicios</span>
                   </div>
 
                   {currentDay.ejercicios.map((ex) => {
                     const isExpanded = expandedEx[ex.id];
                     const exInput = inputs[ex.id] || { peso: 50, reps: 6, rir: 2 };
                     const exLogs = logs[ex.id] || [];
+                    const isFlashing = flashExId === ex.id;
 
                     return (
-                      <div key={ex.id} className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-lg">
+                      <div key={ex.id} className={`bg-slate-900/50 border border-slate-800/80 rounded-2xl overflow-hidden shadow-xl backdrop-blur-sm transition-all ${isFlashing ? 'saved-flash border-emerald-500/60 bg-emerald-950/10' : ''}`}>
                         <button 
                           onClick={() => setExpandedEx(prev => ({ ...prev, [ex.id]: !prev[ex.id] }))}
-                          className="w-full text-left p-4 flex justify-between items-start gap-4 hover:bg-slate-800/40 transition"
+                          className="w-full text-left p-4 flex justify-between items-center gap-3 active:bg-slate-800/30 transition"
                         >
                           <div>
-                            <h3 className="text-base font-extrabold tracking-tight text-slate-100 uppercase">{ex.nombre}</h3>
-                            <div className="mt-1 text-xs text-slate-400 flex flex-wrap gap-2">
-                              <span>{ex.series} series</span>
+                            <h3 className="text-sm font-black tracking-tight text-slate-100 uppercase">{ex.nombre}</h3>
+                            <div className="mt-1 text-[11px] text-slate-400 flex flex-wrap gap-2 font-medium">
+                              <span className="text-emerald-400/90 font-bold">{ex.series} series</span>
                               <span>·</span>
                               <span>{ex.repeticiones} reps</span>
                               <span>·</span>
                               <span>RIR {ex.rir}</span>
                               <span>·</span>
-                              <span>Descanso {ex.descanso}</span>
+                              <span className="text-slate-400">{ex.descanso}</span>
                             </div>
                           </div>
-                          <div className={`w-6 h-6 rounded-full border border-slate-700 flex items-center justify-center text-xs transition-transform ${isExpanded ? 'rotate-180 bg-emerald-500/10 text-emerald-400' : 'text-slate-400'}`}>
+                          <div className={`w-7 h-7 rounded-xl border border-slate-700/80 flex items-center justify-center text-xs transition-transform ${isExpanded ? 'rotate-180 bg-emerald-400/10 text-emerald-400 border-emerald-500/30' : 'text-slate-400'}`}>
                             ↓
                           </div>
                         </button>
 
                         {isExpanded && (
-                          <div className="px-4 pb-4 pt-1 border-t border-slate-800 bg-slate-950/50 space-y-4 text-xs">
-                            {/* Guía Técnica */}
-                            <div className="space-y-2 mt-2">
-                              <div>
-                                <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">TÉCNICA</span>
-                                <ul className="list-disc list-inside text-slate-300 mt-1 space-y-0.5">
+                          <div className="px-4 pb-4 pt-1 border-t border-slate-800/60 bg-[#020617]/40 space-y-4 text-xs">
+                            {/* Guía Técnica y Errores */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                              <div className="bg-emerald-950/20 border border-emerald-500/15 rounded-xl p-3">
+                                <span className="text-[10px] font-black text-emerald-400 tracking-wider uppercase">Técnica Clave</span>
+                                <ul className="list-disc list-inside text-slate-300 mt-1 space-y-1 text-[11px]">
                                   {ex.como.map((c, i) => <li key={i}>{c}</li>)}
                                 </ul>
                               </div>
-                              <div>
-                                <span className="text-[10px] font-bold text-rose-400 uppercase tracking-wider">EVITAR</span>
-                                <ul className="list-disc list-inside text-slate-400 mt-1 space-y-0.5">
+                              <div className="bg-rose-950/20 border border-rose-500/15 rounded-xl p-3">
+                                <span className="text-[10px] font-black text-rose-400 tracking-wider uppercase">Errores a Evitar</span>
+                                <ul className="list-disc list-inside text-slate-400 mt-1 space-y-1 text-[11px]">
                                   {ex.errores.map((e, i) => <li key={i}>{e}</li>)}
                                 </ul>
                               </div>
                             </div>
 
-                            {/* Controles de Entrada / Registro de Serie (HUD Táctil Optimizado) */}
-                            <div className="bg-slate-950 border border-slate-800 p-3.5 rounded-xl space-y-3">
-                              <div className="flex items-center justify-between">
-                                <span className="font-extrabold text-slate-300 tracking-wider text-[11px]">REGISTRAR SERIE</span>
+                            {/* Panel de Registro HUD Estilizado (Sin cajas anidadas excesivas) */}
+                            <div className="pt-2 space-y-3">
+                              <div className="flex items-center justify-between px-0.5">
+                                <span className="font-black text-[10px] text-slate-400 uppercase tracking-widest">REGISTRO DE SERIE ACTIVA</span>
                                 {exLogs[0] && (
-                                  <span className="text-[10px] text-slate-500 font-mono">
-                                    Último: {exLogs[0].peso}kg × {exLogs[0].reps} (RIR{exLogs[0].rir})
+                                  <span className="text-[10px] text-emerald-400/80 font-mono font-semibold">
+                                    Anterior: {exLogs[0].peso}kg × {exLogs[0].reps} (RIR{exLogs[0].rir})
                                   </span>
                                 )}
                               </div>
 
-                              {/* Fila Única de Control de Peso */}
-                              <div className="flex items-center justify-between gap-1.5">
-                                <button onClick={() => handleWeightChange(ex.id, -2.5)} className="h-10 flex-1 bg-slate-800/80 active:bg-slate-700 rounded-lg border border-slate-700 text-xs font-bold font-mono text-slate-200">-2.5</button>
-                                <button onClick={() => handleWeightChange(ex.id, -1.25)} className="h-10 flex-1 bg-slate-800/80 active:bg-slate-700 rounded-lg border border-slate-700 text-xs font-bold font-mono text-slate-200">-1.25</button>
-                                <div className="h-11 px-3 bg-slate-900 border border-emerald-500/50 rounded-lg flex items-center justify-center font-black text-emerald-400 text-sm tracking-tight shadow-[0_0_10px_rgba(16,185,129,0.15)] min-w-[85px]">
-                                  {exInput.peso} kg
+                              {/* Fila de Peso con Destello Neón */}
+                              <div className="space-y-1.5">
+                                <div className="flex items-center justify-between gap-1.5">
+                                  <button onClick={() => handleWeightChange(ex.id, -2.5)} className="h-11 flex-1 bg-slate-800/60 active:bg-slate-700 rounded-xl border border-slate-700/70 text-xs font-black font-mono text-slate-200">-2.5</button>
+                                  <button onClick={() => handleWeightChange(ex.id, -1.25)} className="h-11 flex-1 bg-slate-800/60 active:bg-slate-700 rounded-xl border border-slate-700/70 text-xs font-black font-mono text-slate-200">-1.25</button>
+                                  <div className="h-12 px-3 bg-slate-950 border border-emerald-500/60 rounded-xl flex items-center justify-center font-black text-emerald-400 text-base tracking-tight shadow-[0_0_15px_rgba(16,185,129,0.2)] min-w-[100px] font-mono">
+                                    {exInput.peso} kg
+                                  </div>
+                                  <button onClick={() => handleWeightChange(ex.id, 1.25)} className="h-11 flex-1 bg-slate-800/60 active:bg-slate-700 rounded-xl border border-slate-700/70 text-xs font-black font-mono text-slate-200">+1.25</button>
+                                  <button onClick={() => handleWeightChange(ex.id, 2.5)} className="h-11 flex-1 bg-slate-800/60 active:bg-slate-700 rounded-xl border border-slate-700/70 text-xs font-black font-mono text-slate-200">+2.5</button>
                                 </div>
-                                <button onClick={() => handleWeightChange(ex.id, 1.25)} className="h-10 flex-1 bg-slate-800/80 active:bg-slate-700 rounded-lg border border-slate-700 text-xs font-bold font-mono text-slate-200">+1.25</button>
-                                <button onClick={() => handleWeightChange(ex.id, 2.5)} className="h-10 flex-1 bg-slate-800/80 active:bg-slate-700 rounded-lg border border-slate-700 text-xs font-bold font-mono text-slate-200">+2.5</button>
+                                <div className="text-[10px] font-mono text-cyan-400/90 text-right px-1">
+                                  ⚖️ {getPlateBreakdown(exInput.peso)}
+                                </div>
                               </div>
 
-                              {/* Controles de Reps y RIR */}
-                              <div className="grid grid-cols-2 gap-2">
-                                <div className="bg-slate-900 border border-slate-800 rounded-lg p-2 flex items-center justify-between">
-                                  <span className="text-[10px] font-extrabold text-slate-400 tracking-wider">REPS</span>
+                              {/* Cuadrícula de Reps y RIR */}
+                              <div className="grid grid-cols-2 gap-2.5">
+                                <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-2.5 flex items-center justify-between shadow-inner">
+                                  <span className="text-[10px] font-black text-slate-400 tracking-wider">REPS</span>
                                   <div className="flex items-center gap-2">
-                                    <button onClick={() => handleStepChange(ex.id, 'reps', -1)} className="w-8 h-8 bg-slate-800 active:bg-emerald-500 active:text-slate-950 rounded-md border border-slate-700 font-black text-sm flex items-center justify-center">-</button>
-                                    <span className="font-black text-sm w-5 text-center">{exInput.reps}</span>
-                                    <button onClick={() => handleStepChange(ex.id, 'reps', 1)} className="w-8 h-8 bg-slate-800 active:bg-emerald-500 active:text-slate-950 rounded-md border border-slate-700 font-black text-sm flex items-center justify-center">+</button>
+                                    <button onClick={() => handleStepChange(ex.id, 'reps', -1)} className="w-8 h-8 bg-slate-800 active:bg-emerald-400 active:text-slate-950 rounded-lg border border-slate-700 font-black text-sm flex items-center justify-center transition">-</button>
+                                    <span className="font-black text-base w-5 text-center font-mono text-white">{exInput.reps}</span>
+                                    <button onClick={() => handleStepChange(ex.id, 'reps', 1)} className="w-8 h-8 bg-slate-800 active:bg-emerald-400 active:text-slate-950 rounded-lg border border-slate-700 font-black text-sm flex items-center justify-center transition">+</button>
                                   </div>
                                 </div>
-                                <div className="bg-slate-900 border border-slate-800 rounded-lg p-2 flex items-center justify-between">
-                                  <span className="text-[10px] font-extrabold text-slate-400 tracking-wider">RIR</span>
+                                <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-2.5 flex items-center justify-between shadow-inner">
+                                  <span className="text-[10px] font-black text-slate-400 tracking-wider">RIR</span>
                                   <div className="flex items-center gap-2">
-                                    <button onClick={() => handleStepChange(ex.id, 'rir', -1)} className="w-8 h-8 bg-slate-800 active:bg-emerald-500 active:text-slate-950 rounded-md border border-slate-700 font-black text-sm flex items-center justify-center">-</button>
-                                    <span className="font-black text-sm w-5 text-center">{exInput.rir}</span>
-                                    <button onClick={() => handleStepChange(ex.id, 'rir', 1)} className="w-8 h-8 bg-slate-800 active:bg-emerald-500 active:text-slate-950 rounded-md border border-slate-700 font-black text-sm flex items-center justify-center">+</button>
+                                    <button onClick={() => handleStepChange(ex.id, 'rir', -1)} className="w-8 h-8 bg-slate-800 active:bg-emerald-400 active:text-slate-950 rounded-lg border border-slate-700 font-black text-sm flex items-center justify-center transition">-</button>
+                                    <span className="font-black text-base w-5 text-center font-mono text-white">{exInput.rir}</span>
+                                    <button onClick={() => handleStepChange(ex.id, 'rir', 1)} className="w-8 h-8 bg-slate-800 active:bg-emerald-400 active:text-slate-950 rounded-lg border border-slate-700 font-black text-sm flex items-center justify-center transition">+</button>
                                   </div>
                                 </div>
                               </div>
 
                               <button 
                                 onClick={() => handleSaveSet(ex.id)}
-                                className="w-full bg-emerald-500 hover:bg-emerald-400 active:scale-[0.98] text-slate-950 font-black py-3 rounded-xl text-xs tracking-wider uppercase transition shadow-lg shadow-emerald-500/20"
+                                className="w-full bg-emerald-400 hover:bg-emerald-300 active:scale-[0.98] text-slate-950 font-black py-3.5 rounded-xl text-xs tracking-wider uppercase transition shadow-lg shadow-emerald-400/25 flex items-center justify-center gap-2"
                               >
-                                GUARDAR · {exInput.peso}kg × {exInput.reps} RIR{exInput.rir}
+                                <span>GUARDAR SERIE</span>
+                                <span className="bg-slate-950/15 px-2 py-0.5 rounded text-[11px] font-mono font-bold">{exInput.peso}kg × {exInput.reps} (RIR{exInput.rir})</span>
                               </button>
                             </div>
                           </div>
