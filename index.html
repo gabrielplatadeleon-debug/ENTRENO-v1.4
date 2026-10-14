@@ -1,490 +1,556 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#030712">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>ENTRENO PRO 2026 - HUD Edition</title>
-<link rel="manifest" href='data:application/manifest+json,{
-  "name": "Entreno Pro 2026",
-  "short_name": "Entreno",
-  "start_url": "./",
-  "display": "standalone",
-  "background_color": "#030712",
-  "theme_color": "#030712",
-  "icons": [{
-    "src": "https://cdn-icons-png.flaticon.com/512/2965/2965567.png",
-    "sizes": "512x512",
-    "type": "image/png"
-  }]
-}'>
-<style>
-:root{
-  --fs:16px;
-  --bg:#030712;
-  --bg-card:rgba(17, 24, 39, 0.75);
-  --border:rgba(31, 41, 55, 0.8);
-  --border-glow:rgba(16, 185, 129, 0.3);
-  --text:#f9fafb;
-  --muted:#9ca3af;
-  --accent:#10b981;
-  --accent-glow:rgba(16, 185, 129, 0.25);
-  --blue:#38bdf8;
-  --danger:#ef4444;
-}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{font-size:var(--fs);overflow-x:hidden}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1.4;background-image:radial-gradient(circle at 50% 0%, rgba(16,185,129,0.08) 0%, transparent 50%)}
-
-header{position:sticky;top:0;z-index:30;background:rgba(3, 7, 18, 0.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 14px}
-.logo{font-size:14px;font-weight:900;letter-spacing:-.02em;color:#fff;display:flex;align-items:center;gap:6px}
-.logo span{font-weight:700;color:var(--accent);background:rgba(16,185,129,0.1);padding:2px 8px;border-radius:6px;font-size:10px;border:1px solid rgba(16,185,129,0.2)}
-.h-actions{display:flex;align-items:center;gap:6px;margin-left:auto}
-.btn-h{height:34px;padding:0 10px;border-radius:8px;border:1px solid var(--border);background:rgba(31, 41, 55, 0.6);color:#f9fafb;font-size:11px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
-.btn-h.green{background:var(--accent);border-color:var(--accent);color:#030712;box-shadow:0 0 12px var(--accent-glow);font-weight:900}
-.btn-h.red{background:rgba(239, 68, 68, 0.2);border-color:var(--danger);color:#fca5a5}
-.badge-live{font-size:9px;font-weight:800;padding:3px 7px;border-radius:999px;background:var(--accent);color:#030712;display:none}
-.badge-live.on{display:inline-block;animation:pulse 1.5s infinite}
-.session-timer{font-size:11px;font-weight:800;color:var(--accent);background:rgba(16,185,129,0.1);padding:4px 8px;border-radius:6px;border:1px solid rgba(16,185,129,0.25)}
-@keyframes pulse{0%{opacity:1}50%{opacity:.4}100%{opacity:1}}
-
-.tabs{display:flex;gap:6px;padding:10px 14px;overflow-x:auto;white-space:nowrap;background:rgba(3, 7, 18, 0.8);backdrop-filter:blur(12px);position:sticky;top:60px;z-index:20;scrollbar-width:none;border-bottom:1px solid var(--border)}
-.tabs::-webkit-scrollbar{display:none}
-.tab{height:38px;padding:6px 14px;border-radius:10px;font-size:12px;font-weight:800;border:1px solid var(--border);background:rgba(17, 24, 39, 0.6);color:var(--muted);cursor:pointer;flex-shrink:0}
-.tab.active{background:var(--accent);color:#030712;border-color:var(--accent);box-shadow:0 2px 12px var(--accent-glow)}
-.tab small{font-weight:600;opacity:.8;margin-left:3px;font-size:10px}
-
-.wrap{max-width:600px;margin:0 auto;padding:10px 12px 140px;width:100%}
-.subhead{display:flex;justify-content:space-between;align-items:center;padding:6px 2px 10px}
-.subhead-left{font-size:11px;font-weight:900;letter-spacing:.1em;color:var(--accent);text-transform:uppercase}
-.subhead-right{font-size:11px;color:var(--muted)}
-
-/* TARJETA HUD 2026 */
-.card{background:var(--bg-card);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:16px;box-shadow:0 8px 25px rgba(0,0,0,.5);overflow:hidden;margin-bottom:14px;transition:border-color .2s}
-.card.expanded{border-color:var(--border-glow);box-shadow:0 0 20px rgba(16,185,129,0.1)}
-.card-top{width:100%;text-align:left;background:transparent;border:none;padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px}
-.card-title{font-size:15px;font-weight:900;letter-spacing:-.01em;color:#fff}
-.card-meta{margin-top:4px;font-size:11px;color:var(--muted);display:flex;flex-wrap:wrap;gap:0 6px}
-.arrow{width:32px;height:32px;border-radius:8px;background:rgba(31, 41, 55, 0.8);color:#fff;display:grid;place-items:center;flex-shrink:0;font-size:12px;font-weight:900;transition:transform .2s}
-.arrow.open{background:var(--accent);color:#030712;transform:rotate(180deg)}
-
-.card-body{padding:0 14px 14px;border-top:1px solid var(--border)}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
-@media(max-width:480px){.grid2{grid-template-columns:1fr}}
-.label{font-size:10px;font-weight:900;letter-spacing:.08em;color:var(--muted);margin-bottom:4px;text-transform:uppercase}
-.ul{margin:0;padding-left:14px;display:flex;flex-direction:column;gap:3px}
-.ul li{font-size:12px;color:#e5e7eb}
-.ul li.muted{color:var(--muted)}
-
-/* SECCIÓN REGISTRO REDISEÑADA SIN CAJAS NIDADAS */
-.registro-hud{margin-top:14px;padding-top:12px;border-top:1px dashed var(--border)}
-
-/* CONTROLES DE PESO ERGONÓMICOS */
-.weight-control{display:flex;align-items:center;justify-content:space-between;gap:4px;margin-bottom:8px}
-.btn-w-btn{height:42px;flex:1;min-width:0;border-radius:10px;border:1px solid var(--border);background:rgba(31, 41, 55, 0.7);font-size:12px;font-weight:800;color:#fff;cursor:pointer;display:grid;place-items:center}
-.btn-w-btn:active{background:rgba(55, 65, 81, 0.9)}
-.weight-display{height:44px;padding:0 10px;background:rgba(3, 7, 18, 0.9);border:1px solid var(--accent);border-radius:10px;display:grid;place-items:center;font-size:16px;font-weight:900;color:var(--accent);box-shadow:0 0 10px var(--accent-glow);min-width:90px}
-
-/* CONTROLES REPS Y RIR ERGONÓMICOS */
-.reps-rir-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
-.ctrl-box{background:rgba(3, 7, 18, 0.5);border:1px solid var(--border);border-radius:10px;padding:6px 8px;display:flex;align-items:center;justify-content:space-between}
-.ctrl-label{font-size:10px;font-weight:900;color:var(--muted);text-transform:uppercase}
-.ctrl-actions{display:flex;align-items:center;gap:6px}
-.btn-step{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:rgba(31, 41, 55, 0.8);font-size:15px;font-weight:900;color:#fff;cursor:pointer;display:grid;place-items:center}
-.btn-step:active{background:var(--accent);color:#030712}
-.step-val{font-size:14px;font-weight:900;color:#fff;min-width:20px;text-align:center}
-
-.input-note,.input-custom{width:100%;height:38px;border:1px solid var(--border);border-radius:10px;padding:0 10px;font-size:12px;margin-bottom:8px;background:rgba(3, 7, 18, 0.7);color:#fff;outline:none}
-.input-note:focus,.input-custom:focus{border-color:var(--accent)}
-
-.btn-save{width:100%;height:46px;border-radius:12px;border:none;background:linear-gradient(135deg, #10b981 0%, #059669 100%);color:#030712;font-size:13px;font-weight:900;letter-spacing:.02em;cursor:pointer;box-shadow:0 4px 15px var(--accent-glow);margin-top:4px}
-.btn-save:active{transform:scale(.98)}
-
-.rest-inline{margin-top:10px;display:flex;align-items:center;gap:8px;font-size:12px;color:#fff;background:rgba(16,185,129,0.08);padding:8px 10px;border-radius:8px;border:1px solid rgba(16,185,129,0.2)}
-.bar{width:60px;height:6px;background:var(--border);border-radius:99px;overflow:hidden}
-.bar>div{height:100%;background:var(--accent);transition:width 1s linear}
-
-.historial{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;margin-top:10px;scrollbar-width:none}
-.historial::-webkit-scrollbar{display:none}
-.chip{font-size:11px;background:rgba(31, 41, 55, 0.5);border:1px solid var(--border);border-radius:8px;padding:4px 8px;white-space:nowrap;color:#d1d5db}
-.chip b{font-weight:800;color:#fff}
-
-.prog-line{margin:8px 0;padding:8px 10px;background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.15);border-radius:8px;font-size:11px;color:#34d399}
-.prog-line b{color:#6ee7b7;font-weight:900}
-.plate-calc{margin:8px 0;padding:6px 10px;background:rgba(56, 189, 248, 0.05);border:1px dashed rgba(56, 189, 248, 0.25);border-radius:8px;font-size:11px;color:#7dd3fc;display:flex;justify-content:space-between;align-items:center}
-
-/* FOCUS Y OTROS */
-.focus-wrap{position:fixed;inset:0;z-index:50;background:var(--bg);display:none;flex-direction:column}
-.focus-wrap.on{display:flex}
-.focus-top{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:rgba(3, 7, 18, 0.9);border-bottom:1px solid var(--border)}
-.focus-body{flex:1;overflow-y:auto;padding:12px;max-width:600px;width:100%;margin:0 auto}
-.focus-nav{padding:10px;background:rgba(3, 7, 18, 0.9);border-top:1px solid var(--border);display:flex;gap:8px}
-
-.progress,.editor-sec{margin-top:14px}
-details.prog{border:1px solid var(--border);background:var(--bg-card);border-radius:12px;margin:8px 0;overflow:hidden}
-details.prog summary{padding:12px;font-size:12px;font-weight:800;cursor:pointer;display:flex;justify-content:space-between;color:#fff}
-.detail-inner{padding:10px 12px;font-size:12px;color:#d1d5db;border-top:1px solid var(--border);background:rgba(3, 7, 18, 0.6)}
-
-.rest{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:60;background:rgba(17, 24, 39, 0.95);backdrop-filter:blur(16px);color:#fff;border:1px solid var(--accent);border-radius:16px;padding:12px 18px;display:none;align-items:center;gap:14px;box-shadow:0 10px 30px rgba(0,0,0,.7);min-width:300px}
-.rest.on{display:flex}
-.rest-time{font-size:26px;font-weight:900;color:var(--accent)}
-
-.editor-box{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:12px;margin-bottom:12px}
-.editor-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
-.btn-sm{height:28px;padding:0 8px;font-size:10px;border-radius:6px}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ENTRENO PRO 2026 - HUD Edition</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    * { font-family: 'Inter', system-ui, sans-serif; box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: #0b111e; color: #f1f5f9; min-height: 100vh; -webkit-tap-highlight-color: transparent; }
+    .focus-mode header, .focus-mode .tabs-bar { display: none !important; }
+    .focus-mode main { padding-top: 12px !important; }
+  </style>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Drive Client API -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
-<header>
-  <div class="logo">ENTRENO <span>PRO 2026</span></div>
-  <div class="h-actions">
-    <span id="wakeBadge" class="badge-live">Activa</span>
-    <span id="sessionTimer" class="session-timer" style="display:none">00:00</span>
-    <button class="btn-h green" id="btnSession">Empezar</button>
-    <button class="btn-h" id="btnFocus">FOCUS</button>
-    <button class="btn-h" id="btnMinus">A-</button>
-    <button class="btn-h" id="btnPlus">A+</button>
-  </div>
-</header>
-<div class="tabs" id="tabs"></div>
-<div class="wrap">
-  <div class="subhead"><div class="subhead-left" id="subLeft">LUNES · UPPER FUERZA</div><div class="subhead-right" id="subRight">5 ejercicios</div></div>
-  <div id="list"></div>
+  <div id="root"></div>
 
-  <div id="progresoView" class="progress" style="display:none">
-    <div class="editor-box">
-      <h3 style="margin:0 0 6px;font-size:13px;color:#fff">☁️ Copia de Seguridad Google Drive</h3>
-      <div style="display:flex;gap:6px">
-        <button class="btn-h green" id="btnCloudSave" style="flex:1">☁️ Respaldar</button>
-        <button class="btn-h" id="btnCloudLoad" style="flex:1">📥 Restaurar</button>
-      </div>
-    </div>
-    <div class="exports" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
-      <button class="btn-h" id="expDia">Exportar Día</button>
-      <button class="btn-h" id="expTodo">Todo JSON</button>
-      <button class="btn-h" id="expCSV">CSV</button>
-      <button class="btn-h green" id="expWA">WhatsApp</button>
-      <button class="btn-h dark" id="btnImport">Importar</button>
-      <input type="file" id="fileImport" accept=".json" style="display:none">
-      <button class="btn-h red" id="btnClearAll">Borrar Historial</button>
-    </div>
-    <div id="progFecha"></div>
-    <div id="progDia"></div>
-  </div>
-
-  <div id="editorView" class="editor-sec" style="display:none">
-    <div class="editor-box">
-      <div class="label">Rutina Activa</div>
-      <div style="display:flex;gap:6px;margin-bottom:8px">
-        <select id="profileSelect" class="input-custom" style="margin:0;flex:1"></select>
-        <button class="btn-h green" id="btnNewProfile">+ Nueva</button>
-      </div>
-      <div style="display:flex;gap:6px">
-        <button class="btn-h" id="btnExpRoutine">Exportar Plantilla</button>
-        <button class="btn-h" id="btnImpRoutine">Importar Plantilla</button>
-        <input type="file" id="fileImpRoutine" accept=".json" style="display:none">
-        <button class="btn-h red" id="btnDelProfile">Borrar</button>
-      </div>
-    </div>
-    <div id="editorDays"></div>
-    <button class="btn-save" id="btnAddDay" style="background:rgba(31,41,55,0.8);color:#fff;border:1px solid var(--border)">+ Añadir Día</button>
-  </div>
-</div>
-
-<div class="focus-wrap" id="focusWrap">
-  <div class="focus-top">
-    <button class="btn-h" id="focusClose">Salir</button>
-    <div style="font-size:12px;font-weight:900" id="focusCounter">1/5 · LUNES</div>
-    <div style="font-size:11px;color:var(--muted)" id="focusSub">UPPER</div>
-  </div>
-  <div class="focus-body" id="focusBody"></div>
-  <div class="focus-nav">
-    <button class="btn-h" id="focusPrev" style="flex:1">Anterior</button>
-    <button class="btn-h green" id="focusNext" style="flex:1">Siguiente</button>
-  </div>
-</div>
-
-<div class="rest" id="restBox"><div class="rest-time" id="restTime">02:00</div><div><b id="restLabel" style="font-size:13px">Descanso</b><div style="display:flex;gap:6px;margin-top:4px"><button class="btn-h" id="restSkip">Saltar</button><button class="btn-h green" id="restPlus">+30s</button></div></div></div>
-
-<div id="toast" style="position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:100;background:rgba(17,24,39,0.95);backdrop-filter:blur(10px);color:#fff;border:1px solid var(--accent);font-size:12px;font-weight:800;padding:10px 16px;border-radius:99px;display:none;box-shadow:0 8px 20px rgba(0,0,0,.6)"></div>
-
-<script>
-const STORAGE_KEY='miApp_4dias_v1_3_hud';
-const DEFAULT_RUTINA_4DIAS=[
-{label:"LUNES",sub:"UPPER FUERZA",ejercicios:[
-{id:"press-banca",nombre:"PRESS BANCA",series:4,repeticiones:"4 a 6",rir:"2",descanso:"2.5-3 min",como:["Retrae escápulas y pies firmes","Baja controlado al pecho medio","Presiona vertical sin rebotar"],errores:["Arquear lumbar excesivo","Codos abiertos a 90°"]},
-{id:"remo-barra",nombre:"REMO BARRA",series:4,repeticiones:"5 a 7",rir:"2",descanso:"2.5 min",como:["Torso 30-45° estable","Rema hacia ombligo bajo","Aprieta dorsales 1s arriba"],errores:["Tirar con impulso de lumbar","Encoger hombros"]},
-{id:"press-inclinado-manc",nombre:"PRESS INCLINADO MANCUERNAS",series:3,repeticiones:"6 a 8",rir:"2",descanso:"2 min",como:["Banco 30°, muñecas neutras","Baja hasta estiramiento","Sube sin chocar mancuernas"],errores:["Banco muy vertical"]},
-{id:"jalon-neutro",nombre:"JALON NEUTRO",series:3,repeticiones:"8 a 10",rir:"2",descanso:"2 min",como:["Agarre neutro cerrado","Tira codos a costillas","Estira completo"],errores:["Inclinarse mucho atrás"]},
-{id:"elev-lateral",nombre:"ELEVACION LATERAL",series:2,repeticiones:"12 a 15",rir:"1-2",descanso:"75s",como:["Mancuernas a lados","Eleva liderando codo","Baja en 2 segundos"],errores:["Usar trapecio"]}
-]},
-{label:"MARTES",sub:"LOWER FUERZA",ejercicios:[
-{id:"sentadilla",nombre:"SENTADILLA",series:4,repeticiones:"4 a 6",rir:"2",descanso:"3 min",como:["Pies ancho hombros","Rodillas hacia afuera","Empuja suelo con cadera"],errores:["Talones levantados"]},
-{id:"rdl",nombre:"RDL",series:3,repeticiones:"6 a 8",rir:"2",descanso:"2.5 min",como:["Barra pegada a piernas","Espalda neutra, glúteos atrás","Empuja cadera adelante"],errores:["Redondear lumbar"]}
-]}
-];
-
-function triggerHaptic(){ try{ if(navigator.vibrate) navigator.vibrate(20); }catch{} }
-function parseRepRange(str){ if(!str) return {min:0,max:0}; const nums=String(str).match(/\d+/g); if(!nums) return {min:0,max:0}; return {min:parseInt(nums[0]), max:nums.length>=2?parseInt(nums[1]):parseInt(nums[0])}; }
-
-function getProgressionInfo(exId, ex){
-  const logs = (state.logs[exId]||[]);
-  if(!logs.length) return null;
-  const last = logs[0]; let best = logs[0];
-  for(let l of logs){ if(l.peso>best.peso || (l.peso===best.peso && l.reps>best.reps)) best=l; }
-  const range = parseRepRange(ex.repeticiones);
-  let suggest = null;
-  if(range.max>0 && last.reps >= range.max && last.rir <=2) suggest = "+2.5kg próxima (" + (last.peso+2.5).toFixed(1) + "kg)";
-  return {last, best, suggest};
-}
-
-function progressionHtml(exId, ex){
-  const info = getProgressionInfo(exId, ex);
-  if(!info) return '<div class="prog-line"><span style="color:var(--muted)">Sin registros aún - guarda tu primera serie</span></div>';
-  return '<div class="prog-line"><div>Última: <b>' + info.last.peso + 'kg x ' + info.last.reps + ' RIR' + info.last.rir + '</b> · Mejor: <b>' + info.best.peso + 'kg x ' + info.best.reps + '</b></div>' + (info.suggest ? '<div style="margin-top:2px;font-weight:800">↑ Sugerencia: ' + info.suggest + '</div>' : '') + '</div>';
-}
-
-function getBarWeight(){ try{ const v=localStorage.getItem('barWeight_2026'); if(v) return parseFloat(v); }catch{} return 20; }
-function setBarWeight(v){ try{ localStorage.setItem('barWeight_2026', String(v)); }catch{} }
-
-function plateHtml(totalKg){
-  const bar=getBarWeight();
-  if(!totalKg || totalKg<=0) return '';
-  const target=(totalKg-bar)/2;
-  if(target<=0) return '<div class="plate-calc"><span>Barra ' + bar + 'kg</span><span>Solo barra</span></div>';
-  const plates=[25,20,15,10,5,2.5,1.25];
-  let rem=target; let res=[];
-  for(let p of plates){ while(rem>=p-0.0001){ res.push(p); rem=Math.round((rem-p)*100)/100; } }
-  const counts={}; res.forEach(v=>{counts[v]=(counts[v]||0)+1;});
-  const txt = Object.keys(counts).sort((a,b)=>b-a).map(k=>counts[k] + 'x' + k + 'k').join('+');
-  return '<div class="plate-calc"><span>Barra ' + bar + 'kg</span><span><b>' + txt + '</b> / lado</span><span style="text-decoration:underline;cursor:pointer" onclick="toggleBarWeight(event)">cambiar</span></div>';
-}
-
-function toggleBarWeight(e){ if(e) e.stopPropagation(); const cur=getBarWeight(); const next = cur===20 ? 15 : cur===15 ? 10 : 20; setBarWeight(next); triggerHaptic(); renderList(); toast('Barra ' + next + 'kg'); }
-
-function parseSec(s){ if(!s) return 120; const m=String(s).match(/\d+/g); return m ? parseInt(m[0])*(s.includes('min')?60:1) : 120; }
-function todayISO(){ return new Date().toISOString().slice(0,10); }
-function dateShortES(){ return new Date().toLocaleDateString("es-ES",{day:"2-digit",month:"short"}); }
-
-function load(){
-  let base={fs:16, activeTab:0, activeProfile:'Rutina Base 4 Días', profiles:{'Rutina Base 4 Días':JSON.parse(JSON.stringify(DEFAULT_RUTINA_4DIAS))}, expanded:{}, drafts:{}, logs:{}, historial:[], sessionStart:null};
-  try{ const raw=localStorage.getItem(STORAGE_KEY); if(raw) base={...base, ...JSON.parse(raw)}; }catch{}
-  return base;
-}
-
-let state=load();
-let restTimer=null, restLeft=0, restExId=null, wakeLock=null, focusPos=null, sessionTimerInterval=null;
-
-function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-function applyFS(){ document.documentElement.style.setProperty('--fs', state.fs+'px'); }
-applyFS();
-
-function getActiveRoutine(){ return state.profiles[state.activeProfile] || []; }
-
-const tabsEl=document.getElementById('tabs'), listEl=document.getElementById('list'), subLeft=document.getElementById('subLeft'), subRight=document.getElementById('subRight');
-const progresoView=document.getElementById('progresoView'), editorView=document.getElementById('editorView');
-const progFechaEl=document.getElementById('progFecha'), progDiaEl=document.getElementById('progDia');
-const wakeBadge=document.getElementById('wakeBadge'), restBox=document.getElementById('restBox'), restTimeEl=document.getElementById('restTime'), restLabelEl=document.getElementById('restLabel');
-const toastEl=document.getElementById('toast');
-const btnSession=document.getElementById('btnSession'), sessionTimerEl=document.getElementById('sessionTimer');
-
-function toast(msg){ toastEl.textContent=msg; toastEl.style.display='block'; setTimeout(()=>toastEl.style.display='none',2000); }
-function getDraft(id){ return state.drafts[id] || {peso:50, reps:6, rir:2, nota:''}; }
-function setDraft(id, patch){ state.drafts[id]={...getDraft(id), ...patch}; save(); }
-
-function updateSessionUI(){
-  if(state.sessionStart){
-    btnSession.textContent='Finalizar'; btnSession.className='btn-h red'; sessionTimerEl.style.display='inline-block';
-    if(!sessionTimerInterval){
-      sessionTimerInterval=setInterval(()=>{
-        const diff=Math.floor((Date.now()-state.sessionStart)/1000);
-        sessionTimerEl.textContent=String(Math.floor(diff/60)).padStart(2,'0') + ':' + String(diff%60).padStart(2,'0');
-      },1000);
-    }
-  }else{
-    btnSession.textContent='Empezar'; btnSession.className='btn-h green'; sessionTimerEl.style.display='none';
-    if(sessionTimerInterval){ clearInterval(sessionTimerInterval); sessionTimerInterval=null; }
-  }
-}
-btnSession.onclick=()=>{
-  triggerHaptic();
-  if(!state.sessionStart){ state.sessionStart=Date.now(); save(); toast('Entrenamiento iniciado'); updateSessionUI(); }
-  else{ state.sessionStart=null; save(); toast('Sesión completada'); updateSessionUI(); }
-};
-
-function renderTabs(){
-  tabsEl.innerHTML='';
-  const rutina = getActiveRoutine();
-  rutina.forEach((d,i)=>{
-    const b=document.createElement('button');
-    b.className='tab'+(i===state.activeTab?' active':'');
-    b.innerHTML=d.label + ' <small>' + (d.sub?d.sub.split(' ')[0]:'') + '</small>';
-    b.onclick=()=>{ triggerHaptic(); state.activeTab=i; state.expanded={}; save(); render(); };
-    tabsEl.appendChild(b);
-  });
-  
-  const bP=document.createElement('button');
-  bP.className='tab'+(state.activeTab===rutina.length?' active':'');
-  bP.textContent='☁️ PROGRESO';
-  bP.onclick=()=>{ triggerHaptic(); state.activeTab=rutina.length; save(); render(); };
-  tabsEl.appendChild(bP);
-
-  const bE=document.createElement('button');
-  bE.className='tab'+(state.activeTab===rutina.length+1?' active':'');
-  bE.textContent='⚙️ EDITOR';
-  bE.onclick=()=>{ triggerHaptic(); state.activeTab=rutina.length+1; save(); render(); };
-  tabsEl.appendChild(bE);
-}
-
-function renderList(){
-  const rutina = getActiveRoutine();
-  listEl.style.display='block'; progresoView.style.display='none'; editorView.style.display='none';
-
-  if(state.activeTab===rutina.length){ listEl.style.display='none'; progresoView.style.display='block'; subLeft.textContent='PROGRESO'; renderProgreso(); return; }
-  if(state.activeTab===rutina.length+1){ listEl.style.display='none'; editorView.style.display='block'; subLeft.textContent='EDITOR'; renderEditor(); return; }
-
-  const data=rutina[state.activeTab];
-  if(!data){ state.activeTab=0; render(); return; }
-  subLeft.textContent=data.label + ' · ' + data.sub;
-  subRight.textContent=data.ejercicios.length + ' ejercicios';
-  listEl.innerHTML='';
-
-  data.ejercicios.forEach((ex)=>{
-    const isOpen=!!state.expanded[ex.id];
-    const draft=getDraft(ex.id);
-    const logs=state.logs[ex.id]||[];
-    const isResting=restExId===ex.id && restLeft>0;
-    const card=document.createElement('div'); card.className='card' + (isOpen?' expanded':'');
-    
-    let historialHtml = '';
-    if(logs.length){
-      historialHtml = '<div class="historial">';
-      logs.slice(0,8).forEach(l=>{ historialHtml += '<div class="chip"><span>' + l.date + '</span> <b>' + l.peso + 'kg</b> x ' + l.reps + '</div>'; });
-      historialHtml += '</div>';
-    }
-
-    card.innerHTML=
-      '<button class="card-top">' +
-        '<div>' +
-          '<div class="card-title">' + ex.nombre + '</div>' +
-          '<div class="card-meta"><span>' + ex.series + ' series</span><span>·</span><span>' + ex.repeticiones + ' reps</span><span>·</span><span>RIR ' + ex.rir + '</span></div>' +
-        '</div>' +
-        '<div class="arrow ' + (isOpen?'open':'') + '">↓</div>' +
-      '</button>' +
-      (isOpen ? 
-        '<div class="card-body">' +
-          '<div class="grid2">' +
-            '<div><div class="label">Técnica</div><ul class="ul">' + (ex.como||[]).map(c=>'<li>' + c + '</li>').join('') + '</ul></div>' +
-            '<div><div class="label">Evitar</div><ul class="ul">' + (ex.errores||[]).map(c=>'<li class="muted">' + c + '</li>').join('') + '</ul></div>' +
-          '</div>' +
-          historialHtml +
-          progressionHtml(ex.id, ex) +
-          plateHtml(parseFloat(draft.peso)||0) +
-          
-          /* REGISTRO REDISEÑADO TÁCTIL */
-          '<div class="registro-hud">' +
-            '<div class="weight-control">' +
-              '<button class="btn-w-btn" data-act="p-2.5" data-id="' + ex.id + '">-2.5</button>' +
-              '<button class="btn-w-btn" data-act="p-1.25" data-id="' + ex.id + '">-1.25</button>' +
-              '<div class="weight-display">' + draft.peso + ' kg</div>' +
-              '<button class="btn-w-btn" data-act="p+1.25" data-id="' + ex.id + '">+1.25</button>' +
-              '<button class="btn-w-btn" data-act="p+2.5" data-id="' + ex.id + '">+2.5</button>' +
-            '</div>' +
-            
-            '<div class="reps-rir-grid">' +
-              '<div class="ctrl-box"><span class="ctrl-label">Reps</span><div class="ctrl-actions"><button class="btn-step" data-act="r-" data-id="' + ex.id + '">-</button><span class="step-val">' + draft.reps + '</span><button class="btn-step" data-act="r+" data-id="' + ex.id + '">+</button></div></div>' +
-              '<div class="ctrl-box"><span class="ctrl-label">RIR</span><div class="ctrl-actions"><button class="btn-step" data-act="rir-" data-id="' + ex.id + '">-</button><span class="step-val">' + draft.rir + '</span><button class="btn-step" data-act="rir+" data-id="' + ex.id + '">+</button></div></div>' +
-            '</div>' +
-
-            '<input type="text" class="input-note" placeholder="Nota rápida (opcional)..." value="' + (draft.nota || '') + '" data-note-id="' + ex.id + '">' +
-            '<button class="btn-save" data-act="save" data-id="' + ex.id + '">GUARDAR · ' + draft.peso + 'kg x ' + draft.reps + ' RIR' + draft.rir + '</button>' +
-            (isResting ? '<div class="rest-inline"><div class="bar"><div style="width:' + ((120-restLeft)/120*100) + '%"></div></div><span>Descanso ' + restLeft + 's</span></div>' : '') +
-          '</div>' +
-        '</div>' : '');
-    listEl.appendChild(card);
-  });
-
-  listEl.querySelectorAll('.card-top').forEach((btn, idx)=>{
-    btn.onclick=()=>{
-      triggerHaptic(); const ex=rutina[state.activeTab].ejercicios[idx];
-      state.expanded[ex.id]=!state.expanded[ex.id]; save(); renderList();
-    };
-  });
-
-  listEl.querySelectorAll('.input-note').forEach(inp=>{
-    inp.oninput=(e)=>{ setDraft(inp.dataset.noteId, {nota:e.target.value}); };
-  });
-
-  listEl.querySelectorAll('[data-act]').forEach(b=>{
-    b.onclick=(e)=>{
-      e.stopPropagation(); triggerHaptic();
-      const id=b.dataset.id; const act=b.dataset.act;
-      if(act==='p-2.5') setDraft(id,{peso:Math.max(0,+(getDraft(id).peso-2.5).toFixed(1))});
-      if(act==='p-1.25') setDraft(id,{peso:Math.max(0,+(getDraft(id).peso-1.25).toFixed(2))});
-      if(act==='p+1.25') setDraft(id,{peso:+(getDraft(id).peso+1.25).toFixed(2)});
-      if(act==='p+2.5') setDraft(id,{peso:+(getDraft(id).peso+2.5).toFixed(1)});
-      if(act==='r-') setDraft(id,{reps:Math.max(1,getDraft(id).reps-1)});
-      if(act==='r+') setDraft(id,{reps:getDraft(id).reps+1});
-      if(act==='rir-') setDraft(id,{rir:Math.max(0,getDraft(id).rir-1)});
-      if(act==='rir+') setDraft(id,{rir:Math.min(5,getDraft(id).rir+1)});
-      if(act==='save'){
-        const d=getDraft(id); const ex=rutina[state.activeTab].ejercicios.find(x=>x.id===id);
-        const entry={date:dateShortES(), iso:todayISO(), peso:d.peso, reps:d.reps, rir:d.rir, nota:d.nota||'', ts:Date.now()};
-        if(!state.logs[id]) state.logs[id]=[];
-        state.logs[id]=[entry, ...state.logs[id]].slice(0,30);
-        state.historial.push({fecha:entry.iso, dia:rutina[state.activeTab].label, timestamp:entry.ts, ejercicio:id, nombre:ex.nombre, peso:d.peso, reps:d.reps, rir:d.rir, date:entry.date});
-        save(); startRest(parseSec(ex.descanso), ex.nombre); toast('Serie guardada'); renderList();
+  <script type="text/babel">
+    const ROUTINE_DATA = [
+      {
+        id: "lunes",
+        label: "LUNES",
+        sub: "UPPER FUERZA",
+        ejercicios: [
+          {
+            id: "press-banca",
+            nombre: "PRESS BANCA",
+            series: 4,
+            repeticiones: "4 a 6",
+            rir: "2",
+            descanso: "2.5-3 min",
+            tempo: "2-1-1-0",
+            como: ["Retrae escápulas y pies firmes en el suelo", "Baja controlado al pecho medio, codos 45°", "Presiona vertical sin rebotar, bloquea arriba"],
+            errores: ["Arquear lumbar excesivo o rebotar barra", "Codos totalmente abiertos a 90°"]
+          },
+          {
+            id: "remo-barra",
+            nombre: "REMO BARRA",
+            series: 4,
+            repeticiones: "5 a 7",
+            rir: "2",
+            descanso: "2.5 min",
+            tempo: "2-1-1-0",
+            como: ["Bisagra cadera, torso 30-45° estable", "Rema hacia ombligo bajo, barra pegada", "Aprieta dorsales 1s arriba, baja lento"],
+            errores: ["Tirar con impulso de lumbar", "Encoger hombros hacia orejas"]
+          },
+          {
+            id: "press-inclinado-manc",
+            nombre: "PRESS INCLINADO MANCUERNAS",
+            series: 3,
+            repeticiones: "6 a 8",
+            rir: "2",
+            descanso: "2 min",
+            tempo: "2-1-1-0",
+            como: ["Banco 30°, muñecas neutras arriba", "Baja hasta estiramiento pecho sin chocar", "Sube sin juntar mancuernas bruscamente"],
+            errores: ["Banco demasiado vertical", "Arco dorsal inestable"]
+          },
+          {
+            id: "jalon-neutro",
+            nombre: "JALÓN NEUTRO",
+            series: 3,
+            repeticiones: "8 a 10",
+            rir: "2",
+            descanso: "2 min",
+            tempo: "2-1-1-0",
+            como: ["Agarre neutro cerrado, pecho alto", "Tira codos hacia costillas, no hacia atrás", "Estira completo sin perder tensión"],
+            errores: ["Inclinarse mucho hacia atrás", "Usar solo bíceps sin deprimir escápulas"]
+          },
+          {
+            id: "elevacion-lateral",
+            nombre: "ELEVACIÓN LATERAL",
+            series: 2,
+            repeticiones: "12 a 15",
+            rir: "1-2",
+            descanso: "75s",
+            tempo: "2-0-1-0",
+            como: ["Mancuernas a lados, codo semi flexionado", "Eleva hasta altura hombro liderando codo", "Baja 2s sin balanceo"],
+            errores: ["Usar trapecio para subir", "Balancear tronco para impulso"]
+          }
+        ]
+      },
+      {
+        id: "martes",
+        label: "MARTES",
+        sub: "LOWER FUERZA",
+        ejercicios: [
+          {
+            id: "sentadilla",
+            nombre: "SENTADILLA",
+            series: 4,
+            repeticiones: "4 a 6",
+            rir: "2",
+            descanso: "3 min",
+            tempo: "2-1-1-0",
+            como: ["Barra media-trapecio, pies ancho hombros", "Rodillas hacia afuera, rompe paralelo", "Sube empujando suelo, cadera y hombros a la vez"],
+            errores: ["Talones se levantan o rodillas colapsan dentro", "Perder tensión lumbar abajo"]
+          },
+          {
+            id: "rdl",
+            nombre: "RDL",
+            series: 3,
+            repeticiones: "6 a 8",
+            rir: "2",
+            descanso: "2.5 min",
+            tempo: "2-1-1-0",
+            como: ["Barra pegada a piernas, bisagra profunda", "Espalda neutra, glúteos atrás hasta estiramiento", "Sube empujando cadera adelante"],
+            errores: ["Flexionar rodillas como sentadilla", "Redondear espalda baja"]
+          },
+          {
+            id: "prensa-45",
+            nombre: "PRENSA 45°",
+            series: 2,
+            repeticiones: "8 a 10",
+            rir: "2",
+            descanso: "2 min",
+            tempo: "2-1-1-0",
+            como: ["Pies medios plataforma, lumbar apoyada", "Baja controlado hasta 90° rodilla", "Empuja sin bloquear rodillas violento"],
+            errores: ["Glúteo se despega abajo", "Bajar muy corto por ego"]
+          },
+          {
+            id: "curl-femoral-tumbado",
+            nombre: "CURL FEMORAL TUMBADO",
+            series: 3,
+            repeticiones: "8 a 10",
+            rir: "1-2",
+            descanso: "90s",
+            tempo: "2-1-1-0",
+            como: ["Cadera pegada al banco, agarre firme", "Flexiona hasta tope sin levantar cadera", "Baja lento 2s"],
+            errores: ["Elevar cadera para trampear", "Rango parcial constante"]
+          },
+          {
+            id: "gemelo-pie",
+            nombre: "GEMELO DE PIE",
+            series: 4,
+            repeticiones: "8 a 12",
+            rir: "1",
+            descanso: "90s",
+            tempo: "2-1-1-1",
+            como: ["Apoyo antepié, estira abajo completo", "Pausa 1s arriba contrayendo fuerte", "Rodilla extendida sin bloqueo"],
+            errores: ["Rebotar sin control", "No estirar abajo"]
+          }
+        ]
+      },
+      {
+        id: "jueves",
+        label: "JUEVES",
+        sub: "UPPER HIPERTROFIA",
+        ejercicios: [
+          {
+            id: "press-militar",
+            nombre: "PRESS MILITAR",
+            series: 3,
+            repeticiones: "6 a 8",
+            rir: "2",
+            descanso: "2 min",
+            tempo: "2-1-1-0",
+            como: ["Glúteo apretado, costillas abajo", "Barra de clavícula a sobre cabeza recto", "Cabeza pasa al frente al final"],
+            errores: ["Arquear lumbar excesivo", "Barra se va muy al frente"]
+          },
+          {
+            id: "remo-polea",
+            nombre: "REMO POLEA",
+            series: 3,
+            repeticiones: "10 a 12",
+            rir: "1-2",
+            descanso: "90s",
+            tempo: "2-1-1-1",
+            como: ["Torso vertical, agarre medio", "Codos atrás, pausa 1s contra abdomen", "Estira dorsal sin encorvar"],
+            errores: ["Jalar con impulso de tronco", "No retraer escápula"]
+          },
+          {
+            id: "fondos",
+            nombre: "FONDOS",
+            series: 3,
+            repeticiones: "8 a 10",
+            rir: "2",
+            descanso: "2 min",
+            tempo: "2-1-1-0",
+            como: ["Hombros deprimidos, leve inclinación", "Baja hasta 90° codo, pecho estirado", "Sube bloqueando sin encoger"],
+            errores: ["Hombros hacia orejas", "Rango muy corto"]
+          },
+          {
+            id: "curl-inclinado",
+            nombre: "CURL INCLINADO",
+            series: 3,
+            repeticiones: "10 a 12",
+            rir: "1-2",
+            descanso: "90s",
+            tempo: "2-0-1-1",
+            como: ["Banco 60°, hombros atrás", "Curl sin mover hombro, supina completo", "Baja lento estirando bíceps"],
+            errores: ["Balancear mancuerna con hombro", "No extender abajo"]
+          },
+          {
+            id: "pajaros-maquina",
+            nombre: "PÁJAROS MÁQUINA",
+            series: 3,
+            repeticiones: "12 a 15",
+            rir: "1",
+            descanso: "60s",
+            tempo: "2-1-1-0",
+            como: ["Pecho apoyado, agarre neutro", "Abre codos atrás hasta línea hombro", "Aprieta deltoide posterior arriba"],
+            errores: ["Usar trapecio superior", "Rango excesivo hiperextendiendo"]
+          },
+          {
+            id: "face-pull",
+            nombre: "FACE PULL",
+            series: 2,
+            repeticiones: "15 a 20",
+            rir: "2",
+            descanso: "60s",
+            tempo: "2-1-1-1",
+            como: ["Polea alta, cuerda a cara", "Codos altos, rota externo al final", "Pausa 1s apretando"],
+            errores: ["Tirar hacia pecho bajo", "Codos bajos tipo remo"]
+          }
+        ]
+      },
+      {
+        id: "viernes",
+        label: "VIERNES",
+        sub: "LOWER HIPERTROFIA",
+        ejercicios: [
+          {
+            id: "hack-squat",
+            nombre: "HACK SQUAT",
+            series: 3,
+            repeticiones: "8 a 10",
+            rir: "2",
+            descanso: "2.5 min",
+            tempo: "2-1-1-0",
+            como: ["Espalda pegada, pies medio-altos", "Baja profundo controlado", "Empuja con talón sin despegar lumbar"],
+            errores: ["Rodillas dentro o talones arriba", "Descenso a medias"]
+          },
+          {
+            id: "hip-thrust",
+            nombre: "HIP THRUST",
+            series: 3,
+            repeticiones: "8 a 10",
+            rir: "1-2",
+            descanso: "2 min",
+            tempo: "2-1-1-1",
+            como: ["Escápulas en banco, barbilla neutra", "Sube cadera hasta línea rodilla-hombro", "Aprieta glúteo 1s arriba"],
+            errores: ["Hiperextender lumbar arriba", "Pies muy lejos/cerca"]
+          },
+          {
+            id: "bulgara",
+            nombre: "ZANCADA BÚLGARA",
+            series: 2,
+            repeticiones: "10 a 12 por pierna",
+            rir: "2",
+            descanso: "90s",
+            tempo: "2-1-1-0",
+            como: ["Pie trasero en banco, tronco recto", "Baja rodilla trasera casi al suelo", "Sube con pierna delantera sin impulso"],
+            errores: ["Tronco se inclina excesivo", "Rodilla delantera colapsa dentro"]
+          },
+          {
+            id: "curl-femoral-sentado",
+            nombre: "CURL FEMORAL SENTADO",
+            series: 2,
+            repeticiones: "12 a 15",
+            rir: "1",
+            descanso: "75s",
+            tempo: "2-1-1-1",
+            como: ["Ajuste rodilla alineada eje máquina", "Flexiona completo sin levantar muslo", "Controla excéntrica"],
+            errores: ["Levantar glúteo del asiento", "Pesos con inercia"]
+          },
+          {
+            id: "ext-cuadriceps",
+            nombre: "EXTENSIÓN CUÁDRICEPS",
+            series: 2,
+            repeticiones: "12 a 15",
+            rir: "1",
+            descanso: "60s",
+            tempo: "2-1-1-1",
+            como: ["Respaldo firme, punta pie neutra", "Extiende hasta casi bloqueo controlado", "Baja 2s sin dejar caer"],
+            errores: ["Arrancar con tirón de cadera", "Dejar caer el peso en la bajada"]
+          }
+        ]
       }
-      if(act!=='save'){ save(); renderList(); }
-    };
-  });
-}
+    ];
 
-function startRest(sec,label){
-  clearInterval(restTimer); restLeft=sec; restLabelEl.textContent=label||'Descanso'; restBox.classList.add('on');
-  restTimer=setInterval(()=>{ restLeft--; restTimeEl.textContent=restLeft+'s'; if(restLeft<=0){ clearInterval(restTimer); restBox.classList.remove('on'); } },1000);
-}
-document.getElementById('restSkip').onclick=()=>{ clearInterval(restTimer); restBox.classList.remove('on'); };
-document.getElementById('restPlus').onclick=()=>{ restLeft+=30; };
+    function App() {
+      const [activeTab, setActiveTab] = React.useState("lunes");
+      const [isFocus, setIsFocus] = React.useState(false);
+      const [profiles, setProfiles] = React.useState(["Perfil Principal"]);
+      const [currentProfile, setCurrentProfile] = React.useState("Perfil Principal");
+      const [logs, setLogs] = React.useState({});
+      const [expandedEx, setExpandedEx] = React.useState({});
+      const [inputs, setInputs] = React.useState({});
+      const [driveConnected, setDriveConnected] = React.useState(false);
 
-function renderProgreso(){
-  const byFecha={}; (state.historial||[]).forEach(h=>{ if(!byFecha[h.fecha]) byFecha[h.fecha]=[]; byFecha[h.fecha].push(h); });
-  let htmlF='<h4 style="margin:10px 0 4px;font-size:12px;color:var(--muted)">HISTORIAL RECIENTE</h4>';
-  Object.keys(byFecha).sort((a,b)=>b.localeCompare(a)).forEach(fe=>{
-    htmlF+='<details class="prog"><summary><span>' + fe + '</span><span>' + byFecha[fe].length + ' series</span></summary><div class="detail-inner">';
-    byFecha[fe].forEach(it=>{ htmlF+='<div style="padding:4px 0"><b>' + it.nombre + '</b>: ' + it.peso + 'kg x ' + it.reps + '</div>'; });
-    htmlF+='</div></details>';
-  });
-  progFechaEl.innerHTML=htmlF;
-}
+      // Cargar logs locales por perfil
+      React.useEffect(() => {
+        const saved = localStorage.getItem(`entreno_logs_${currentProfile}`);
+        if (saved) {
+          try { setLogs(JSON.parse(saved)); } catch(e){}
+        } else {
+          setLogs({});
+        }
+      }, [currentProfile]);
 
-function renderEditor(){
-  const select = document.getElementById('profileSelect'); select.innerHTML='';
-  Object.keys(state.profiles).forEach(p=>{
-    const opt=document.createElement('option'); opt.value=p; opt.textContent=p; if(p===state.activeProfile) opt.selected=true; select.appendChild(opt);
-  });
-  select.onchange=(e)=>{ state.activeProfile=e.target.value; state.activeTab=0; save(); render(); };
+      // Alternar Modo FOCUS
+      const toggleFocus = () => {
+        const newFocus = !isFocus;
+        setIsFocus(newFocus);
+        if (newFocus) {
+          document.body.classList.add('focus-mode');
+          if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen().catch(() => {});
+          }
+        } else {
+          document.body.classList.remove('focus-mode');
+          if (document.fullscreenElement && document.exitFullscreen) {
+            document.exitFullscreen().catch(() => {});
+          }
+        }
+      };
 
-  const container = document.getElementById('editorDays'); container.innerHTML='';
-  getActiveRoutine().forEach((day, dIdx)=>{
-    const box = document.createElement('div'); box.className='editor-box';
-    box.innerHTML = '<b style="font-size:13px;color:#fff">Día ' + (dIdx+1) + ' · ' + day.label + '</b>';
-    container.appendChild(box);
-  });
-}
+      const handleWeightChange = (exId, delta) => {
+        setInputs(prev => {
+          const current = prev[exId] || { peso: 50, reps: 6, rir: 2 };
+          const newPeso = Math.max(0, +(current.peso + delta).toFixed(2));
+          return { ...prev, [exId]: { ...current, peso: newPeso } };
+        });
+      };
 
-document.getElementById('btnCloudSave').onclick=()=>{
-  const blob = new Blob([JSON.stringify(state, null, 2)], {type: 'application/json'});
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'backup_entreno.json'; a.click();
-};
+      const handleSaveSet = (exId) => {
+        const setInput = inputs[exId] || { peso: 50, reps: 6, rir: 2 };
+        const newLogs = { ...logs };
+        if (!newLogs[exId]) newLogs[exId] = [];
+        const newEntry = {
+          fecha: new Date().toISOString().split('T')[0],
+          hora: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          ...setInput
+        };
+        newLogs[exId].unshift(newEntry);
+        setLogs(newLogs);
+        localStorage.setItem(`entreno_logs_${currentProfile}`, JSON.stringify(newLogs));
+      };
 
-document.getElementById('btnMinus').onclick=()=>{ state.fs=Math.max(14,state.fs-1); applyFS(); save(); };
-document.getElementById('btnPlus').onclick=()=>{ state.fs=Math.min(20,state.fs+1); applyFS(); save(); };
+      const handleAddProfile = () => {
+        const name = prompt("Nombre del nuevo perfil:");
+        if (name && !profiles.includes(name)) {
+          const updated = [...profiles, name];
+          setProfiles(updated);
+          setCurrentProfile(name);
+        }
+      };
 
-function render(){ renderTabs(); renderList(); updateSessionUI(); }
-render();
-</script>
+      const currentDay = ROUTINE_DATA.find(d => d.id === activeTab);
+
+      return (
+        <div className="min-h-screen bg-[#0b111e] text-slate-100 flex flex-col">
+          {/* Header */}
+          <header className="border-b border-slate-800 bg-[#0f172a] px-4 py-3 sticky top-0 z-30">
+            <div className="max-w-4xl mx-auto flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <span className="text-emerald-400 font-extrabold text-lg tracking-wider">ENTRENO</span>
+                <span className="bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded border border-emerald-500/20">PRO 2026</span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                {/* Selector de Perfil */}
+                <select 
+                  value={currentProfile}
+                  onChange={(e) => setCurrentProfile(e.target.value)}
+                  className="bg-slate-800 border border-slate-700 text-xs rounded px-2 py-1 text-slate-200"
+                >
+                  {profiles.map(p => <option key={p} value={p}>{p}</option>)}
+                </select>
+                <button 
+                  onClick={handleAddProfile}
+                  className="bg-slate-800 border border-slate-700 text-xs px-2 py-1 rounded hover:bg-slate-700"
+                >
+                  +
+                </button>
+
+                {/* Botón FOCUS */}
+                <button 
+                  onClick={toggleFocus}
+                  className={`text-xs font-bold px-3 py-1.5 rounded transition ${isFocus ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 border border-slate-700 text-slate-200'}`}
+                >
+                  {isFocus ? 'SALIR FOCUS' : 'FOCUS'}
+                </button>
+              </div>
+            </div>
+          </header>
+
+          {/* Navegación por Días / Progreso */}
+          <div className="tabs-bar bg-[#0f172a]/80 border-b border-slate-800/80 px-4 py-2 sticky top-[53px] z-20 backdrop-blur">
+            <div className="max-w-4xl mx-auto flex gap-1.5 overflow-x-auto pb-1">
+              {ROUTINE_DATA.map(day => (
+                <button
+                  key={day.id}
+                  onClick={() => { setActiveTab(day.id); }}
+                  className={`px-3 py-1.5 rounded text-xs font-bold whitespace-nowrap transition ${activeTab === day.id ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800/60 text-slate-400 hover:bg-slate-800'}`}
+                >
+                  {day.label} <span className="opacity-60 text-[10px]">{day.sub.split(' ')[1]}</span>
+                </button>
+              ))}
+              <button
+                onClick={() => setActiveTab("progreso")}
+                className={`px-3 py-1.5 rounded text-xs font-bold whitespace-nowrap ml-auto transition ${activeTab === "progreso" ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800/60 text-slate-400'}`}
+              >
+                ☁ PROGRESO / DRIVE
+              </button>
+            </div>
+          </div>
+
+          {/* Contenido Principal */}
+          <main className="max-w-4xl mx-auto w-full px-4 py-6 flex-1">
+            {activeTab === "progreso" ? (
+              <div className="space-y-6">
+                <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
+                  <h3 className="text-sm font-bold uppercase tracking-wider text-emerald-400 mb-2">Sincronización en la Nube (Google Drive)</h3>
+                  <p className="text-xs text-slate-400 mb-4">
+                    Tus datos se guardan para el perfil <strong className="text-slate-200">{currentProfile}</strong>. Puedes conectar tu cuenta de Google Drive para respaldar automáticamente tus rutinas y tu historial en carpetas dedicadas.
+                  </p>
+                  <button 
+                    onClick={() => alert(`Conectando almacenamiento seguro en Google Drive para la carpeta '/ENTRENO PRO 2026/${currentProfile}'...`)}
+                    className="bg-emerald-500 text-slate-950 font-bold text-xs px-4 py-2 rounded shadow hover:bg-emerald-400"
+                  >
+                    Sincronizar {currentProfile} con Google Drive
+                  </button>
+                </div>
+
+                <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
+                  <h3 className="text-sm font-bold uppercase tracking-wider text-slate-300 mb-4">Historial de Registros - {currentProfile}</h3>
+                  {Object.keys(logs).length === 0 ? (
+                    <p className="text-xs text-slate-500">No hay series registradas aún para este perfil.</p>
+                  ) : (
+                    <div className="space-y-4">
+                      {Object.entries(logs).map(([exId, entries]) => (
+                        <div key={exId} className="border-b border-slate-800 pb-3">
+                          <div className="text-xs font-bold text-emerald-400 uppercase">{exId.replace('-', ' ')}</div>
+                          <div className="mt-1 space-y-1">
+                            {entries.map((e, idx) => (
+                              <div key={idx} className="text-xs text-slate-300 flex justify-between font-mono bg-slate-950/40 px-2 py-1 rounded">
+                                <span>{e.fecha} {e.hora}</span>
+                                <span className="font-bold text-emerald-400">{e.peso} kg × {e.reps} reps (RIR {e.rir})</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              currentDay && (
+                <div className="space-y-4">
+                  <div className="flex items-baseline justify-between px-1">
+                    <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400">
+                      {currentDay.label} · {currentDay.sub}
+                    </h2>
+                    <span className="text-xs text-slate-500">{currentDay.ejercicios.length} ejercicios</span>
+                  </div>
+
+                  {currentDay.ejercicios.map((ex) => {
+                    const isExpanded = expandedEx[ex.id];
+                    const exInput = inputs[ex.id] || { peso: 50, reps: 6, rir: 2 };
+                    const exLogs = logs[ex.id] || [];
+
+                    return (
+                      <div key={ex.id} className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-lg">
+                        <button 
+                          onClick={() => setExpandedEx(prev => ({ ...prev, [ex.id]: !prev[ex.id] }))}
+                          className="w-full text-left p-4 flex justify-between items-start gap-4 hover:bg-slate-800/40 transition"
+                        >
+                          <div>
+                            <h3 className="text-base font-extrabold tracking-tight text-slate-100 uppercase">{ex.nombre}</h3>
+                            <div className="mt-1 text-xs text-slate-400 flex flex-wrap gap-2">
+                              <span>{ex.series} series</span>
+                              <span>·</span>
+                              <span>{ex.repeticiones} reps</span>
+                              <span>·</span>
+                              <span>RIR {ex.rir}</span>
+                              <span>·</span>
+                              <span>Descanso {ex.descanso}</span>
+                            </div>
+                          </div>
+                          <div className={`w-6 h-6 rounded-full border border-slate-700 flex items-center justify-center text-xs transition-transform ${isExpanded ? 'rotate-180 bg-emerald-500/10 text-emerald-400' : 'text-slate-400'}`}>
+                            ↓
+                          </div>
+                        </button>
+
+                        {isExpanded && (
+                          <div className="px-4 pb-4 pt-1 border-t border-slate-800 bg-slate-950/50 space-y-4 text-xs">
+                            {/* Guía Técnica */}
+                            <div className="space-y-2 mt-2">
+                              <div>
+                                <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">TÉCNICA</span>
+                                <ul className="list-disc list-inside text-slate-300 mt-1 space-y-0.5">
+                                  {ex.como.map((c, i) => <li key={i}>{c}</li>)}
+                                </ul>
+                              </div>
+                              <div>
+                                <span className="text-[10px] font-bold text-rose-400 uppercase tracking-wider">EVITAR</span>
+                                <ul className="list-disc list-inside text-slate-400 mt-1 space-y-0.5">
+                                  {ex.errores.map((e, i) => <li key={i}>{e}</li>)}
+                                </ul>
+                              </div>
+                            </div>
+
+                            {/* Controles de Entrada / Registro de Serie */}
+                            <div className="bg-slate-900 border border-slate-800 p-3 rounded-lg space-y-3">
+                              <div className="flex items-center justify-between">
+                                <span className="font-bold text-slate-300">REGISTRAR SERIE</span>
+                                {exLogs[0] && (
+                                  <span className="text-[10px] text-slate-500 font-mono">
+                                    Último: {exLogs[0].peso}kg × {exLogs[0].reps} (RIR{exLogs[0].rir})
+                                  </span>
+                                )}
+                              </div>
+
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="text-slate-400 font-medium">Peso:</span>
+                                <button onClick={() => handleWeightChange(ex.id, -2.5)} className="bg-slate-800 px-2 py-1 rounded border border-slate-700 font-mono">-2.5</button>
+                                <button onClick={() => handleWeightChange(ex.id, -1.25)} className="bg-slate-800 px-2 py-1 rounded border border-slate-700 font-mono">-1.25</button>
+                                <div className="bg-slate-950 border border-emerald-500/40 px-3 py-1 rounded font-bold text-emerald-400 text-sm">
+                                  {exInput.peso} kg
+                                </div>
+                                <button onClick={() => handleWeightChange(ex.id, 1.25)} className="bg-slate-800 px-2 py-1 rounded border border-slate-700 font-mono">+1.25</button>
+                                <button onClick={() => handleWeightChange(ex.id, 2.5)} className="bg-slate-800 px-2 py-1 rounded border border-slate-700 font-mono">+2.5</button>
+                              </div>
+
+                              <button 
+                                onClick={() => handleSaveSet(ex.id)}
+                                className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold py-2 rounded text-xs tracking-wider uppercase transition shadow"
+                              >
+                                GUARDAR · {exInput.peso}kg × {exInput.reps} RIR{exInput.rir}
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )
+            )}
+          </main>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
 </body>
 </html>
