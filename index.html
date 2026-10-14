@@ -324,20 +324,18 @@
 
       // Sincronización automática a Google Drive en segundo plano
       const syncToDriveCloud = async (updatedLogs) => {
-        if (!accessToken) return; // Si no hay sesión iniciada, solo actúa localmente
+        if (!accessToken) return;
         setSyncStatus("Sincronizando con Drive...");
         try {
           const fileContent = JSON.stringify({ profile: currentProfile, logs: updatedLogs, updatedAt: new Date().toISOString() }, null, 2);
           const fileName = `entreno_backup_${currentProfile}.json`;
 
-          // Buscar si el archivo ya existe en Drive
           const searchRes = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='${fileName}' and mimeType='application/json'`, {
             headers: { Authorization: `Bearer ${accessToken}` }
           });
           const searchData = await searchRes.json();
 
           if (searchData.files && searchData.files.length > 0) {
-            // Actualizar archivo existente
             const fileId = searchData.files[0].id;
             await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
               method: 'PATCH',
@@ -345,7 +343,6 @@
               body: fileContent
             });
           } else {
-            // Crear archivo nuevo
             const metadata = { name: fileName, mimeType: 'application/json' };
             const form = new FormData();
             form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
@@ -388,6 +385,16 @@
         });
       };
 
+      const handleStepChange = (exId, field, delta) => {
+        setInputs(prev => {
+          const current = prev[exId] || { peso: 50, reps: 6, rir: 2 };
+          let val = current[field] + delta;
+          if (field === 'reps') val = Math.max(1, val);
+          if (field === 'rir') val = Math.max(0, Math.min(5, val));
+          return { ...prev, [exId]: { ...current, [field]: val } };
+        });
+      };
+
       const handleSaveSet = (exId) => {
         const setInput = inputs[exId] || { peso: 50, reps: 6, rir: 2 };
         const newLogs = { ...logs };
@@ -400,10 +407,7 @@
         newLogs[exId].unshift(newEntry);
         setLogs(newLogs);
         
-        // Guardado local
         localStorage.setItem(`entreno_logs_${currentProfile}`, JSON.stringify(newLogs));
-        
-        // Sincronización automática a la nube en tiempo real
         syncToDriveCloud(newLogs);
       };
 
@@ -429,7 +433,6 @@
               </div>
 
               <div className="flex items-center gap-2">
-                {/* Selector de Perfil */}
                 <select 
                   value={currentProfile}
                   onChange={(e) => setCurrentProfile(e.target.value)}
@@ -444,7 +447,6 @@
                   +
                 </button>
 
-                {/* Botón FOCUS */}
                 <button 
                   onClick={toggleFocus}
                   className={`text-xs font-bold px-3 py-1.5 rounded transition ${isFocus ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 border border-slate-700 text-slate-200'}`}
@@ -576,10 +578,10 @@
                               </div>
                             </div>
 
-                            {/* Controles de Entrada / Registro de Serie */}
-                            <div className="bg-slate-900 border border-slate-800 p-3 rounded-lg space-y-3">
+                            {/* Controles de Entrada / Registro de Serie (HUD Táctil Optimizado) */}
+                            <div className="bg-slate-950 border border-slate-800 p-3.5 rounded-xl space-y-3">
                               <div className="flex items-center justify-between">
-                                <span className="font-bold text-slate-300">REGISTRAR SERIE</span>
+                                <span className="font-extrabold text-slate-300 tracking-wider text-[11px]">REGISTRAR SERIE</span>
                                 {exLogs[0] && (
                                   <span className="text-[10px] text-slate-500 font-mono">
                                     Último: {exLogs[0].peso}kg × {exLogs[0].reps} (RIR{exLogs[0].rir})
@@ -587,20 +589,40 @@
                                 )}
                               </div>
 
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <span className="text-slate-400 font-medium">Peso:</span>
-                                <button onClick={() => handleWeightChange(ex.id, -2.5)} className="bg-slate-800 px-2 py-1 rounded border border-slate-700 font-mono">-2.5</button>
-                                <button onClick={() => handleWeightChange(ex.id, -1.25)} className="bg-slate-800 px-2 py-1 rounded border border-slate-700 font-mono">-1.25</button>
-                                <div className="bg-slate-950 border border-emerald-500/40 px-3 py-1 rounded font-bold text-emerald-400 text-sm">
+                              {/* Fila Única de Control de Peso */}
+                              <div className="flex items-center justify-between gap-1.5">
+                                <button onClick={() => handleWeightChange(ex.id, -2.5)} className="h-10 flex-1 bg-slate-800/80 active:bg-slate-700 rounded-lg border border-slate-700 text-xs font-bold font-mono text-slate-200">-2.5</button>
+                                <button onClick={() => handleWeightChange(ex.id, -1.25)} className="h-10 flex-1 bg-slate-800/80 active:bg-slate-700 rounded-lg border border-slate-700 text-xs font-bold font-mono text-slate-200">-1.25</button>
+                                <div className="h-11 px-3 bg-slate-900 border border-emerald-500/50 rounded-lg flex items-center justify-center font-black text-emerald-400 text-sm tracking-tight shadow-[0_0_10px_rgba(16,185,129,0.15)] min-w-[85px]">
                                   {exInput.peso} kg
                                 </div>
-                                <button onClick={() => handleWeightChange(ex.id, 1.25)} className="bg-slate-800 px-2 py-1 rounded border border-slate-700 font-mono">+1.25</button>
-                                <button onClick={() => handleWeightChange(ex.id, 2.5)} className="bg-slate-800 px-2 py-1 rounded border border-slate-700 font-mono">+2.5</button>
+                                <button onClick={() => handleWeightChange(ex.id, 1.25)} className="h-10 flex-1 bg-slate-800/80 active:bg-slate-700 rounded-lg border border-slate-700 text-xs font-bold font-mono text-slate-200">+1.25</button>
+                                <button onClick={() => handleWeightChange(ex.id, 2.5)} className="h-10 flex-1 bg-slate-800/80 active:bg-slate-700 rounded-lg border border-slate-700 text-xs font-bold font-mono text-slate-200">+2.5</button>
+                              </div>
+
+                              {/* Controles de Reps y RIR */}
+                              <div className="grid grid-cols-2 gap-2">
+                                <div className="bg-slate-900 border border-slate-800 rounded-lg p-2 flex items-center justify-between">
+                                  <span className="text-[10px] font-extrabold text-slate-400 tracking-wider">REPS</span>
+                                  <div className="flex items-center gap-2">
+                                    <button onClick={() => handleStepChange(ex.id, 'reps', -1)} className="w-8 h-8 bg-slate-800 active:bg-emerald-500 active:text-slate-950 rounded-md border border-slate-700 font-black text-sm flex items-center justify-center">-</button>
+                                    <span className="font-black text-sm w-5 text-center">{exInput.reps}</span>
+                                    <button onClick={() => handleStepChange(ex.id, 'reps', 1)} className="w-8 h-8 bg-slate-800 active:bg-emerald-500 active:text-slate-950 rounded-md border border-slate-700 font-black text-sm flex items-center justify-center">+</button>
+                                  </div>
+                                </div>
+                                <div className="bg-slate-900 border border-slate-800 rounded-lg p-2 flex items-center justify-between">
+                                  <span className="text-[10px] font-extrabold text-slate-400 tracking-wider">RIR</span>
+                                  <div className="flex items-center gap-2">
+                                    <button onClick={() => handleStepChange(ex.id, 'rir', -1)} className="w-8 h-8 bg-slate-800 active:bg-emerald-500 active:text-slate-950 rounded-md border border-slate-700 font-black text-sm flex items-center justify-center">-</button>
+                                    <span className="font-black text-sm w-5 text-center">{exInput.rir}</span>
+                                    <button onClick={() => handleStepChange(ex.id, 'rir', 1)} className="w-8 h-8 bg-slate-800 active:bg-emerald-500 active:text-slate-950 rounded-md border border-slate-700 font-black text-sm flex items-center justify-center">+</button>
+                                  </div>
+                                </div>
                               </div>
 
                               <button 
                                 onClick={() => handleSaveSet(ex.id)}
-                                className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold py-2 rounded text-xs tracking-wider uppercase transition shadow"
+                                className="w-full bg-emerald-500 hover:bg-emerald-400 active:scale-[0.98] text-slate-950 font-black py-3 rounded-xl text-xs tracking-wider uppercase transition shadow-lg shadow-emerald-500/20"
                               >
                                 GUARDAR · {exInput.peso}kg × {exInput.reps} RIR{exInput.rir}
                               </button>
