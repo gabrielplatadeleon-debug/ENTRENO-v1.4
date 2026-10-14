@@ -309,7 +309,7 @@
       // Función para autenticar con Google Drive (OAuth 2.0 / GIS)
       const handleGoogleLogin = () => {
         const client = google.accounts.oauth2.initTokenClient({
-          client_id: '743772639737-jrf3qhna3putebqeve97i7p1krftd6j3.apps.googleusercontent.com.apps.googleusercontent.com', // Reemplazar con tu ID de cliente de Google Cloud
+          client_id: '743772639737-jrf3qhna3putebqeve97i7p1krftd6j3.apps.googleusercontent.com',
           scope: 'https://www.googleapis.com/auth/drive.file',
           callback: (response) => {
             if (response.access_token) {
