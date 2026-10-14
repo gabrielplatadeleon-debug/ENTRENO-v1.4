@@ -3,548 +3,390 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ENTRENO PRO 2026 - HUD Edition</title>
+  <title>Mi Dieta Hipertrofia - 3000 kcal</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-    * { font-family: 'Inter', system-ui, sans-serif; box-sizing: border-box; margin: 0; padding: 0; }
-    body { background-color: #0b111e; color: #f1f5f9; min-height: 100vh; -webkit-tap-highlight-color: transparent; }
-    .focus-mode header, .focus-mode .tabs-bar { display: none !important; }
-    .focus-mode main { padding-top: 12px !important; }
+    @import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap');
+    * { font-family: 'Instrument Sans', ui-sans-system, sans-serif; box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: #ffffff; color: #111c14; min-height: 100vh; -webkit-tap-highlight-color: transparent; }
+    header { background-color: #0f2a1d; color: #ffffff; position: sticky; top: 0; z-index: 20; }
+    .max-w { max-width: 860px; margin: 0 auto; }
   </style>
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Drive Client API -->
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
   <div id="root"></div>
 
   <script type="text/babel">
-    const ROUTINE_DATA = [
+    const meals = [
       {
-        id: "lunes",
-        label: "LUNES",
-        sub: "UPPER FUERZA",
-        ejercicios: [
-          {
-            id: "press-banca",
-            nombre: "PRESS BANCA",
-            series: 4,
-            repeticiones: "4 a 6",
-            rir: "2",
-            descanso: "2.5-3 min",
-            tempo: "2-1-1-0",
-            como: ["Retrae escápulas y pies firmes en el suelo", "Baja controlado al pecho medio, codos 45°", "Presiona vertical sin rebotar, bloquea arriba"],
-            errores: ["Arquear lumbar excesivo o rebotar barra", "Codos totalmente abiertos a 90°"]
-          },
-          {
-            id: "remo-barra",
-            nombre: "REMO BARRA",
-            series: 4,
-            repeticiones: "5 a 7",
-            rir: "2",
-            descanso: "2.5 min",
-            tempo: "2-1-1-0",
-            como: ["Bisagra cadera, torso 30-45° estable", "Rema hacia ombligo bajo, barra pegada", "Aprieta dorsales 1s arriba, baja lento"],
-            errores: ["Tirar con impulso de lumbar", "Encoger hombros hacia orejas"]
-          },
-          {
-            id: "press-inclinado-manc",
-            nombre: "PRESS INCLINADO MANCUERNAS",
-            series: 3,
-            repeticiones: "6 a 8",
-            rir: "2",
-            descanso: "2 min",
-            tempo: "2-1-1-0",
-            como: ["Banco 30°, muñecas neutras arriba", "Baja hasta estiramiento pecho sin chocar", "Sube sin juntar mancuernas bruscamente"],
-            errores: ["Banco demasiado vertical", "Arco dorsal inestable"]
-          },
-          {
-            id: "jalon-neutro",
-            nombre: "JALÓN NEUTRO",
-            series: 3,
-            repeticiones: "8 a 10",
-            rir: "2",
-            descanso: "2 min",
-            tempo: "2-1-1-0",
-            como: ["Agarre neutro cerrado, pecho alto", "Tira codos hacia costillas, no hacia atrás", "Estira completo sin perder tensión"],
-            errores: ["Inclinarse mucho hacia atrás", "Usar solo bíceps sin deprimir escápulas"]
-          },
-          {
-            id: "elevacion-lateral",
-            nombre: "ELEVACIÓN LATERAL",
-            series: 2,
-            repeticiones: "12 a 15",
-            rir: "1-2",
-            descanso: "75s",
-            tempo: "2-0-1-0",
-            como: ["Mancuernas a lados, codo semi flexionado", "Eleva hasta altura hombro liderando codo", "Baja 2s sin balanceo"],
-            errores: ["Usar trapecio para subir", "Balancear tronco para impulso"]
-          }
+        id: "desayuno",
+        time: "7:00",
+        label: "Desayuno",
+        foods: [
+          { name: "Avena", amount: "130g" },
+          { name: "Leche semidescremada", amount: "300ml" },
+          { name: "Crema de cacahuete 100%", amount: "20g" }
+        ],
+        protein: "30g",
+        kcal: "739"
+      },
+      {
+        id: "comida",
+        time: "14:00",
+        label: "Comida",
+        foods: [
+          { name: "Pechuga de pollo", amount: "200g" },
+          { name: "Arroz", amount: "120g" },
+          { name: "Aceite de oliva", amount: "10ml" },
+          { name: "Ensalada bolsa", amount: "100g" }
+        ],
+        protein: "54g",
+        kcal: "728"
+      },
+      {
+        id: "merienda",
+        time: "17:00",
+        label: "Merienda",
+        foods: [
+          { name: "Batido proteína whey", amount: "30g" },
+          { name: "Leche semidescremada", amount: "300ml" },
+          { name: "Avena", amount: "80g" },
+          { name: "Miel", amount: "20g" }
+        ],
+        protein: "48g",
+        kcal: "560"
+      },
+      {
+        id: "cena",
+        time: "21:00",
+        label: "Cena",
+        foods: [
+          { name: "Carne picada vacuno 5%", amount: "150g" },
+          { name: "Huevos L", amount: "3 uds" },
+          { name: "Patata", amount: "200g" },
+          { name: "Pan integral", amount: "80g" },
+          { name: "Aceite de oliva", amount: "10ml" },
+          { name: "Verdura congelada", amount: "100g" }
+        ],
+        protein: "54g",
+        kcal: "659"
+      }
+    ];
+
+    const alternatives = [
+      {
+        title: "Plan B: Comida o Cena Exprés (Sin cocinar)",
+        desc: "Ideal si no tienes arroz ni carne preparada en los táperes.",
+        items: [
+          { name: "Carbohidrato rápido", detail: "4-5 rebanadas de pan integral o botes de patata cocida envasada al vacío." },
+          { name: "Proteína rápida", detail: "2 latas grandes de atún/caballa al natural o 150g-200g de pechuga de pavo/pollo en lonchas extra." },
+          { name: "Acompañamiento", detail: "Bolsa de ensalada directa con un chorrito de aceite de oliva." }
         ]
       },
       {
-        id: "martes",
-        label: "MARTES",
-        sub: "LOWER FUERZA",
-        ejercicios: [
-          {
-            id: "sentadilla",
-            nombre: "SENTADILLA",
-            series: 4,
-            repeticiones: "4 a 6",
-            rir: "2",
-            descanso: "3 min",
-            tempo: "2-1-1-0",
-            como: ["Barra media-trapecio, pies ancho hombros", "Rodillas hacia afuera, rompe paralelo", "Sube empujando suelo, cadera y hombros a la vez"],
-            errores: ["Talones se levantan o rodillas colapsan dentro", "Perder tensión lumbar abajo"]
-          },
-          {
-            id: "rdl",
-            nombre: "RDL",
-            series: 3,
-            repeticiones: "6 a 8",
-            rir: "2",
-            descanso: "2.5 min",
-            tempo: "2-1-1-0",
-            como: ["Barra pegada a piernas, bisagra profunda", "Espalda neutra, glúteos atrás hasta estiramiento", "Sube empujando cadera adelante"],
-            errores: ["Flexionar rodillas como sentadilla", "Redondear espalda baja"]
-          },
-          {
-            id: "prensa-45",
-            nombre: "PRENSA 45°",
-            series: 2,
-            repeticiones: "8 a 10",
-            rir: "2",
-            descanso: "2 min",
-            tempo: "2-1-1-0",
-            como: ["Pies medios plataforma, lumbar apoyada", "Baja controlado hasta 90° rodilla", "Empuja sin bloquear rodillas violento"],
-            errores: ["Glúteo se despega abajo", "Bajar muy corto por ego"]
-          },
-          {
-            id: "curl-femoral-tumbado",
-            nombre: "CURL FEMORAL TUMBADO",
-            series: 3,
-            repeticiones: "8 a 10",
-            rir: "1-2",
-            descanso: "90s",
-            tempo: "2-1-1-0",
-            como: ["Cadera pegada al banco, agarre firme", "Flexiona hasta tope sin levantar cadera", "Baja lento 2s"],
-            errores: ["Elevar cadera para trampear", "Rango parcial constante"]
-          },
-          {
-            id: "gemelo-pie",
-            nombre: "GEMELO DE PIE",
-            series: 4,
-            repeticiones: "8 a 12",
-            rir: "1",
-            descanso: "90s",
-            tempo: "2-1-1-1",
-            como: ["Apoyo antepié, estira abajo completo", "Pausa 1s arriba contrayendo fuerte", "Rodilla extendida sin bloqueo"],
-            errores: ["Rebotar sin control", "No estirar abajo"]
-          }
+        title: "Plan B: Desayuno o Merienda Rápida",
+        desc: "Para mañanas con prisa o cuando no da tiempo a cocinar avena.",
+        items: [
+          { name: "Cereales rápidos", detail: "Crema de arroz instantánea, copos de avena instantáneos o muesli sin azúcar disueltos en leche fría." },
+          { name: "Proteína", detail: "Mantén tu cacahuete o tu cazo de proteína whey disuelto en el shaker." }
         ]
       },
       {
-        id: "jueves",
-        label: "JUEVES",
-        sub: "UPPER HIPERTROFIA",
-        ejercicios: [
-          {
-            id: "press-militar",
-            nombre: "PRESS MILITAR",
-            series: 3,
-            repeticiones: "6 a 8",
-            rir: "2",
-            descanso: "2 min",
-            tempo: "2-1-1-0",
-            como: ["Glúteo apretado, costillas abajo", "Barra de clavícula a sobre cabeza recto", "Cabeza pasa al frente al final"],
-            errores: ["Arquear lumbar excesivo", "Barra se va muy al frente"]
-          },
-          {
-            id: "remo-polea",
-            nombre: "REMO POLEA",
-            series: 3,
-            repeticiones: "10 a 12",
-            rir: "1-2",
-            descanso: "90s",
-            tempo: "2-1-1-1",
-            como: ["Torso vertical, agarre medio", "Codos atrás, pausa 1s contra abdomen", "Estira dorsal sin encorvar"],
-            errores: ["Jalar con impulso de tronco", "No retraer escápula"]
-          },
-          {
-            id: "fondos",
-            nombre: "FONDOS",
-            series: 3,
-            repeticiones: "8 a 10",
-            rir: "2",
-            descanso: "2 min",
-            tempo: "2-1-1-0",
-            como: ["Hombros deprimidos, leve inclinación", "Baja hasta 90° codo, pecho estirado", "Sube bloqueando sin encoger"],
-            errores: ["Hombros hacia orejas", "Rango muy corto"]
-          },
-          {
-            id: "curl-inclinado",
-            nombre: "CURL INCLINADO",
-            series: 3,
-            repeticiones: "10 a 12",
-            rir: "1-2",
-            descanso: "90s",
-            tempo: "2-0-1-1",
-            como: ["Banco 60°, hombros atrás", "Curl sin mover hombro, supina completo", "Baja lento estirando bíceps"],
-            errores: ["Balancear mancuerna con hombro", "No extender abajo"]
-          },
-          {
-            id: "pajaros-maquina",
-            nombre: "PÁJAROS MÁQUINA",
-            series: 3,
-            repeticiones: "12 a 15",
-            rir: "1",
-            descanso: "60s",
-            tempo: "2-1-1-0",
-            como: ["Pecho apoyado, agarre neutro", "Abre codos atrás hasta línea hombro", "Aprieta deltoide posterior arriba"],
-            errores: ["Usar trapecio superior", "Rango excesivo hiperextendiendo"]
-          },
-          {
-            id: "face-pull",
-            nombre: "FACE PULL",
-            series: 2,
-            repeticiones: "15 a 20",
-            rir: "2",
-            descanso: "60s",
-            tempo: "2-1-1-1",
-            como: ["Polea alta, cuerda a cara", "Codos altos, rota externo al final", "Pausa 1s apretando"],
-            errores: ["Tirar hacia pecho bajo", "Codos bajos tipo remo"]
-          }
-        ]
-      },
-      {
-        id: "viernes",
-        label: "VIERNES",
-        sub: "LOWER HIPERTROFIA",
-        ejercicios: [
-          {
-            id: "hack-squat",
-            nombre: "HACK SQUAT",
-            series: 3,
-            repeticiones: "8 a 10",
-            rir: "2",
-            descanso: "2.5 min",
-            tempo: "2-1-1-0",
-            como: ["Espalda pegada, pies medio-altos", "Baja profundo controlado", "Empuja con talón sin despegar lumbar"],
-            errores: ["Rodillas dentro o talones arriba", "Descenso a medias"]
-          },
-          {
-            id: "hip-thrust",
-            nombre: "HIP THRUST",
-            series: 3,
-            repeticiones: "8 a 10",
-            rir: "1-2",
-            descanso: "2 min",
-            tempo: "2-1-1-1",
-            como: ["Escápulas en banco, barbilla neutra", "Sube cadera hasta línea rodilla-hombro", "Aprieta glúteo 1s arriba"],
-            errores: ["Hiperextender lumbar arriba", "Pies muy lejos/cerca"]
-          },
-          {
-            id: "bulgara",
-            nombre: "ZANCADA BÚLGARA",
-            series: 2,
-            repeticiones: "10 a 12 por pierna",
-            rir: "2",
-            descanso: "90s",
-            tempo: "2-1-1-0",
-            como: ["Pie trasero en banco, tronco recto", "Baja rodilla trasera casi al suelo", "Sube con pierna delantera sin impulso"],
-            errores: ["Tronco se inclina excesivo", "Rodilla delantera colapsa dentro"]
-          },
-          {
-            id: "curl-femoral-sentado",
-            nombre: "CURL FEMORAL SENTADO",
-            series: 2,
-            repeticiones: "12 a 15",
-            rir: "1",
-            descanso: "75s",
-            tempo: "2-1-1-1",
-            como: ["Ajuste rodilla alineada eje máquina", "Flexiona completo sin levantar muslo", "Controla excéntrica"],
-            errores: ["Levantar glúteo del asiento", "Pesos con inercia"]
-          },
-          {
-            id: "ext-cuadriceps",
-            nombre: "EXTENSIÓN CUÁDRICEPS",
-            series: 2,
-            repeticiones: "12 a 15",
-            rir: "1",
-            descanso: "60s",
-            tempo: "2-1-1-1",
-            como: ["Respaldo firme, punta pie neutra", "Extiende hasta casi bloqueo controlado", "Baja 2s sin dejar caer"],
-            errores: ["Arrancar con tirón de cadera", "Dejar caer el peso en la bajada"]
-          }
+        title: "Comodín de Supermercado (3 Ingredientes)",
+        desc: "Solución de emergencia si abres la nevera y está vacía.",
+        items: [
+          { name: "Plato preparado base", detail: "Pechuga de pollo asada envasada fría (Mercadona / Lidl)." },
+          { name: "Carbohidrato microondas", detail: "Vasito de arroz exprés (1 min en microondas)." },
+          { name: "Verdura", detail: "Bolsita de verdura al vapor apta para microondas." }
         ]
       }
     ];
 
     function App() {
-      const [activeTab, setActiveTab] = React.useState("lunes");
-      const [isFocus, setIsFocus] = React.useState(false);
-      const [profiles, setProfiles] = React.useState(["Perfil Principal"]);
-      const [currentProfile, setCurrentProfile] = React.useState("Perfil Principal");
-      const [logs, setLogs] = React.useState({});
-      const [expandedEx, setExpandedEx] = React.useState({});
-      const [inputs, setInputs] = React.useState({});
-      const [driveConnected, setDriveConnected] = React.useState(false);
-
-      // Cargar logs locales por perfil
-      React.useEffect(() => {
-        const saved = localStorage.getItem(`entreno_logs_${currentProfile}`);
-        if (saved) {
-          try { setLogs(JSON.parse(saved)); } catch(e){}
-        } else {
-          setLogs({});
-        }
-      }, [currentProfile]);
-
-      // Alternar Modo FOCUS
-      const toggleFocus = () => {
-        const newFocus = !isFocus;
-        setIsFocus(newFocus);
-        if (newFocus) {
-          document.body.classList.add('focus-mode');
-          if (document.documentElement.requestFullscreen) {
-            document.documentElement.requestFullscreen().catch(() => {});
-          }
-        } else {
-          document.body.classList.remove('focus-mode');
-          if (document.fullscreenElement && document.exitFullscreen) {
-            document.exitFullscreen().catch(() => {});
-          }
-        }
-      };
-
-      const handleWeightChange = (exId, delta) => {
-        setInputs(prev => {
-          const current = prev[exId] || { peso: 50, reps: 6, rir: 2 };
-          const newPeso = Math.max(0, +(current.peso + delta).toFixed(2));
-          return { ...prev, [exId]: { ...current, peso: newPeso } };
-        });
-      };
-
-      const handleSaveSet = (exId) => {
-        const setInput = inputs[exId] || { peso: 50, reps: 6, rir: 2 };
-        const newLogs = { ...logs };
-        if (!newLogs[exId]) newLogs[exId] = [];
-        const newEntry = {
-          fecha: new Date().toISOString().split('T')[0],
-          hora: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          ...setInput
-        };
-        newLogs[exId].unshift(newEntry);
-        setLogs(newLogs);
-        localStorage.setItem(`entreno_logs_${currentProfile}`, JSON.stringify(newLogs));
-      };
-
-      const handleAddProfile = () => {
-        const name = prompt("Nombre del nuevo perfil:");
-        if (name && !profiles.includes(name)) {
-          const updated = [...profiles, name];
-          setProfiles(updated);
-          setCurrentProfile(name);
-        }
-      };
-
-      const currentDay = ROUTINE_DATA.find(d => d.id === activeTab);
+      const [openMeal, setOpenMeal] = React.useState(null);
+      const [activeTab, setActiveTab] = React.useState("dieta");
 
       return (
-        <div className="min-h-screen bg-[#0b111e] text-slate-100 flex flex-col">
-          {/* Header */}
-          <header className="border-b border-slate-800 bg-[#0f172a] px-4 py-3 sticky top-0 z-30">
-            <div className="max-w-4xl mx-auto flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <span className="text-emerald-400 font-extrabold text-lg tracking-wider">ENTRENO</span>
-                <span className="bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded border border-emerald-500/20">PRO 2026</span>
-              </div>
+        <div className="min-h-screen bg-white text-[#111c14] selection:bg-[#0f2a1d] selection:text-white">
+          <header className="w-full bg-[#0f2a1d] text-white sticky top-0 z-20">
+            <div className="max-w mx-auto px-5 md:px-8 py-5 md:py-8">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="space-y-2">
+                  <div className="inline-flex items-center gap-2 rounded-full bg-white/[0.09] border border-white/10 px-3 py-1 text-[11px] tracking-[0.12em] uppercase font-medium">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#a8e6a0]"></span>
+                    Dieta Base · 4 tomas · En Crudo
+                  </div>
+                  <h1 className="text-[20px] md:text-[28px] leading-[1.1] tracking-[-0.02em] font-semibold">
+                    Dieta Hipertrofia - 3000 kcal
+                  </h1>
+                </div>
 
-              <div className="flex items-center gap-2">
-                {/* Selector de Perfil */}
-                <select 
-                  value={currentProfile}
-                  onChange={(e) => setCurrentProfile(e.target.value)}
-                  className="bg-slate-800 border border-slate-700 text-xs rounded px-2 py-1 text-slate-200"
-                >
-                  {profiles.map(p => <option key={p} value={p}>{p}</option>)}
-                </select>
-                <button 
-                  onClick={handleAddProfile}
-                  className="bg-slate-800 border border-slate-700 text-xs px-2 py-1 rounded hover:bg-slate-700"
-                >
-                  +
-                </button>
-
-                {/* Botón FOCUS */}
-                <button 
-                  onClick={toggleFocus}
-                  className={`text-xs font-bold px-3 py-1.5 rounded transition ${isFocus ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 border border-slate-700 text-slate-200'}`}
-                >
-                  {isFocus ? 'SALIR FOCUS' : 'FOCUS'}
-                </button>
+                <div className="flex gap-2 bg-white/10 p-1 rounded-full border border-white/10 w-fit">
+                  <button 
+                    onClick={() => setActiveTab("dieta")}
+                    className={`px-4 py-1.5 rounded-full text-xs font-semibold transition ${activeTab === "dieta" ? 'bg-white text-[#0f2a1d]' : 'text-white/80 hover:text-white'}`}
+                  >
+                    Menú Principal
+                  </button>
+                  <button 
+                    onClick={() => setActiveTab("alternativas")}
+                    className={`px-4 py-1.5 rounded-full text-xs font-semibold transition ${activeTab === "alternativas" ? 'bg-white text-[#0f2a1d]' : 'text-white/80 hover:text-white'}`}
+                  >
+                    ⚡ Plan B / Alternativas
+                  </button>
+                </div>
               </div>
             </div>
           </header>
 
-          {/* Navegación por Días / Progreso */}
-          <div className="tabs-bar bg-[#0f172a]/80 border-b border-slate-800/80 px-4 py-2 sticky top-[53px] z-20 backdrop-blur">
-            <div className="max-w-4xl mx-auto flex gap-1.5 overflow-x-auto pb-1">
-              {ROUTINE_DATA.map(day => (
-                <button
-                  key={day.id}
-                  onClick={() => { setActiveTab(day.id); }}
-                  className={`px-3 py-1.5 rounded text-xs font-bold whitespace-nowrap transition ${activeTab === day.id ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800/60 text-slate-400 hover:bg-slate-800'}`}
-                >
-                  {day.label} <span className="opacity-60 text-[10px]">{day.sub.split(' ')[1]}</span>
-                </button>
-              ))}
-              <button
-                onClick={() => setActiveTab("progreso")}
-                className={`px-3 py-1.5 rounded text-xs font-bold whitespace-nowrap ml-auto transition ${activeTab === "progreso" ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800/60 text-slate-400'}`}
-              >
-                ☁ PROGRESO / DRIVE
-              </button>
-            </div>
-          </div>
-
-          {/* Contenido Principal */}
-          <main className="max-w-4xl mx-auto w-full px-4 py-6 flex-1">
-            {activeTab === "progreso" ? (
-              <div className="space-y-6">
-                <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-emerald-400 mb-2">Sincronización en la Nube (Google Drive)</h3>
-                  <p className="text-xs text-slate-400 mb-4">
-                    Tus datos se guardan para el perfil <strong className="text-slate-200">{currentProfile}</strong>. Puedes conectar tu cuenta de Google Drive para respaldar automáticamente tus rutinas y tu historial en carpetas dedicadas.
-                  </p>
-                  <button 
-                    onClick={() => alert(`Conectando almacenamiento seguro en Google Drive para la carpeta '/ENTRENO PRO 2026/${currentProfile}'...`)}
-                    className="bg-emerald-500 text-slate-950 font-bold text-xs px-4 py-2 rounded shadow hover:bg-emerald-400"
-                  >
-                    Sincronizar {currentProfile} con Google Drive
-                  </button>
-                </div>
-
-                <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-slate-300 mb-4">Historial de Registros - {currentProfile}</h3>
-                  {Object.keys(logs).length === 0 ? (
-                    <p className="text-xs text-slate-500">No hay series registradas aún para este perfil.</p>
-                  ) : (
-                    <div className="space-y-4">
-                      {Object.entries(logs).map(([exId, entries]) => (
-                        <div key={exId} className="border-b border-slate-800 pb-3">
-                          <div className="text-xs font-bold text-emerald-400 uppercase">{exId.replace('-', ' ')}</div>
-                          <div className="mt-1 space-y-1">
-                            {entries.map((e, idx) => (
-                              <div key={idx} className="text-xs text-slate-300 flex justify-between font-mono bg-slate-950/40 px-2 py-1 rounded">
-                                <span>{e.fecha} {e.hora}</span>
-                                <span className="font-bold text-emerald-400">{e.peso} kg × {e.reps} reps (RIR {e.rir})</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
+          <main className="max-w mx-auto px-5 md:px-8 pb-20">
+            {activeTab === "dieta" ? (
+              <>
+                <section className="mt-8 md:mt-10">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-[28px] h-[28px] rounded-full bg-[#0f2a1d] text-white flex items-center justify-center text-[12px] font-semibold">1</div>
+                    <h2 className="text-[15px] font-semibold tracking-[-0.01em]">Objetivo diario</h2>
+                  </div>
+                  <div className="rounded-[16px] border border-[#e8ebe6] bg-[#fafaf8] p-4 md:p-5 flex flex-wrap gap-2.5">
+                    <div className="inline-flex items-center gap-2 rounded-full bg-white border border-[#e8ebe6] px-4 py-2 text-[13px]">
+                      <span className="font-semibold">3000 kcal</span>
+                      <span className="w-px h-3 bg-black/10"></span>
+                      <span className="text-black/50 text-[12px]">objetivo</span>
                     </div>
-                  )}
-                </div>
-              </div>
-            ) : (
-              currentDay && (
-                <div className="space-y-4">
-                  <div className="flex items-baseline justify-between px-1">
-                    <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400">
-                      {currentDay.label} · {currentDay.sub}
-                    </h2>
-                    <span className="text-xs text-slate-500">{currentDay.ejercicios.length} ejercicios</span>
+                    <div className="inline-flex items-center gap-2 rounded-full bg-white border border-[#e8ebe6] px-4 py-2 text-[13px]">
+                      <span className="font-semibold">198g</span>
+                      <span className="text-black/50 text-[12px]">proteína</span>
+                    </div>
+                    <div className="inline-flex items-center gap-2 rounded-full bg-white border border-[#e8ebe6] px-4 py-2 text-[13px]">
+                      <span className="font-semibold">78g</span>
+                      <span className="text-black/50 text-[12px]">grasa</span>
+                    </div>
+                    <div className="inline-flex items-center gap-2 rounded-full bg-white border border-[#e8ebe6] px-4 py-2 text-[13px]">
+                      <span className="font-semibold">360g</span>
+                      <span className="text-black/50 text-[12px]">carbo</span>
+                    </div>
+                    <div className="inline-flex items-center gap-2 rounded-full bg-[#0f2a1d] text-white px-4 py-2 text-[13px]">
+                      <span className="font-semibold">4 tomas</span>
+                    </div>
+                  </div>
+                  <p className="mt-3 text-[12px] leading-[1.6] text-black/40 px-1">
+                    Cantidades en crudo. Pesar antes de cocinar. Aceite medido con cucharilla.
+                  </p>
+                </section>
+
+                <section className="mt-10">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-[28px] h-[28px] rounded-full bg-[#0f2a1d] text-white flex items-center justify-center text-[12px] font-semibold">2</div>
+                    <h2 className="text-[15px] font-semibold tracking-[-0.01em]">Dieta diaria — Cantidades en CRUDO</h2>
                   </div>
 
-                  {currentDay.ejercicios.map((ex) => {
-                    const isExpanded = expandedEx[ex.id];
-                    const exInput = inputs[ex.id] || { peso: 50, reps: 6, rir: 2 };
-                    const exLogs = logs[ex.id] || [];
-
-                    return (
-                      <div key={ex.id} className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-lg">
-                        <button 
-                          onClick={() => setExpandedEx(prev => ({ ...prev, [ex.id]: !prev[ex.id] }))}
-                          className="w-full text-left p-4 flex justify-between items-start gap-4 hover:bg-slate-800/40 transition"
-                        >
-                          <div>
-                            <h3 className="text-base font-extrabold tracking-tight text-slate-100 uppercase">{ex.nombre}</h3>
-                            <div className="mt-1 text-xs text-slate-400 flex flex-wrap gap-2">
-                              <span>{ex.series} series</span>
-                              <span>·</span>
-                              <span>{ex.repeticiones} reps</span>
-                              <span>·</span>
-                              <span>RIR {ex.rir}</span>
-                              <span>·</span>
-                              <span>Descanso {ex.descanso}</span>
-                            </div>
-                          </div>
-                          <div className={`w-6 h-6 rounded-full border border-slate-700 flex items-center justify-center text-xs transition-transform ${isExpanded ? 'rotate-180 bg-emerald-500/10 text-emerald-400' : 'text-slate-400'}`}>
-                            ↓
-                          </div>
-                        </button>
-
-                        {isExpanded && (
-                          <div className="px-4 pb-4 pt-1 border-t border-slate-800 bg-slate-950/50 space-y-4 text-xs">
-                            {/* Guía Técnica */}
-                            <div className="space-y-2 mt-2">
-                              <div>
-                                <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">TÉCNICA</span>
-                                <ul className="list-disc list-inside text-slate-300 mt-1 space-y-0.5">
-                                  {ex.como.map((c, i) => <li key={i}>{c}</li>)}
-                                </ul>
-                              </div>
-                              <div>
-                                <span className="text-[10px] font-bold text-rose-400 uppercase tracking-wider">EVITAR</span>
-                                <ul className="list-disc list-inside text-slate-400 mt-1 space-y-0.5">
-                                  {ex.errores.map((e, i) => <li key={i}>{e}</li>)}
-                                </ul>
-                              </div>
-                            </div>
-
-                            {/* Controles de Entrada / Registro de Serie */}
-                            <div className="bg-slate-900 border border-slate-800 p-3 rounded-lg space-y-3">
-                              <div className="flex items-center justify-between">
-                                <span className="font-bold text-slate-300">REGISTRAR SERIE</span>
-                                {exLogs[0] && (
-                                  <span className="text-[10px] text-slate-500 font-mono">
-                                    Último: {exLogs[0].peso}kg × {exLogs[0].reps} (RIR{exLogs[0].rir})
-                                  </span>
-                                )}
-                              </div>
-
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <span className="text-slate-400 font-medium">Peso:</span>
-                                <button onClick={() => handleWeightChange(ex.id, -2.5)} className="bg-slate-800 px-2 py-1 rounded border border-slate-700 font-mono">-2.5</button>
-                                <button onClick={() => handleWeightChange(ex.id, -1.25)} className="bg-slate-800 px-2 py-1 rounded border border-slate-700 font-mono">-1.25</button>
-                                <div className="bg-slate-950 border border-emerald-500/40 px-3 py-1 rounded font-bold text-emerald-400 text-sm">
-                                  {exInput.peso} kg
+                  <div className="hidden md:block rounded-[16px] border border-[#e8ebe6] overflow-hidden bg-white">
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left border-collapse">
+                        <thead>
+                          <tr className="bg-[#f5f5f2] border-b border-[#e8ebe6] text-[11px] uppercase tracking-[0.08em] text-black/40">
+                            <th className="font-medium py-3.5 px-5 w-[140px]">Comida</th>
+                            <th className="font-medium py-3.5 px-5">Alimentos</th>
+                            <th className="font-medium py-3.5 px-5 w-[150px]">Cantidad</th>
+                            <th className="font-medium py-3.5 px-5 w-[90px] text-right">Proteína</th>
+                            <th className="font-medium py-3.5 px-5 w-[90px] text-right">Kcal</th>
+                          </tr>
+                        </thead>
+                        <tbody className="text-[13px] leading-[1.5]">
+                          {meals.map((meal) => (
+                            <tr key={meal.id} className="border-b border-[#f0f1ee] last:border-0 hover:bg-[#fcfcfa] transition-colors">
+                              <td className="py-4 px-5 align-top">
+                                <div className="font-semibold">{meal.label}</div>
+                                <div className="text-[12px] text-black/40 mt-0.5">{meal.time}</div>
+                              </td>
+                              <td className="py-4 px-5 align-top">
+                                <div className="flex flex-col gap-1">
+                                  {meal.foods.map((f, i) => (
+                                    <span key={i} className="text-[#1a2b1f]">{f.name}</span>
+                                  ))}
                                 </div>
-                                <button onClick={() => handleWeightChange(ex.id, 1.25)} className="bg-slate-800 px-2 py-1 rounded border border-slate-700 font-mono">+1.25</button>
-                                <button onClick={() => handleWeightChange(ex.id, 2.5)} className="bg-slate-800 px-2 py-1 rounded border border-slate-700 font-mono">+2.5</button>
-                              </div>
+                              </td>
+                              <td className="py-4 px-5 align-top">
+                                <div className="flex flex-col gap-1 text-black/60 font-mono text-[12px]">
+                                  {meal.foods.map((f, i) => (
+                                    <span key={i}>{f.amount}</span>
+                                  ))}
+                                </div>
+                              </td>
+                              <td className="py-4 px-5 align-top text-right font-medium">{meal.protein}</td>
+                              <td className="py-4 px-5 align-top text-right text-black/70">{meal.kcal}</td>
+                            </tr>
+                          ))}
+                          <tr className="bg-[#0f2a1d] text-white">
+                            <td colSpan={3} className="py-4 px-5 font-medium text-[13px]">TOTAL</td>
+                            <td className="py-4 px-5 text-right font-semibold text-[13px]">186–198g</td>
+                            <td className="py-4 px-5 text-right font-semibold text-[13px]">~2986</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
 
-                              <button 
-                                onClick={() => handleSaveSet(ex.id)}
-                                className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold py-2 rounded text-xs tracking-wider uppercase transition shadow"
-                              >
-                                GUARDAR · {exInput.peso}kg × {exInput.reps} RIR{exInput.rir}
-                              </button>
+                  <div className="md:hidden flex flex-col gap-3">
+                    {meals.map((meal) => {
+                      const isOpen = openMeal === meal.id;
+                      return (
+                        <div key={meal.id} className="rounded-[14px] border border-[#e8ebe6] bg-white overflow-hidden">
+                          <button 
+                            onClick={() => setOpenMeal(isOpen ? null : meal.id)}
+                            className="w-full flex items-center justify-between px-4 py-3.5 text-left"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="w-9 h-9 rounded-full bg-[#f2f4f0] flex items-center justify-center text-[11px] font-semibold text-[#0f2a1d]">
+                                {meal.time}
+                              </div>
+                              <div>
+                                <div className="text-[13px] font-semibold leading-tight">{meal.label}</div>
+                                <div className="text-[11px] text-black/40 mt-0.5">{meal.foods.length} alimentos</div>
+                              </div>
                             </div>
-                          </div>
-                        )}
+                            <div className="flex items-center gap-3">
+                              <div className="text-right">
+                                <div className="text-[12px] font-semibold">{meal.protein} P</div>
+                                <div className="text-[11px] text-black/50">{meal.kcal} kcal</div>
+                              </div>
+                              <div className={`w-6 h-6 rounded-full border border-[#e8ebe6] flex items-center justify-center transition-transform ${isOpen ? 'rotate-180' : ''}`}>
+                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                  <path d="M2 4L6 8L10 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                                </svg>
+                              </div>
+                            </div>
+                          </button>
+
+                          {isOpen && (
+                            <div className="px-4 pb-4 pt-1 border-t border-[#f0f1ee] bg-[#fcfcfa]">
+                              <div className="mt-2 grid grid-cols-[1fr_auto] gap-y-2 text-[13px]">
+                                {meal.foods.map((food, idx) => (
+                                  <React.Fragment key={idx}>
+                                    <span className="text-[#1a2b1f]">{food.name}</span>
+                                    <span className="font-mono text-[12px] text-black/60 text-right">{food.amount}</span>
+                                  </React.Fragment>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+
+                    <div className="rounded-[14px] bg-[#0f2a1d] text-white px-4 py-4 flex items-center justify-between">
+                      <span className="text-[13px] font-medium tracking-wide">TOTAL DÍA</span>
+                      <div className="flex items-center gap-4 text-[13px]">
+                        <span className="font-semibold">186–198g proteína</span>
+                        <span className="opacity-80">~2986 kcal</span>
                       </div>
-                    );
-                  })}
+                    </div>
+                  </div>
+                </section>
+
+                <section className="mt-10">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-[28px] h-[28px] rounded-full bg-[#0f2a1d] text-white flex items-center justify-center text-[12px] font-semibold">3</div>
+                    <h2 className="text-[15px] font-semibold tracking-[-0.01em]">Lista compra semanal</h2>
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-3">
+                    <div className="rounded-[16px] border border-[#e8ebe6] bg-white p-5">
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="w-7 h-7 rounded-full bg-[#e8f5e6] flex items-center justify-center text-[11px] font-bold text-[#0f2a1d]">M</div>
+                        <h3 className="text-[13px] font-semibold">Mercadona</h3>
+                        <span className="ml-auto text-[10px] px-2 py-1 rounded-full bg-[#f5f5f2] text-black/40 uppercase tracking-widest">Frescos</span>
+                      </div>
+                      <ul className="space-y-2.5 text-[13px] leading-[1.4]">
+                        {[
+                          { name: "Pechuga pollo", qty: "1,4kg", note: "fileteada" },
+                          { name: "Huevos L", qty: "24 uds", note: "2 maples" },
+                          { name: "Leche semidescremada", qty: "6L", note: "" },
+                          { name: "Arroz redondo / largo", qty: "1kg", note: "" },
+                          { name: "Pan integral", qty: "500g", note: "molde" },
+                          { name: "Ensalada bolsa", qty: "3 bolsas", note: "100g x toma" },
+                          { name: "Verdura congelada", qty: "1kg", note: "mezcla" },
+                          { name: "Miel", qty: "1 bote", note: "" }
+                        ].map((item, index) => (
+                          <li key={index} className="flex items-start justify-between gap-3">
+                            <span className="flex items-center gap-2.5">
+                              <span className="w-[18px] h-[18px] rounded-[5px] border border-[#d9ddd6] flex-shrink-0 mt-0.5"></span>
+                              <span className="text-[#1a2b1f]">{item.name}</span>
+                            </span>
+                            <span className="text-right">
+                              <span className="font-mono text-[12px] font-medium">{item.qty}</span>
+                              {item.note && <span className="ml-2 text-[11px] text-black/40">{item.note}</span>}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="rounded-[16px] border border-[#e8ebe6] bg-white p-5">
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="w-7 h-7 rounded-full bg-[#fff4d6] flex items-center justify-center text-[11px] font-bold text-[#5a4100]">L</div>
+                        <h3 className="text-[13px] font-semibold">Lidl / Hiperdino</h3>
+                        <span className="ml-auto text-[10px] px-2 py-1 rounded-full bg-[#f5f5f2] text-black/40 uppercase tracking-widest">Despensa</span>
+                      </div>
+                      <ul className="space-y-2.5 text-[13px] leading-[1.4]">
+                        {[
+                          { name: "Avena", qty: "1,8kg", note: "copos suaves" },
+                          { name: "Carne picada vacuno 5%", qty: "1kg", note: "" },
+                          { name: "Patata natural", qty: "2,5kg", note: "" },
+                          { name: "Crema cacahuete 100%", qty: "1 bote", note: "sin azúcar" },
+                          { name: "Aceite oliva virgen extra", qty: "1 botella", note: "en casa ok" }
+                        ].map((item, index) => (
+                          <li key={index} className="flex items-start justify-between gap-3">
+                            <span className="flex items-center gap-2.5">
+                              <span className="w-[18px] h-[18px] rounded-[5px] border border-[#d9ddd6] flex-shrink-0 mt-0.5"></span>
+                              <span className="text-[#1a2b1f]">{item.name}</span>
+                            </span>
+                            <span className="text-right">
+                              <span className="font-mono text-[12px] font-medium">{item.qty}</span>
+                              {item.note && <span className="ml-2 text-[11px] text-black/40">{item.note}</span>}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </section>
+              </>
+            ) : (
+              <section className="mt-8 md:mt-10 space-y-6">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-[28px] h-[28px] rounded-full bg-[#0f2a1d] text-white flex items-center justify-center text-[12px] font-semibold">⚡</div>
+                  <h2 className="text-[18px] font-semibold tracking-[-0.01em]">Alternativas Rápidas (Plan B)</h2>
                 </div>
-              )
+                <p className="text-sm text-black/60">
+                  Soluciones exprés para cuando vas con prisa, no tienes comida preparada o la nevera está vacía, usando productos de Mercadona, Lidl o Hiperdino.
+                </p>
+
+                <div className="grid gap-4">
+                  {alternatives.map((alt, idx) => (
+                    <div key={idx} className="rounded-[16px] border border-[#e8ebe6] bg-white p-5 shadow-sm">
+                      <h3 className="text-[15px] font-bold text-[#0f2a1d] mb-1">{alt.title}</h3>
+                      <p className="text-[13px] text-black/50 mb-4">{alt.desc}</p>
+                      <div className="space-y-3 border-t border-[#f0f1ee] pt-3">
+                        {alt.items.map((item, i) => (
+                          <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[13px]">
+                            <span className="font-semibold text-[#1a2b1f]">• {item.name}:</span>
+                            <span className="text-black/70 sm:text-right font-mono text-[12px]">{item.detail}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
             )}
+
+            <footer className="mt-12 pt-6 border-t border-[#eef0ec] flex items-center justify-between text-[11px] text-black/30">
+              <span>Dieta base · cantidades en crudo</span>
+              <span className="font-mono">3000 kcal · 4 tomas</span>
+            </footer>
           </main>
         </div>
       );
