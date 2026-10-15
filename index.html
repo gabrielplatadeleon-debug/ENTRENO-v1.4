@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>ENTRENO PRO 2026 - Native UI Edition</title>
+  <title>ENTRENO PRO 2026 - Modular Pro</title>
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#000000">
 
-  <!-- Enlace al archivo CSS modular -->
+  <!-- Estilos modulares CSS -->
   <link rel="stylesheet" href="./css/styles.css">
 
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
@@ -22,10 +22,11 @@
 <body class="bg-black text-slate-100 selection:bg-emerald-500 selection:text-black">
   <div id="root"></div>
 
-  <!-- Enlace al archivo de datos modular -->
+  <!-- Scripts Modulares -->
   <script src="./js/routineData.js"></script>
+  <script src="./js/storageSync.js"></script>
 
-  <!-- Lógica Principal de la App React -->
+  <!-- Lógica Principal de la App -->
   <script type="text/babel">
     function App() {
       const [activeTab, setActiveTab] = React.useState("lunes");
@@ -40,12 +41,7 @@
       const [timer, setTimer] = React.useState({ active: false, secondsLeft: 0, totalSeconds: 0, exName: "" });
 
       React.useEffect(() => {
-        const saved = localStorage.getItem(`entreno_logs_${currentProfile}`);
-        if (saved) {
-          try { setLogs(JSON.parse(saved)); } catch(e){}
-        } else {
-          setLogs({});
-        }
+        setLogs(StorageSync.getLogs(currentProfile));
       }, [currentProfile]);
 
       React.useEffect(() => {
@@ -74,43 +70,6 @@
           },
         });
         client.requestAccessToken();
-      };
-
-      const syncToDriveCloud = async (updatedLogs) => {
-        if (!accessToken) return;
-        setSyncStatus("Sincronizando...");
-        try {
-          const fileContent = JSON.stringify({ profile: currentProfile, logs: updatedLogs, updatedAt: new Date().toISOString() }, null, 2);
-          const fileName = `entreno_backup_${currentProfile}.json`;
-
-          const searchRes = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='${fileName}' and mimeType='application/json'`, {
-            headers: { Authorization: `Bearer ${accessToken}` }
-          });
-          const searchData = await searchRes.json();
-
-          if (searchData.files && searchData.files.length > 0) {
-            const fileId = searchData.files[0].id;
-            await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
-              method: 'PATCH',
-              headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-              body: fileContent
-            });
-          } else {
-            const metadata = { name: fileName, mimeType: 'application/json' };
-            const form = new FormData();
-            form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-            form.append('file', new Blob([fileContent], { type: 'application/json' }));
-
-            await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-              method: 'POST',
-              headers: { Authorization: `Bearer ${accessToken}` },
-              body: form
-            });
-          }
-          setSyncStatus("Sincronizado ✔️");
-        } catch (err) {
-          setSyncStatus("Error Drive ⚠️");
-        }
       };
 
       const handleWeightChange = (exId, delta) => {
@@ -144,8 +103,8 @@
         newLogs[exId].unshift(newEntry);
         setLogs(newLogs);
         
-        localStorage.setItem(`entreno_logs_${currentProfile}`, JSON.stringify(newLogs));
-        syncToDriveCloud(newLogs);
+        StorageSync.saveLogs(currentProfile, newLogs);
+        StorageSync.syncToCloud(accessToken, currentProfile, newLogs, setSyncStatus);
 
         setFlashExId(exId);
         setTimeout(() => setFlashExId(null), 600);
@@ -208,7 +167,7 @@
                 </div>
                 <div>
                   <h1 className="text-emerald-400 font-extrabold text-sm tracking-tight mono leading-none">ENTRENO PRO</h1>
-                  <span className="text-[9px] text-neutral-400 font-bold tracking-widest uppercase">MODULAR HUD v2.5</span>
+                  <span className="text-[9px] text-neutral-400 font-bold tracking-widest uppercase">MODULAR ARCHITECTURE v3.0</span>
                 </div>
               </div>
 
@@ -263,7 +222,7 @@
                       Conectar Google Drive
                     </button>
                   ) : (
-                    <p className="text-xs text-emerald-300 font-bold">¡Conectado! Sincronización activa en tiempo real.</p>
+                    <p className="text-xs text-emerald-300 font-bold">¡Conectado! Sincronización modular activa.</p>
                   )}
                 </div>
 
@@ -304,7 +263,6 @@
                     return (
                       <div key={ex.id} className={`glass-card rounded-3xl overflow-hidden shadow-2xl transition-all ${isFlashing ? 'saved-flash border-emerald-500 bg-emerald-950/20' : ''}`}>
                         
-                        {/* Cabecera de Tarjeta */}
                         <button 
                           onClick={() => setExpandedEx(prev => ({ ...prev, [ex.id]: !prev[ex.id] }))}
                           className="w-full text-left p-4 flex justify-between items-center gap-3 active:bg-white/5 transition"
@@ -341,7 +299,6 @@
                           </div>
                         </button>
 
-                        {/* Cuerpo Desplegado */}
                         {isExpanded && (
                           <div className="px-4 pb-4 pt-1 border-t border-white/5 bg-black/40 space-y-4 text-xs">
                             
@@ -422,7 +379,7 @@
             )}
           </main>
 
-          {/* Barra de Navegación Inferior Estilo App Nativa */}
+          {/* Barra de Navegación Inferior */}
           <nav className="glass-nav fixed bottom-0 left-0 right-0 z-40 px-3 py-2.5">
             <div className="max-w-md mx-auto flex items-center justify-around gap-1">
               {routineList.map(day => (
