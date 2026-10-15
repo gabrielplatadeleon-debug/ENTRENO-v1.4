@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ENTRENO PRO 2026 - UltraHUD Edition</title>
+  <title>ENTRENO PRO 2026 - ProSeries & Overload</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
     * { font-family: 'Inter', system-ui, sans-serif; box-sizing: border-box; margin: 0; padding: 0; }
@@ -41,7 +41,7 @@
             series: 4,
             repeticiones: "4 a 6",
             rir: "2",
-            descanso: "180", // En segundos para el temporizador
+            descanso: "180",
             descansoTxt: "2.5-3 min",
             como: ["Retrae escápulas y pies firmes en el suelo", "Baja controlado al pecho medio, codos 45°", "Presiona vertical sin rebotar, bloquea arriba"],
             errores: ["Arquear lumbar excesivo o rebotar barra", "Codos totalmente abiertos a 90°"]
@@ -302,8 +302,6 @@
       const [syncStatus, setSyncStatus] = React.useState("Desconectado de Drive");
       const [accessToken, setAccessToken] = React.useState(null);
       const [flashExId, setFlashExId] = React.useState(null);
-
-      // Estado del Temporizador de Descanso
       const [timer, setTimer] = React.useState({ active: false, secondsLeft: 0, totalSeconds: 0, exName: "" });
 
       React.useEffect(() => {
@@ -315,7 +313,6 @@
         }
       }, [currentProfile]);
 
-      // Lógica de la cuenta atrás del temporizador
       React.useEffect(() => {
         let interval = null;
         if (timer.active && timer.secondsLeft > 0) {
@@ -431,11 +428,9 @@
         localStorage.setItem(`entreno_logs_${currentProfile}`, JSON.stringify(newLogs));
         syncToDriveCloud(newLogs);
 
-        // Disparar animación visual
         setFlashExId(exId);
         setTimeout(() => setFlashExId(null), 600);
 
-        // Iniciar temporizador de descanso automático
         const restSecs = parseInt(ex.descanso) || 90;
         setTimer({ active: true, secondsLeft: restSecs, totalSeconds: restSecs, exName: ex.nombre });
       };
@@ -592,6 +587,7 @@
                     const exLogs = logs[ex.id] || [];
                     const isFlashing = flashExId === ex.id;
                     const completedSetsCount = exLogs.filter(e => e.fecha === new Date().toISOString().split('T')[0]).length;
+                    const lastSet = exLogs[0];
 
                     return (
                       <div key={ex.id} className={`bg-slate-900/50 border border-slate-800/80 rounded-2xl overflow-hidden shadow-xl backdrop-blur-sm transition-all ${isFlashing ? 'saved-flash border-emerald-500/60 bg-emerald-950/10' : ''}`}>
@@ -602,11 +598,11 @@
                           className="w-full text-left p-3.5 flex justify-between items-center gap-3 active:bg-slate-800/30 transition"
                         >
                           <div className="flex-1">
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center justify-between gap-2">
                               <h3 className="text-sm font-black tracking-tight text-slate-100 uppercase">{ex.nombre}</h3>
                               
-                              {/* Indicador Visual de Series Cumplidas */}
-                              <div className="flex items-center gap-1 ml-1">
+                              {/* Círculos de Series a la derecha */}
+                              <div className="flex items-center gap-1">
                                 {Array.from({ length: ex.series }).map((_, i) => (
                                   <div 
                                     key={i} 
@@ -616,29 +612,22 @@
                               </div>
                             </div>
 
-                            <div className="mt-1 text-[11px] text-slate-400 flex items-center gap-2 font-medium">
-                              <span className="text-emerald-400/90 font-bold">{ex.series} series</span>
-                              <span>·</span>
-                              <span>{ex.repeticiones} reps</span>
-                              <span>·</span>
-                              <span>RIR {ex.rir}</span>
-                              <span>·</span>
-                              <span className="text-slate-400">{ex.descansoTxt}</span>
+                            <div className="mt-1 text-[11px] text-slate-400 flex items-center justify-between font-medium">
+                              <div className="flex items-center gap-2">
+                                <span className="text-emerald-400/90 font-bold">{ex.series} series</span>
+                                <span>·</span>
+                                <span>{ex.repeticiones} reps</span>
+                                <span>·</span>
+                                <span>RIR {ex.rir}</span>
+                              </div>
                               
-                              {/* Récord / Anterior cuando está colapsado */}
-                              {!isExpanded && exLogs[0] && (
-                                <>
-                                  <span className="text-slate-600">|</span>
-                                  <span className="text-slate-300 font-mono text-[10px] font-bold bg-slate-950/60 px-1.5 py-0.5 rounded border border-slate-800">
-                                    Último: {exLogs[0].peso}kg × {exLogs[0].reps}
-                                  </span>
-                                </>
+                              {/* Récord / Último registro cuando está colapsado */}
+                              {!isExpanded && lastSet && (
+                                <span className="text-emerald-300 font-mono text-[10px] font-extrabold bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-500/30">
+                                  Último: {lastSet.peso}kg × {lastSet.reps}
+                                </span>
                               )}
                             </div>
-                          </div>
-
-                          <div className={`w-7 h-7 rounded-xl border border-slate-700/80 flex items-center justify-center text-xs transition-transform ${isExpanded ? 'rotate-180 bg-emerald-400/10 text-emerald-400 border-emerald-500/30' : 'text-slate-400'}`}>
-                            ↓
                           </div>
                         </button>
 
@@ -662,13 +651,13 @@
                               </div>
                             </div>
 
-                            {/* Panel HUD Táctil de Entrada */}
+                            {/* Panel HUD Táctil de Entrada con Sobrecarga Progresiva */}
                             <div className="pt-2 space-y-3">
                               <div className="flex items-center justify-between px-0.5">
                                 <span className="font-black text-[10px] text-slate-400 uppercase tracking-widest">REGISTRO DE SERIE ACTIVA</span>
-                                {exLogs[0] && (
-                                  <span className="text-[10px] text-emerald-400/80 font-mono font-semibold">
-                                    Anterior: {exLogs[0].peso}kg × {exLogs[0].reps} (RIR{exLogs[0].rir})
+                                {lastSet && (
+                                  <span className="text-[10px] text-cyan-300 font-mono font-bold bg-cyan-950/40 px-2 py-0.5 rounded border border-cyan-500/30">
+                                    💡 Anterior: {lastSet.peso}kg × {lastSet.reps} (RIR {lastSet.rir})
                                   </span>
                                 )}
                               </div>
