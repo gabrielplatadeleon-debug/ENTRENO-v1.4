@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ENTRENO PRO 2026 - CyberHUD Edition</title>
+  <title>ENTRENO PRO 2026 - UltraHUD Edition</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
     * { font-family: 'Inter', system-ui, sans-serif; box-sizing: border-box; margin: 0; padding: 0; }
@@ -11,7 +11,6 @@
     .focus-mode header, .focus-mode .tabs-bar { display: none !important; }
     .focus-mode main { padding-top: 12px !important; }
     
-    /* Animación de destello al guardar */
     @keyframes pulseGlow {
       0% { box-shadow: 0 0 20px rgba(16,185,129,0.6); }
       100% { box-shadow: 0 0 5px rgba(16,185,129,0.2); }
@@ -42,7 +41,8 @@
             series: 4,
             repeticiones: "4 a 6",
             rir: "2",
-            descanso: "2.5-3 min",
+            descanso: "180", // En segundos para el temporizador
+            descansoTxt: "2.5-3 min",
             como: ["Retrae escápulas y pies firmes en el suelo", "Baja controlado al pecho medio, codos 45°", "Presiona vertical sin rebotar, bloquea arriba"],
             errores: ["Arquear lumbar excesivo o rebotar barra", "Codos totalmente abiertos a 90°"]
           },
@@ -52,7 +52,8 @@
             series: 4,
             repeticiones: "5 a 7",
             rir: "2",
-            descanso: "2.5 min",
+            descanso: "150",
+            descansoTxt: "2.5 min",
             como: ["Bisagra cadera, torso 30-45° estable", "Rema hacia ombligo bajo, barra pegada", "Aprieta dorsales 1s arriba, baja lento"],
             errores: ["Tirar con impulso de lumbar", "Encoger hombros hacia orejas"]
           },
@@ -62,7 +63,8 @@
             series: 3,
             repeticiones: "6 a 8",
             rir: "2",
-            descanso: "2 min",
+            descanso: "120",
+            descansoTxt: "2 min",
             como: ["Banco 30°, muñecas neutras arriba", "Baja hasta estiramiento pecho sin chocar", "Sube sin juntar mancuernas bruscamente"],
             errores: ["Banco demasiado vertical", "Arco dorsal inestable"]
           },
@@ -72,7 +74,8 @@
             series: 3,
             repeticiones: "8 a 10",
             rir: "2",
-            descanso: "2 min",
+            descanso: "120",
+            descansoTxt: "2 min",
             como: ["Agarre neutro cerrado, pecho alto", "Tira codos hacia costillas, no hacia atrás", "Estira completo sin perder tensión"],
             errores: ["Inclinarse mucho hacia atrás", "Usar solo bíceps sin deprimir escápulas"]
           },
@@ -82,7 +85,8 @@
             series: 2,
             repeticiones: "12 a 15",
             rir: "1-2",
-            descanso: "75s",
+            descanso: "75",
+            descansoTxt: "75s",
             como: ["Mancuernas a lados, codo semi flexionado", "Eleva hasta altura hombro liderando codo", "Baja 2s sin balanceo"],
             errores: ["Usar trapecio para subir", "Balancear tronco para impulso"]
           }
@@ -99,7 +103,8 @@
             series: 4,
             repeticiones: "4 a 6",
             rir: "2",
-            descanso: "3 min",
+            descanso: "180",
+            descansoTxt: "3 min",
             como: ["Barra media-trapecio, pies ancho hombros", "Rodillas hacia afuera, rompe paralelo", "Sube empujando suelo, cadera y hombros a la vez"],
             errores: ["Talones se levantan o rodillas colapsan dentro", "Perder tensión lumbar abajo"]
           },
@@ -109,7 +114,8 @@
             series: 3,
             repeticiones: "6 a 8",
             rir: "2",
-            descanso: "2.5 min",
+            descanso: "150",
+            descansoTxt: "2.5 min",
             como: ["Barra pegada a piernas, bisagra profunda", "Espalda neutra, glúteos atrás hasta estiramiento", "Sube empujando cadera adelante"],
             errores: ["Flexionar rodillas como sentadilla", "Redondear espalda baja"]
           },
@@ -119,7 +125,8 @@
             series: 2,
             repeticiones: "8 a 10",
             rir: "2",
-            descanso: "2 min",
+            descanso: "120",
+            descansoTxt: "2 min",
             como: ["Pies medios plataforma, lumbar apoyada", "Baja controlado hasta 90° rodilla", "Empuja sin bloquear rodillas violento"],
             errores: ["Glúteo se despega abajo", "Bajar muy corto por ego"]
           },
@@ -129,7 +136,8 @@
             series: 3,
             repeticiones: "8 a 10",
             rir: "1-2",
-            descanso: "90s",
+            descanso: "90",
+            descansoTxt: "90s",
             como: ["Cadera pegada al banco, agarre firme", "Flexiona hasta tope sin levantar cadera", "Baja lento 2s"],
             errores: ["Elevar cadera para trampear", "Rango parcial constante"]
           },
@@ -139,7 +147,8 @@
             series: 4,
             repeticiones: "8 a 12",
             rir: "1",
-            descanso: "90s",
+            descanso: "90",
+            descansoTxt: "90s",
             como: ["Apoyo antepié, estira abajo completo", "Pausa 1s arriba contrayendo fuerte", "Rodilla extendida sin bloqueo"],
             errores: ["Rebotar sin control", "No estirar abajo"]
           }
@@ -156,7 +165,8 @@
             series: 3,
             repeticiones: "6 a 8",
             rir: "2",
-            descanso: "2 min",
+            descanso: "120",
+            descansoTxt: "2 min",
             como: ["Glúteo apretado, costillas abajo", "Barra de clavícula a sobre cabeza recto", "Cabeza pasa al frente al final"],
             errores: ["Arquear lumbar excesivo", "Barra se va muy al frente"]
           },
@@ -166,7 +176,8 @@
             series: 3,
             repeticiones: "10 a 12",
             rir: "1-2",
-            descanso: "90s",
+            descanso: "90",
+            descansoTxt: "90s",
             como: ["Torso vertical, agarre medio", "Codos atrás, pausa 1s contra abdomen", "Estira dorsal sin encorvar"],
             errores: ["Jalar con impulso de tronco", "No retraer escápula"]
           },
@@ -176,7 +187,8 @@
             series: 3,
             repeticiones: "8 a 10",
             rir: "2",
-            descanso: "2 min",
+            descanso: "120",
+            descansoTxt: "2 min",
             como: ["Hombros deprimidos, leve inclinación", "Baja hasta 90° codo, pecho estirado", "Sube bloqueando sin encoger"],
             errores: ["Hombros hacia orejas", "Rango muy corto"]
           },
@@ -186,7 +198,8 @@
             series: 3,
             repeticiones: "10 a 12",
             rir: "1-2",
-            descanso: "90s",
+            descanso: "90",
+            descansoTxt: "90s",
             como: ["Banco 60°, hombros atrás", "Curl sin mover hombro, supina completo", "Baja lento estirando bíceps"],
             errores: ["Balancear mancuerna con hombro", "No extender abajo"]
           },
@@ -196,7 +209,8 @@
             series: 3,
             repeticiones: "12 a 15",
             rir: "1",
-            descanso: "60s",
+            descanso: "60",
+            descansoTxt: "60s",
             como: ["Pecho apoyado, agarre neutro", "Abre codos atrás hasta línea hombro", "Aprieta deltoide posterior arriba"],
             errores: ["Usar trapecio superior", "Rango excesivo hiperextendiendo"]
           },
@@ -206,7 +220,8 @@
             series: 2,
             repeticiones: "15 a 20",
             rir: "2",
-            descanso: "60s",
+            descanso: "60",
+            descansoTxt: "60s",
             como: ["Polea alta, cuerda a cara", "Codos altos, rota externo al final", "Pausa 1s apretando"],
             errores: ["Tirar hacia pecho bajo", "Codos bajos tipo remo"]
           }
@@ -223,7 +238,8 @@
             series: 3,
             repeticiones: "8 a 10",
             rir: "2",
-            descanso: "2.5 min",
+            descanso: "150",
+            descansoTxt: "2.5 min",
             como: ["Espalda pegada, pies medio-altos", "Baja profundo controlado", "Empuja con talón sin despegar lumbar"],
             errores: ["Rodillas dentro o talones arriba", "Descenso a medias"]
           },
@@ -233,7 +249,8 @@
             series: 3,
             repeticiones: "8 a 10",
             rir: "1-2",
-            descanso: "2 min",
+            descanso: "120",
+            descansoTxt: "2 min",
             como: ["Escápulas en banco, barbilla neutra", "Sube cadera hasta línea rodilla-hombro", "Aprieta glúteo 1s arriba"],
             errores: ["Hiperextender lumbar arriba", "Pies muy lejos/cerca"]
           },
@@ -243,7 +260,8 @@
             series: 2,
             repeticiones: "10 a 12 por pierna",
             rir: "2",
-            descanso: "90s",
+            descanso: "90",
+            descansoTxt: "90s",
             como: ["Pie trasero en banco, tronco recto", "Baja rodilla trasera casi al suelo", "Sube con pierna delantera sin impulso"],
             errores: ["Tronco se inclina excesivo", "Rodilla delantera colapsa dentro"]
           },
@@ -253,7 +271,8 @@
             series: 2,
             repeticiones: "12 a 15",
             rir: "1",
-            descanso: "75s",
+            descanso: "75",
+            descansoTxt: "75s",
             como: ["Ajuste rodilla alineada eje máquina", "Flexiona completo sin levantar muslo", "Controla excéntrica"],
             errores: ["Levantar glúteo del asiento", "Pesos con inercia"]
           },
@@ -263,7 +282,8 @@
             series: 2,
             repeticiones: "12 a 15",
             rir: "1",
-            descanso: "60s",
+            descanso: "60",
+            descansoTxt: "60s",
             como: ["Respaldo firme, punta pie neutra", "Extiende hasta casi bloqueo controlado", "Baja 2s sin dejar caer"],
             errores: ["Arrancar con tirón de cadera", "Dejar caer el peso en la bajada"]
           }
@@ -283,6 +303,9 @@
       const [accessToken, setAccessToken] = React.useState(null);
       const [flashExId, setFlashExId] = React.useState(null);
 
+      // Estado del Temporizador de Descanso
+      const [timer, setTimer] = React.useState({ active: false, secondsLeft: 0, totalSeconds: 0, exName: "" });
+
       React.useEffect(() => {
         const saved = localStorage.getItem(`entreno_logs_${currentProfile}`);
         if (saved) {
@@ -291,6 +314,20 @@
           setLogs({});
         }
       }, [currentProfile]);
+
+      // Lógica de la cuenta atrás del temporizador
+      React.useEffect(() => {
+        let interval = null;
+        if (timer.active && timer.secondsLeft > 0) {
+          interval = setInterval(() => {
+            setTimer(prev => ({ ...prev, secondsLeft: prev.secondsLeft - 1 }));
+          }, 1000);
+        } else if (timer.secondsLeft === 0 && timer.active) {
+          setTimer(prev => ({ ...prev, active: false }));
+          if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+        }
+        return () => clearInterval(interval);
+      }, [timer.active, timer.secondsLeft]);
 
       const handleGoogleLogin = () => {
         const client = google.accounts.oauth2.initTokenClient({
@@ -378,7 +415,8 @@
         });
       };
 
-      const handleSaveSet = (exId) => {
+      const handleSaveSet = (ex) => {
+        const exId = ex.id;
         const setInput = inputs[exId] || { peso: 50, reps: 6, rir: 2 };
         const newLogs = { ...logs };
         if (!newLogs[exId]) newLogs[exId] = [];
@@ -393,9 +431,13 @@
         localStorage.setItem(`entreno_logs_${currentProfile}`, JSON.stringify(newLogs));
         syncToDriveCloud(newLogs);
 
-        // Disparar destello visual
+        // Disparar animación visual
         setFlashExId(exId);
         setTimeout(() => setFlashExId(null), 600);
+
+        // Iniciar temporizador de descanso automático
+        const restSecs = parseInt(ex.descanso) || 90;
+        setTimer({ active: true, secondsLeft: restSecs, totalSeconds: restSecs, exName: ex.nombre });
       };
 
       const handleAddProfile = () => {
@@ -407,7 +449,6 @@
         }
       };
 
-      // Calculadora auxiliar de discos por lado (Asumiendo barra estándar de 20kg)
       const getPlateBreakdown = (totalKg) => {
         const bar = 20;
         if (!totalKg || totalKg <= bar) return "Solo barra (20kg)";
@@ -427,10 +468,16 @@
         return `${txt} por lado`;
       };
 
+      const formatTime = (secs) => {
+        const m = Math.floor(secs / 60);
+        const s = secs % 60;
+        return `${m}:${s < 10 ? '0' : ''}${s}`;
+      };
+
       const currentDay = ROUTINE_DATA.find(d => d.id === activeTab);
 
       return (
-        <div className="min-h-screen bg-[#030712] text-slate-100 flex flex-col">
+        <div className="min-h-screen bg-[#030712] text-slate-100 flex flex-col pb-24">
           {/* Header CyberHUD */}
           <header className="border-b border-slate-800/80 bg-[#030712]/90 backdrop-blur-md px-4 py-3 sticky top-0 z-30">
             <div className="max-w-4xl mx-auto flex items-center justify-between gap-3">
@@ -531,7 +578,7 @@
               </div>
             ) : (
               currentDay && (
-                <div className="space-y-4">
+                <div className="space-y-3.5">
                   <div className="flex items-baseline justify-between px-1">
                     <h2 className="text-[11px] font-black uppercase tracking-widest text-slate-400">
                       {currentDay.label} · <span className="text-emerald-400">{currentDay.sub}</span>
@@ -544,32 +591,61 @@
                     const exInput = inputs[ex.id] || { peso: 50, reps: 6, rir: 2 };
                     const exLogs = logs[ex.id] || [];
                     const isFlashing = flashExId === ex.id;
+                    const completedSetsCount = exLogs.filter(e => e.fecha === new Date().toISOString().split('T')[0]).length;
 
                     return (
                       <div key={ex.id} className={`bg-slate-900/50 border border-slate-800/80 rounded-2xl overflow-hidden shadow-xl backdrop-blur-sm transition-all ${isFlashing ? 'saved-flash border-emerald-500/60 bg-emerald-950/10' : ''}`}>
+                        
+                        {/* Cabecera del Ejercicio */}
                         <button 
                           onClick={() => setExpandedEx(prev => ({ ...prev, [ex.id]: !prev[ex.id] }))}
-                          className="w-full text-left p-4 flex justify-between items-center gap-3 active:bg-slate-800/30 transition"
+                          className="w-full text-left p-3.5 flex justify-between items-center gap-3 active:bg-slate-800/30 transition"
                         >
-                          <div>
-                            <h3 className="text-sm font-black tracking-tight text-slate-100 uppercase">{ex.nombre}</h3>
-                            <div className="mt-1 text-[11px] text-slate-400 flex flex-wrap gap-2 font-medium">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <h3 className="text-sm font-black tracking-tight text-slate-100 uppercase">{ex.nombre}</h3>
+                              
+                              {/* Indicador Visual de Series Cumplidas */}
+                              <div className="flex items-center gap-1 ml-1">
+                                {Array.from({ length: ex.series }).map((_, i) => (
+                                  <div 
+                                    key={i} 
+                                    className={`w-2 h-2 rounded-full transition-all ${i < completedSetsCount ? 'bg-emerald-400 shadow-[0_0_6px_rgba(16,185,129,0.8)] scale-110' : 'bg-slate-800 border border-slate-700'}`} 
+                                  />
+                                ))}
+                              </div>
+                            </div>
+
+                            <div className="mt-1 text-[11px] text-slate-400 flex items-center gap-2 font-medium">
                               <span className="text-emerald-400/90 font-bold">{ex.series} series</span>
                               <span>·</span>
                               <span>{ex.repeticiones} reps</span>
                               <span>·</span>
                               <span>RIR {ex.rir}</span>
                               <span>·</span>
-                              <span className="text-slate-400">{ex.descanso}</span>
+                              <span className="text-slate-400">{ex.descansoTxt}</span>
+                              
+                              {/* Récord / Anterior cuando está colapsado */}
+                              {!isExpanded && exLogs[0] && (
+                                <>
+                                  <span className="text-slate-600">|</span>
+                                  <span className="text-slate-300 font-mono text-[10px] font-bold bg-slate-950/60 px-1.5 py-0.5 rounded border border-slate-800">
+                                    Último: {exLogs[0].peso}kg × {exLogs[0].reps}
+                                  </span>
+                                </>
+                              )}
                             </div>
                           </div>
+
                           <div className={`w-7 h-7 rounded-xl border border-slate-700/80 flex items-center justify-center text-xs transition-transform ${isExpanded ? 'rotate-180 bg-emerald-400/10 text-emerald-400 border-emerald-500/30' : 'text-slate-400'}`}>
                             ↓
                           </div>
                         </button>
 
+                        {/* Cuerpo Desplegado */}
                         {isExpanded && (
                           <div className="px-4 pb-4 pt-1 border-t border-slate-800/60 bg-[#020617]/40 space-y-4 text-xs">
+                            
                             {/* Guía Técnica y Errores */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
                               <div className="bg-emerald-950/20 border border-emerald-500/15 rounded-xl p-3">
@@ -586,7 +662,7 @@
                               </div>
                             </div>
 
-                            {/* Panel de Registro HUD Estilizado (Sin cajas anidadas excesivas) */}
+                            {/* Panel HUD Táctil de Entrada */}
                             <div className="pt-2 space-y-3">
                               <div className="flex items-center justify-between px-0.5">
                                 <span className="font-black text-[10px] text-slate-400 uppercase tracking-widest">REGISTRO DE SERIE ACTIVA</span>
@@ -597,7 +673,7 @@
                                 )}
                               </div>
 
-                              {/* Fila de Peso con Destello Neón */}
+                              {/* Fila de Peso Única */}
                               <div className="space-y-1.5">
                                 <div className="flex items-center justify-between gap-1.5">
                                   <button onClick={() => handleWeightChange(ex.id, -2.5)} className="h-11 flex-1 bg-slate-800/60 active:bg-slate-700 rounded-xl border border-slate-700/70 text-xs font-black font-mono text-slate-200">-2.5</button>
@@ -613,7 +689,7 @@
                                 </div>
                               </div>
 
-                              {/* Cuadrícula de Reps y RIR */}
+                              {/* Cuadrícula Reps & RIR */}
                               <div className="grid grid-cols-2 gap-2.5">
                                 <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-2.5 flex items-center justify-between shadow-inner">
                                   <span className="text-[10px] font-black text-slate-400 tracking-wider">REPS</span>
@@ -634,7 +710,7 @@
                               </div>
 
                               <button 
-                                onClick={() => handleSaveSet(ex.id)}
+                                onClick={() => handleSaveSet(ex)}
                                 className="w-full bg-emerald-400 hover:bg-emerald-300 active:scale-[0.98] text-slate-950 font-black py-3.5 rounded-xl text-xs tracking-wider uppercase transition shadow-lg shadow-emerald-400/25 flex items-center justify-center gap-2"
                               >
                                 <span>GUARDAR SERIE</span>
@@ -650,6 +726,44 @@
               )
             )}
           </main>
+
+          {/* Temporizador Flotante de Descanso */}
+          {timer.active && (
+            <div className="fixed bottom-3 left-4 right-4 max-w-lg mx-auto bg-slate-900/95 border border-emerald-500/50 rounded-2xl p-3 shadow-[0_10px_25px_rgba(0,0,0,0.8)] backdrop-blur-md flex items-center justify-between gap-3 z-50 animate-bounce-short">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 font-mono font-black text-sm shadow-[0_0_10px_rgba(16,185,129,0.3)]">
+                  ⏱️
+                </div>
+                <div>
+                  <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">{timer.exName}</div>
+                  <div className="text-lg font-black font-mono text-emerald-400 tracking-tight">
+                    {formatTime(timer.secondsLeft)} <span className="text-[10px] text-slate-500 font-sans font-normal">DESCANSO</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-1.5">
+                <button 
+                  onClick={() => setTimer(prev => ({ ...prev, secondsLeft: Math.max(0, prev.secondsLeft - 30) }))}
+                  className="bg-slate-800 border border-slate-700 text-[11px] font-bold px-2 py-1.5 rounded-lg text-slate-300 active:bg-slate-700"
+                >
+                  -30s
+                </button>
+                <button 
+                  onClick={() => setTimer(prev => ({ ...prev, secondsLeft: prev.secondsLeft + 30 }))}
+                  className="bg-slate-800 border border-slate-700 text-[11px] font-bold px-2 py-1.5 rounded-lg text-slate-300 active:bg-slate-700"
+                >
+                  +30s
+                </button>
+                <button 
+                  onClick={() => setTimer(prev => ({ ...prev, active: false }))}
+                  className="bg-rose-500/20 border border-rose-500/40 text-rose-400 text-xs font-extrabold w-8 h-8 rounded-lg flex items-center justify-center ml-1 active:bg-rose-500/40"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       );
     }
@@ -658,4 +772,3 @@
   </script>
 </body>
 </html>
-
