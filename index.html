@@ -7,34 +7,8 @@
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#000000">
 
-  <!-- Estilos Avanzados Glassmorphism & CyberOLED -->
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap');
-    * { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; box-sizing: border-box; margin: 0; padding: 0; }
-    .mono { font-family: 'JetBrains Mono', monospace; }
-    body { background-color: #000000; color: #f8fafc; min-height: 100vh; -webkit-tap-highlight-color: transparent; }
-    
-    .glass-card {
-      background: linear-gradient(135deg, rgba(18, 18, 22, 0.7) 0%, rgba(10, 10, 14, 0.8) 100%);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-    
-    .glass-nav {
-      background: rgba(5, 5, 8, 0.85);
-      backdrop-filter: blur(25px);
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
-    }
-
-    @keyframes neonPulse {
-      0% { box-shadow: 0 0 25px rgba(16,185,129,0.5); border-color: rgba(16,185,129,0.9); }
-      100% { box-shadow: 0 0 10px rgba(16,185,129,0.2); border-color: rgba(16,185,129,0.4); }
-    }
-    .saved-flash { animation: neonPulse 0.5s ease-out; }
-    
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-  </style>
+  <!-- Enlace al archivo CSS modular -->
+  <link rel="stylesheet" href="./css/styles.css">
 
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
@@ -48,269 +22,11 @@
 <body class="bg-black text-slate-100 selection:bg-emerald-500 selection:text-black">
   <div id="root"></div>
 
-  <script type="text/babel">
-    const ROUTINE_DATA = [
-      {
-        id: "lunes",
-        label: "LUNES",
-        sub: "UPPER FUERZA",
-        ejercicios: [
-          {
-            id: "press-banca",
-            nombre: "PRESS BANCA",
-            series: 4,
-            repeticiones: "4 a 6",
-            rir: "2",
-            descanso: "180",
-            descansoTxt: "2.5-3 min",
-            como: ["Retrae escápulas y pies firmes en el suelo", "Baja controlado al pecho medio, codos 45°", "Presiona vertical sin rebotar, bloquea arriba"],
-            errores: ["Arquear lumbar excesivo o rebotar barra", "Codos totalmente abiertos a 90°"]
-          },
-          {
-            id: "remo-barra",
-            nombre: "REMO BARRA",
-            series: 4,
-            repeticiones: "5 a 7",
-            rir: "2",
-            descanso: "150",
-            descansoTxt: "2.5 min",
-            como: ["Bisagra cadera, torso 30-45° estable", "Rema hacia ombligo bajo, barra pegada", "Aprieta dorsales 1s arriba, baja lento"],
-            errores: ["Tirar con impulso de lumbar", "Encoger hombros hacia orejas"]
-          },
-          {
-            id: "press-inclinado-manc",
-            nombre: "PRESS INCLINADO MANCUERNAS",
-            series: 3,
-            repeticiones: "6 a 8",
-            rir: "2",
-            descanso: "120",
-            descansoTxt: "2 min",
-            como: ["Banco 30°, muñecas neutras arriba", "Baja hasta estiramiento pecho sin chocar", "Sube sin juntar mancuernas bruscamente"],
-            errores: ["Banco demasiado vertical", "Arco dorsal inestable"]
-          },
-          {
-            id: "jalon-neutro",
-            nombre: "JALÓN NEUTRO",
-            series: 3,
-            repeticiones: "8 a 10",
-            rir: "2",
-            descanso: "120",
-            descansoTxt: "2 min",
-            como: ["Agarre neutro cerrado, pecho alto", "Tira codos hacia costillas, no hacia atrás", "Estira completo sin perder tensión"],
-            errores: ["Inclinarse mucho hacia atrás", "Usar solo bíceps sin deprimir escápulas"]
-          },
-          {
-            id: "elevacion-lateral",
-            nombre: "ELEVACIÓN LATERAL",
-            series: 2,
-            repeticiones: "12 a 15",
-            rir: "1-2",
-            descanso: "75",
-            descansoTxt: "75s",
-            como: ["Mancuernas a lados, codo semi flexionado", "Eleva hasta altura hombro liderando codo", "Baja 2s sin balanceo"],
-            errores: ["Usar trapecio para subir", "Balancear tronco para impulso"]
-          }
-        ]
-      },
-      {
-        id: "martes",
-        label: "MARTES",
-        sub: "LOWER FUERZA",
-        ejercicios: [
-          {
-            id: "sentadilla",
-            nombre: "SENTADILLA",
-            series: 4,
-            repeticiones: "4 a 6",
-            rir: "2",
-            descanso: "180",
-            descansoTxt: "3 min",
-            como: ["Barra media-trapecio, pies ancho hombros", "Rodillas hacia afuera, rompe paralelo", "Sube empujando suelo, cadera y hombros a la vez"],
-            errores: ["Talones se levantan o rodillas colapsan dentro", "Perder tensión lumbar abajo"]
-          },
-          {
-            id: "rdl",
-            nombre: "RDL",
-            series: 3,
-            repeticiones: "6 a 8",
-            rir: "2",
-            descanso: "150",
-            descansoTxt: "2.5 min",
-            como: ["Barra pegada a piernas, bisagra profunda", "Espalda neutra, glúteos atrás hasta estiramiento", "Sube empujando cadera adelante"],
-            errores: ["Flexionar rodillas como sentadilla", "Redondear espalda baja"]
-          },
-          {
-            id: "prensa-45",
-            nombre: "PRENSA 45°",
-            series: 2,
-            repeticiones: "8 a 10",
-            rir: "2",
-            descanso: "120",
-            descansoTxt: "2 min",
-            como: ["Pies medios plataforma, lumbar apoyada", "Baja controlado hasta 90° rodilla", "Empuja sin bloquear rodillas violento"],
-            errores: ["Glúteo se despega abajo", "Bajar muy corto por ego"]
-          },
-          {
-            id: "curl-femoral-tumbado",
-            nombre: "CURL FEMORAL TUMBADO",
-            series: 3,
-            repeticiones: "8 a 10",
-            rir: "1-2",
-            descanso: "90",
-            descansoTxt: "90s",
-            como: ["Cadera pegada al banco, agarre firme", "Flexiona hasta tope sin levantar cadera", "Baja lento 2s"],
-            errores: ["Elevar cadera para trampear", "Rango parcial constante"]
-          },
-          {
-            id: "gemelo-pie",
-            nombre: "GEMELO DE PIE",
-            series: 4,
-            repeticiones: "8 a 12",
-            rir: "1",
-            descanso: "90",
-            descansoTxt: "90s",
-            como: ["Apoyo antepié, estira abajo completo", "Pausa 1s arriba contrayendo fuerte", "Rodilla extendida sin bloqueo"],
-            errores: ["Rebotar sin control", "No estirar abajo"]
-          }
-        ]
-      },
-      {
-        id: "jueves",
-        label: "JUEVES",
-        sub: "UPPER HIPERTROFIA",
-        ejercicios: [
-          {
-            id: "press-militar",
-            nombre: "PRESS MILITAR",
-            series: 3,
-            repeticiones: "6 a 8",
-            rir: "2",
-            descanso: "120",
-            descansoTxt: "2 min",
-            como: ["Glúteo apretado, costillas abajo", "Barra de clavícula a sobre cabeza recto", "Cabeza pasa al frente al final"],
-            errores: ["Arquear lumbar excesivo", "Barra se va muy al frente"]
-          },
-          {
-            id: "remo-polea",
-            nombre: "REMO POLEA",
-            series: 3,
-            repeticiones: "10 a 12",
-            rir: "1-2",
-            descanso: "90",
-            descansoTxt: "90s",
-            como: ["Torso vertical, agarre medio", "Codos atrás, pausa 1s contra abdomen", "Estira dorsal sin encorvar"],
-            errores: ["Jalar con impulso de tronco", "No retraer escápula"]
-          },
-          {
-            id: "fondos",
-            nombre: "FONDOS",
-            series: 3,
-            repeticiones: "8 a 10",
-            rir: "2",
-            descanso: "120",
-            descansoTxt: "2 min",
-            como: ["Hombros deprimidos, leve inclinación", "Baja hasta 90° codo, pecho estirado", "Sube bloqueando sin encoger"],
-            errores: ["Hombros hacia orejas", "Rango muy corto"]
-          },
-          {
-            id: "curl-inclinado",
-            nombre: "CURL INCLINADO",
-            series: 3,
-            repeticiones: "10 a 12",
-            rir: "1-2",
-            descanso: "90",
-            descansoTxt: "90s",
-            como: ["Banco 60°, hombros atrás", "Curl sin mover hombro, supina completo", "Baja lento estirando bíceps"],
-            errores: ["Balancear mancuerna con hombro", "No extender abajo"]
-          },
-          {
-            id: "pajaros-maquina",
-            nombre: "PÁJAROS MÁQUINA",
-            series: 3,
-            repeticiones: "12 a 15",
-            rir: "1",
-            descanso: "60",
-            descansoTxt: "60s",
-            como: ["Pecho apoyado, agarre neutro", "Abre codos atrás hasta línea hombro", "Aprieta deltoide posterior arriba"],
-            errores: ["Usar trapecio superior", "Rango excesivo hiperextendiendo"]
-          },
-          {
-            id: "face-pull",
-            nombre: "FACE PULL",
-            series: 2,
-            repeticiones: "15 a 20",
-            rir: "2",
-            descanso: "60",
-            descansoTxt: "60s",
-            como: ["Polea alta, cuerda a cara", "Codos altos, rota externo al final", "Pausa 1s apretando"],
-            errores: ["Tirar hacia pecho bajo", "Codos bajos tipo remo"]
-          }
-        ]
-      },
-      {
-        id: "viernes",
-        label: "VIERNES",
-        sub: "LOWER HIPERTROFIA",
-        ejercicios: [
-          {
-            id: "hack-squat",
-            nombre: "HACK SQUAT",
-            series: 3,
-            repeticiones: "8 a 10",
-            rir: "2",
-            descanso: "150",
-            descansoTxt: "2.5 min",
-            como: ["Espalda pegada, pies medio-altos", "Baja profundo controlado", "Empuja con talón sin despegar lumbar"],
-            errores: ["Rodillas dentro o talones arriba", "Descenso a medias"]
-          },
-          {
-            id: "hip-thrust",
-            nombre: "HIP THRUST",
-            series: 3,
-            repeticiones: "8 a 10",
-            rir: "1-2",
-            descanso: "120",
-            descansoTxt: "2 min",
-            como: ["Escápulas en banco, barbilla neutra", "Sube cadera hasta línea rodilla-hombro", "Aprieta glúteo 1s arriba"],
-            errores: ["Hiperextender lumbar arriba", "Pies muy lejos/cerca"]
-          },
-          {
-            id: "bulgara",
-            nombre: "ZANCADA BÚLGARA",
-            series: 2,
-            repeticiones: "10 a 12 por pierna",
-            rir: "2",
-            descanso: "90",
-            descansoTxt: "90s",
-            como: ["Pie trasero en banco, tronco recto", "Baja rodilla trasera casi al suelo", "Sube con pierna delantera sin impulso"],
-            errores: ["Tronco se inclina excesivo", "Rodilla delantera colapsa dentro"]
-          },
-          {
-            id: "curl-femoral-sentado",
-            nombre: "CURL FEMORAL SENTADO",
-            series: 2,
-            repeticiones: "12 a 15",
-            rir: "1",
-            descanso: "75",
-            descansoTxt: "75s",
-            como: ["Ajuste rodilla alineada eje máquina", "Flexiona completo sin levantar muslo", "Controla excéntrica"],
-            errores: ["Levantar glúteo del asiento", "Pesos con inercia"]
-          },
-          {
-            id: "ext-cuadriceps",
-            nombre: "EXTENSIÓN CUÁDRICEPS",
-            series: 2,
-            repeticiones: "12 a 15",
-            rir: "1",
-            descanso: "60",
-            descansoTxt: "60s",
-            como: ["Respaldo firme, punta pie neutra", "Extiende hasta casi bloqueo controlado", "Baja 2s sin dejar caer"],
-            errores: ["Arrancar con tirón de cadera", "Dejar caer el peso en la bajada"]
-          }
-        ]
-      }
-    ];
+  <!-- Enlace al archivo de datos modular -->
+  <script src="./js/routineData.js"></script>
 
+  <!-- Lógica Principal de la App React -->
+  <script type="text/babel">
     function App() {
       const [activeTab, setActiveTab] = React.useState("lunes");
       const [profiles, setProfiles] = React.useState(["Perfil Principal"]);
@@ -472,7 +188,8 @@
         return `${m}:${s < 10 ? '0' : ''}${s}`;
       };
 
-      const currentDay = ROUTINE_DATA.find(d => d.id === activeTab);
+      const routineList = typeof ROUTINE_DATA !== 'undefined' ? ROUTINE_DATA : [];
+      const currentDay = routineList.find(d => d.id === activeTab);
 
       const totalSessionSets = currentDay ? currentDay.ejercicios.reduce((acc, ex) => {
         const exLogs = logs[ex.id] || [];
@@ -482,7 +199,7 @@
       return (
         <div className="min-h-screen bg-black text-slate-100 flex flex-col pb-36 selection:bg-emerald-500 selection:text-black">
           
-          {/* Header Superior Comercial Estilo Hevy / Strong */}
+          {/* Header Superior Comercial */}
           <header className="border-b border-white/5 bg-black/90 backdrop-blur-2xl px-4 py-3 sticky top-0 z-30">
             <div className="max-w-4xl mx-auto flex items-center justify-between gap-3">
               <div className="flex items-center gap-2.5">
@@ -491,7 +208,7 @@
                 </div>
                 <div>
                   <h1 className="text-emerald-400 font-extrabold text-sm tracking-tight mono leading-none">ENTRENO PRO</h1>
-                  <span className="text-[9px] text-neutral-400 font-bold tracking-widest uppercase">NATIVE HUD v2.5</span>
+                  <span className="text-[9px] text-neutral-400 font-bold tracking-widest uppercase">MODULAR HUD v2.5</span>
                 </div>
               </div>
 
@@ -587,7 +304,7 @@
                     return (
                       <div key={ex.id} className={`glass-card rounded-3xl overflow-hidden shadow-2xl transition-all ${isFlashing ? 'saved-flash border-emerald-500 bg-emerald-950/20' : ''}`}>
                         
-                        {/* Cabecera de Tarjeta Estilo Comercial */}
+                        {/* Cabecera de Tarjeta */}
                         <button 
                           onClick={() => setExpandedEx(prev => ({ ...prev, [ex.id]: !prev[ex.id] }))}
                           className="w-full text-left p-4 flex justify-between items-center gap-3 active:bg-white/5 transition"
@@ -596,7 +313,6 @@
                             <div className="flex items-center justify-between gap-2">
                               <h3 className="text-sm font-black tracking-tight text-white uppercase">{ex.nombre}</h3>
                               
-                              {/* Indicadores de Series */}
                               <div className="flex items-center gap-1.5">
                                 {Array.from({ length: ex.series }).map((_, i) => (
                                   <div 
@@ -629,7 +345,6 @@
                         {isExpanded && (
                           <div className="px-4 pb-4 pt-1 border-t border-white/5 bg-black/40 space-y-4 text-xs">
                             
-                            {/* Guía Técnica y Errores */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
                               <div className="bg-emerald-950/20 border border-emerald-500/20 rounded-2xl p-3.5">
                                 <span className="text-[10px] font-black text-emerald-400 tracking-wider uppercase">Técnica Clave</span>
@@ -645,7 +360,6 @@
                               </div>
                             </div>
 
-                            {/* Panel HUD Táctil */}
                             <div className="pt-2 space-y-3.5">
                               <div className="flex items-center justify-between px-0.5">
                                 <span className="font-black text-[10px] text-neutral-400 uppercase tracking-widest">REGISTRO DE SERIE ACTIVA</span>
@@ -656,7 +370,6 @@
                                 )}
                               </div>
 
-                              {/* Fila de Peso */}
                               <div className="space-y-1.5">
                                 <div className="flex items-center justify-between gap-1.5">
                                   <button onClick={() => handleWeightChange(ex.id, -2.5)} className="h-12 flex-1 bg-neutral-900 active:bg-neutral-800 rounded-2xl border border-white/10 text-xs font-black mono text-slate-200 shadow-sm">-2.5</button>
@@ -672,7 +385,6 @@
                                 </div>
                               </div>
 
-                              {/* Cuadrícula Reps & RIR */}
                               <div className="grid grid-cols-2 gap-3">
                                 <div className="bg-neutral-900/90 border border-white/10 rounded-2xl p-3 flex items-center justify-between">
                                   <span className="text-[10px] font-black text-neutral-400 tracking-wider">REPS</span>
@@ -710,10 +422,10 @@
             )}
           </main>
 
-          {/* Barra de Navegación Inferior Estilo App Nativa (Bottom Nav) */}
+          {/* Barra de Navegación Inferior Estilo App Nativa */}
           <nav className="glass-nav fixed bottom-0 left-0 right-0 z-40 px-3 py-2.5">
             <div className="max-w-md mx-auto flex items-center justify-around gap-1">
-              {ROUTINE_DATA.map(day => (
+              {routineList.map(day => (
                 <button
                   key={day.id}
                   onClick={() => setActiveTab(day.id)}
@@ -733,7 +445,7 @@
             </div>
           </nav>
 
-          {/* Temporizador Flotante de Descanso */}
+          {/* Temporizador Flotante */}
           {timer.active && (
             <div className="fixed bottom-20 left-4 right-4 max-w-lg mx-auto glass-card border border-emerald-500/60 rounded-3xl p-4 shadow-[0_15px_35px_rgba(0,0,0,0.9)] flex items-center justify-between gap-3 z-50">
               <div className="flex items-center gap-3">
