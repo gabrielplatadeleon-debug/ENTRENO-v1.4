@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>ENTRENO PRO 2026 - Bulletproof v3.4</title>
+  <title>ENTRENO PRO 2026 - Bulletproof v3.5</title>
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#000000">
 
@@ -458,9 +458,9 @@
 
       const getPlateBreakdown = (totalKg) => {
         const bar = 20;
-        if (!totalKg || totalKg <= bar) return "Solo barra (20kg)";
+        if (!totalKg || totalKg <= bar) return "Barra (20kg)";
         let rem = (totalKg - bar) / 2;
-        if (rem <= 0) return "Solo barra (20kg)";
+        if (rem <= 0) return "Barra (20kg)";
         const plates = [25, 20, 15, 10, 5, 2.5, 1.25];
         let res = [];
         for (let p of plates) {
@@ -471,8 +471,8 @@
         }
         const counts = {};
         res.forEach(v => { counts[v] = (counts[v] || 0) + 1; });
-        const txt = Object.keys(counts).sort((a, b) => b - a).map(k => `${counts[k]}x${k}k`).join(' + ');
-        return `${txt} por lado`;
+        const txt = Object.keys(counts).sort((a, b) => b - a).map(k => `${counts[k]}x${k}k`).join('+');
+        return `${txt} / lado`;
       };
 
       const formatTime = (secs) => {
@@ -483,10 +483,21 @@
 
       const currentDay = ROUTINE_DATA.find(d => d.id === activeTab);
 
-      const totalSessionSets = currentDay ? currentDay.ejercicios.reduce((acc, ex) => {
-        const exLogs = logs[ex.id] || [];
-        return acc + exLogs.filter(e => e.fecha === new Date().toISOString().split('T')[0]).length;
-      }, 0) : 0;
+      // CÁLCULO DE MÉTRICAS DE SESIÓN
+      const todayDate = new Date().toISOString().split('T')[0];
+      let totalSessionSets = 0;
+      let totalSessionVolume = 0;
+
+      if (currentDay) {
+        currentDay.ejercicios.forEach(ex => {
+          const exLogs = logs[ex.id] || [];
+          const todayLogs = exLogs.filter(e => e.fecha === todayDate);
+          totalSessionSets += todayLogs.length;
+          todayLogs.forEach(entry => {
+            totalSessionVolume += (entry.peso || 0) * (entry.reps || 0);
+          });
+        });
+      }
 
       return (
         <div className="min-h-screen bg-black text-slate-100 flex flex-col pb-36 selection:bg-emerald-500 selection:text-black">
@@ -499,7 +510,7 @@
                 </div>
                 <div>
                   <h1 className="text-emerald-400 font-extrabold text-sm tracking-tight mono leading-none">ENTRENO PRO</h1>
-                  <span className="text-[9px] text-neutral-400 font-bold tracking-widest uppercase">MOBILE OPTIMIZED v3.4</span>
+                  <span className="text-[9px] text-neutral-400 font-bold tracking-widest uppercase">HIGH-DENSITY v3.5</span>
                 </div>
               </div>
 
@@ -523,20 +534,26 @@
 
           {activeTab !== "progreso" && currentDay && (
             <div className="max-w-4xl mx-auto w-full px-4 pt-3">
-              <div className="glass-card rounded-2xl p-3.5 flex items-center justify-between border border-white/10 shadow-xl">
+              <div className="glass-card rounded-2xl p-3 flex items-center justify-between border border-white/10 shadow-xl">
                 <div>
-                  <div className="text-[10px] font-black uppercase tracking-widest text-neutral-400">SESIÓN ACTIVA</div>
+                  <div className="text-[9px] font-black uppercase tracking-widest text-neutral-400">SESIÓN ACTIVA</div>
                   <div className="text-xs font-extrabold text-slate-200 mt-0.5">{currentDay.label} · <span className="text-emerald-400">{currentDay.sub}</span></div>
                 </div>
-                <div className="text-right">
-                  <div className="text-[10px] font-black uppercase tracking-widest text-emerald-400 mono">SERIES COMPLETADAS</div>
-                  <div className="text-sm font-black mono text-white">{totalSessionSets} <span className="text-neutral-500 text-xs">ejecutadas</span></div>
+                <div className="flex items-center gap-4 text-right">
+                  <div>
+                    <div className="text-[9px] font-black uppercase tracking-widest text-cyan-400 mono">VOLUMEN</div>
+                    <div className="text-xs font-black mono text-white">{totalSessionVolume.toLocaleString()} <span className="text-neutral-500 text-[9px]">kg</span></div>
+                  </div>
+                  <div>
+                    <div className="text-[9px] font-black uppercase tracking-widest text-emerald-400 mono">SERIES</div>
+                    <div className="text-xs font-black mono text-white">{totalSessionSets} <span className="text-neutral-500 text-[9px]">hechas</span></div>
+                  </div>
                 </div>
               </div>
             </div>
           )}
 
-          <main className="max-w-4xl mx-auto w-full px-4 py-4 flex-1">
+          <main className="max-w-4xl mx-auto w-full px-4 py-3 flex-1">
             {activeTab === "progreso" ? (
               <div className="space-y-4">
                 <div className="glass-card rounded-3xl p-6 shadow-2xl">
@@ -581,40 +598,40 @@
               </div>
             ) : (
               currentDay && (
-                <div className="space-y-3.5">
+                <div className="space-y-3">
                   {currentDay.ejercicios.map((ex) => {
                     const isExpanded = expandedEx[ex.id];
                     const isHelpOpen = showHelp[ex.id];
                     const exInput = inputs[ex.id] || { peso: 50, reps: 6, rir: 2 };
                     const exLogs = logs[ex.id] || [];
                     const isFlashing = flashExId === ex.id;
-                    const todayLogs = exLogs.filter(e => e.fecha === new Date().toISOString().split('T')[0]);
+                    const todayLogs = exLogs.filter(e => e.fecha === todayDate);
                     const completedSetsCount = todayLogs.length;
                     const lastSet = exLogs[0];
 
                     return (
-                      <div key={ex.id} className={`glass-card rounded-3xl overflow-hidden shadow-2xl transition-all ${isFlashing ? 'saved-flash border-emerald-500 bg-emerald-950/20' : ''}`}>
+                      <div key={ex.id} className={`glass-card rounded-2xl overflow-hidden shadow-2xl transition-all ${isFlashing ? 'saved-flash border-emerald-500 bg-emerald-950/20' : ''}`}>
                         
                         <button 
                           onClick={() => setExpandedEx(prev => ({ ...prev, [ex.id]: !prev[ex.id] }))}
-                          className="w-full text-left p-4 flex justify-between items-center gap-3 active:bg-white/5 transition"
+                          className="w-full text-left p-3 flex justify-between items-center gap-3 active:bg-white/5 transition"
                         >
                           <div className="flex-1">
                             <div className="flex items-center justify-between gap-2">
-                              <h3 className="text-sm font-black tracking-tight text-white uppercase">{ex.nombre}</h3>
+                              <h3 className="text-xs font-black tracking-tight text-white uppercase">{ex.nombre}</h3>
                               
-                              <div className="flex items-center gap-1.5">
+                              <div className="flex items-center gap-1">
                                 {Array.from({ length: ex.series }).map((_, i) => (
                                   <div 
                                     key={i} 
-                                    className={`w-2.5 h-2.5 rounded-full transition-all ${i < completedSetsCount ? 'bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.9)] scale-110' : 'bg-neutral-800 border border-neutral-700'}`} 
+                                    className={`w-2 h-2 rounded-full transition-all ${i < completedSetsCount ? 'bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.9)] scale-110' : 'bg-neutral-800 border border-neutral-700'}`} 
                                   />
                                 ))}
                               </div>
                             </div>
 
-                            <div className="mt-2 text-[11px] text-neutral-400 flex items-center justify-between font-medium">
-                              <div className="flex items-center gap-2">
+                            <div className="mt-1 text-[10px] text-neutral-400 flex items-center justify-between font-medium">
+                              <div className="flex items-center gap-1.5">
                                 <span className="text-emerald-400 font-bold">{ex.series} series</span>
                                 <span>·</span>
                                 <span>{ex.repeticiones} reps</span>
@@ -623,7 +640,7 @@
                               </div>
                               
                               {!isExpanded && lastSet && (
-                                <span className="text-emerald-300 mono text-[10px] font-extrabold bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
+                                <span className="text-emerald-300 mono text-[9px] font-extrabold bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-500/30">
                                   Último: {lastSet.peso}kg × {lastSet.reps}
                                 </span>
                               )}
@@ -632,31 +649,31 @@
                         </button>
 
                         {isExpanded && (
-                          <div className="px-4 pb-4 pt-1 border-t border-white/5 bg-black/40 space-y-4 text-xs">
+                          <div className="px-3 pb-3 pt-1 border-t border-white/5 bg-black/40 space-y-3 text-xs">
                             
-                            {/* Botón de acordeón para Técnica y Errores (Optimización Móvil) */}
-                            <div className="pt-2">
+                            {/* Botón Guía Táctica */}
+                            <div>
                               <button
                                 onClick={() => setShowHelp(prev => ({ ...prev, [ex.id]: !prev[ex.id] }))}
-                                className="w-full bg-neutral-900/80 border border-white/10 hover:border-emerald-500/40 text-neutral-300 font-extrabold py-2 px-3 rounded-xl flex items-center justify-between text-[11px] transition"
+                                className="w-full bg-neutral-900/80 border border-white/10 hover:border-emerald-500/40 text-neutral-400 font-bold py-1.5 px-2.5 rounded-xl flex items-center justify-between text-[10px] transition"
                               >
-                                <span className="flex items-center gap-2 text-emerald-400">
+                                <span className="flex items-center gap-1.5 text-emerald-400">
                                   <span>💡</span> Técnica Clave & Errores
                                 </span>
-                                <span className="text-neutral-500">{isHelpOpen ? '▲ Ocultar' : '▼ Ver guía'}</span>
+                                <span className="text-neutral-500">{isHelpOpen ? '▲ Ocultar' : '▼ Ver'}</span>
                               </button>
 
                               {isHelpOpen && (
-                                <div className="grid grid-cols-1 gap-2.5 mt-2.5 animate-fadeIn">
-                                  <div className="bg-emerald-950/20 border border-emerald-500/20 rounded-2xl p-3">
-                                    <span className="text-[10px] font-black text-emerald-400 tracking-wider uppercase">Técnica Clave</span>
-                                    <ul className="list-disc list-inside text-slate-300 mt-1 space-y-1 text-[11px]">
+                                <div className="grid grid-cols-1 gap-2 mt-2">
+                                  <div className="bg-emerald-950/20 border border-emerald-500/20 rounded-xl p-2.5">
+                                    <span className="text-[9px] font-black text-emerald-400 uppercase">Técnica Clave</span>
+                                    <ul className="list-disc list-inside text-slate-300 mt-0.5 space-y-0.5 text-[10px]">
                                       {ex.como.map((c, i) => <li key={i}>{c}</li>)}
                                     </ul>
                                   </div>
-                                  <div className="bg-rose-950/20 border border-rose-500/20 rounded-2xl p-3">
-                                    <span className="text-[10px] font-black text-rose-400 tracking-wider uppercase">Errores a Evitar</span>
-                                    <ul className="list-disc list-inside text-neutral-400 mt-1 space-y-1 text-[11px]">
+                                  <div className="bg-rose-950/20 border border-rose-500/20 rounded-xl p-2.5">
+                                    <span className="text-[9px] font-black text-rose-400 uppercase">Errores a Evitar</span>
+                                    <ul className="list-disc list-inside text-neutral-400 mt-0.5 space-y-0.5 text-[10px]">
                                       {ex.errores.map((e, i) => <li key={i}>{e}</li>)}
                                     </ul>
                                   </div>
@@ -664,28 +681,27 @@
                               )}
                             </div>
 
-                            {/* Grid de Rendimiento: Series Realizadas Hoy */}
+                            {/* Series Realizadas Hoy */}
                             {todayLogs.length > 0 && (
-                              <div className="space-y-2">
-                                <span className="font-black text-[10px] text-emerald-400 uppercase tracking-widest">SERIES REALIZADAS HOY</span>
-                                <div className="space-y-1.5">
+                              <div className="space-y-1">
+                                <span className="font-black text-[9px] text-emerald-400 uppercase tracking-widest">SERIES HOY</span>
+                                <div className="space-y-1">
                                   {todayLogs.map((set, sIndex) => {
                                     const originalIndex = exLogs.findIndex(item => item === set);
                                     return (
-                                      <div key={sIndex} className="flex items-center justify-between bg-neutral-900/90 border border-white/10 rounded-2xl px-3.5 py-2.5 mono text-xs">
-                                        <div className="flex items-center gap-3">
-                                          <span className="w-6 h-6 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 font-black flex items-center justify-center text-[10px]">
-                                            {todayLogs.length - sIndex}
+                                      <div key={sIndex} className="flex items-center justify-between bg-neutral-900/90 border border-white/10 rounded-xl px-3 py-1.5 mono text-xs">
+                                        <div className="flex items-center gap-2.5">
+                                          <span className="w-5 h-5 rounded-md bg-emerald-500/20 text-emerald-400 font-black flex items-center justify-center text-[9px]">
+                                            #{todayLogs.length - sIndex}
                                           </span>
                                           <span className="font-extrabold text-white">{set.peso} kg</span>
-                                          <span className="text-neutral-400">×</span>
+                                          <span className="text-neutral-500">×</span>
                                           <span className="font-extrabold text-slate-200">{set.reps} reps</span>
-                                          <span className="text-neutral-500 text-[10px]">(RIR {set.rir})</span>
+                                          <span className="text-neutral-500 text-[9px]">(RIR {set.rir})</span>
                                         </div>
                                         <button 
                                           onClick={() => handleDeleteSet(ex.id, originalIndex)}
-                                          className="text-neutral-500 hover:text-rose-400 font-black px-2 py-1 transition"
-                                          title="Eliminar serie"
+                                          className="text-neutral-500 hover:text-rose-400 font-black px-1"
                                         >
                                           ✕
                                         </button>
@@ -696,58 +712,65 @@
                               </div>
                             )}
 
-                            <div className="space-y-3.5">
-                              <div className="flex items-center justify-between px-0.5">
-                                <span className="font-black text-[10px] text-neutral-400 uppercase tracking-widest">REGISTRO DE NUEVA SERIE</span>
+                            {/* CUADRÍCULA DE ENTRADA UNIFICADA (Alta Densidad) */}
+                            <div className="bg-neutral-950/80 border border-white/10 rounded-2xl p-2.5 space-y-2">
+                              <div className="flex items-center justify-between">
+                                <span className="font-black text-[9px] text-neutral-400 uppercase tracking-widest">REGISTRO DE SERIE</span>
                                 {lastSet && (
-                                  <span className="text-[10px] text-cyan-300 mono font-bold bg-cyan-950/50 px-2.5 py-1 rounded-xl border border-cyan-500/30">
-                                    💡 Anterior: {lastSet.peso}kg × {lastSet.reps} (RIR {lastSet.rir})
+                                  <span className="text-[9px] text-cyan-300 mono font-bold bg-cyan-950/50 px-2 py-0.5 rounded-lg border border-cyan-500/30">
+                                    💡 Ant: {lastSet.peso}kg × {lastSet.reps}
                                   </span>
                                 )}
                               </div>
 
-                              <div className="space-y-1.5">
-                                <div className="flex items-center justify-between gap-1.5">
-                                  <button onClick={() => handleWeightChange(ex.id, -2.5)} className="h-12 flex-1 bg-neutral-900 active:bg-neutral-800 rounded-2xl border border-white/10 text-xs font-black mono text-slate-200 shadow-sm">-2.5</button>
-                                  <button onClick={() => handleWeightChange(ex.id, -1.25)} className="h-12 flex-1 bg-neutral-900 active:bg-neutral-800 rounded-2xl border border-white/10 text-xs font-black mono text-slate-200 shadow-sm">-1.25</button>
-                                  <div className="h-13 px-4 bg-black border border-emerald-500/80 rounded-2xl flex items-center justify-center font-black text-emerald-400 text-lg tracking-tight shadow-[0_0_20px_rgba(16,185,129,0.25)] min-w-[110px] mono">
-                                    {exInput.peso} kg
+                              {/* Fila Única de Inputs Compactos */}
+                              <div className="grid grid-cols-3 gap-2">
+                                
+                                {/* PESO */}
+                                <div className="bg-neutral-900 rounded-xl p-2 border border-white/5 flex flex-col items-center">
+                                  <span className="text-[8px] font-black text-neutral-400 uppercase">PESO (KG)</span>
+                                  <div className="flex items-center justify-between w-full mt-1">
+                                    <button onClick={() => handleWeightChange(ex.id, -2.5)} className="w-6 h-6 bg-neutral-800 text-slate-300 rounded-lg text-xs font-black">-</button>
+                                    <span className="font-black text-sm text-emerald-400 mono">{exInput.peso}</span>
+                                    <button onClick={() => handleWeightChange(ex.id, 2.5)} className="w-6 h-6 bg-neutral-800 text-slate-300 rounded-lg text-xs font-black">+</button>
                                   </div>
-                                  <button onClick={() => handleWeightChange(ex.id, 1.25)} className="h-12 flex-1 bg-neutral-900 active:bg-neutral-800 rounded-2xl border border-white/10 text-xs font-black mono text-slate-200 shadow-sm">+1.25</button>
-                                  <button onClick={() => handleWeightChange(ex.id, 2.5)} className="h-12 flex-1 bg-neutral-900 active:bg-neutral-800 rounded-2xl border border-white/10 text-xs font-black mono text-slate-200 shadow-sm">+2.5</button>
                                 </div>
-                                <div className="text-[10px] mono text-cyan-400 text-right px-1 font-semibold">
-                                  ⚖️ {getPlateBreakdown(exInput.peso)}
+
+                                {/* REPS */}
+                                <div className="bg-neutral-900 rounded-xl p-2 border border-white/5 flex flex-col items-center">
+                                  <span className="text-[8px] font-black text-neutral-400 uppercase">REPS</span>
+                                  <div className="flex items-center justify-between w-full mt-1">
+                                    <button onClick={() => handleStepChange(ex.id, 'reps', -1)} className="w-6 h-6 bg-neutral-800 text-slate-300 rounded-lg text-xs font-black">-</button>
+                                    <span className="font-black text-sm text-white mono">{exInput.reps}</span>
+                                    <button onClick={() => handleStepChange(ex.id, 'reps', 1)} className="w-6 h-6 bg-neutral-800 text-slate-300 rounded-lg text-xs font-black">+</button>
+                                  </div>
                                 </div>
+
+                                {/* RIR */}
+                                <div className="bg-neutral-900 rounded-xl p-2 border border-white/5 flex flex-col items-center">
+                                  <span className="text-[8px] font-black text-neutral-400 uppercase">RIR</span>
+                                  <div className="flex items-center justify-between w-full mt-1">
+                                    <button onClick={() => handleStepChange(ex.id, 'rir', -1)} className="w-6 h-6 bg-neutral-800 text-slate-300 rounded-lg text-xs font-black">-</button>
+                                    <span className="font-black text-sm text-white mono">{exInput.rir}</span>
+                                    <button onClick={() => handleStepChange(ex.id, 'rir', 1)} className="w-6 h-6 bg-neutral-800 text-slate-300 rounded-lg text-xs font-black">+</button>
+                                  </div>
+                                </div>
+
                               </div>
 
-                              <div className="grid grid-cols-2 gap-3">
-                                <div className="bg-neutral-900/90 border border-white/10 rounded-2xl p-3 flex items-center justify-between">
-                                  <span className="text-[10px] font-black text-neutral-400 tracking-wider">REPS</span>
-                                  <div className="flex items-center gap-2.5">
-                                    <button onClick={() => handleStepChange(ex.id, 'reps', -1)} className="w-9 h-9 bg-neutral-800 active:bg-emerald-400 active:text-black rounded-xl border border-white/10 font-black text-base flex items-center justify-center transition">-</button>
-                                    <span className="font-black text-lg w-6 text-center mono text-white">{exInput.reps}</span>
-                                    <button onClick={() => handleStepChange(ex.id, 'reps', 1)} className="w-9 h-9 bg-neutral-800 active:bg-emerald-400 active:text-black rounded-xl border border-white/10 font-black text-base flex items-center justify-center transition">+</button>
-                                  </div>
-                                </div>
-                                <div className="bg-neutral-900/90 border border-white/10 rounded-2xl p-3 flex items-center justify-between">
-                                  <span className="text-[10px] font-black text-neutral-400 tracking-wider">RIR</span>
-                                  <div className="flex items-center gap-2.5">
-                                    <button onClick={() => handleStepChange(ex.id, 'rir', -1)} className="w-9 h-9 bg-neutral-800 active:bg-emerald-400 active:text-black rounded-xl border border-white/10 font-black text-base flex items-center justify-center transition">-</button>
-                                    <span className="font-black text-lg w-6 text-center mono text-white">{exInput.rir}</span>
-                                    <button onClick={() => handleStepChange(ex.id, 'rir', 1)} className="w-9 h-9 bg-neutral-800 active:bg-emerald-400 active:text-black rounded-xl border border-white/10 font-black text-base flex items-center justify-center transition">+</button>
-                                  </div>
-                                </div>
+                              <div className="flex items-center justify-between px-1 text-[9px] mono text-cyan-400">
+                                <span>⚖️ {getPlateBreakdown(exInput.peso)}</span>
                               </div>
 
                               <button 
                                 onClick={() => handleSaveSet(ex)}
-                                className="w-full bg-emerald-400 hover:bg-emerald-300 active:scale-[0.98] text-black font-black py-4 rounded-2xl text-xs tracking-wider uppercase transition shadow-xl shadow-emerald-400/30 flex items-center justify-center gap-2"
+                                className="w-full bg-emerald-400 hover:bg-emerald-300 active:scale-[0.98] text-black font-black py-3 rounded-xl text-xs tracking-wider uppercase transition shadow-lg shadow-emerald-400/20 flex items-center justify-center gap-1.5"
                               >
                                 <span>GUARDAR SERIE</span>
-                                <span className="bg-black/15 px-2.5 py-1 rounded-xl text-[11px] mono font-extrabold">{exInput.peso}kg × {exInput.reps} (RIR{exInput.rir})</span>
+                                <span className="bg-black/15 px-2 py-0.5 rounded-md text-[10px] mono font-bold">{exInput.peso}kg × {exInput.reps}</span>
                               </button>
                             </div>
+
                           </div>
                         )}
                       </div>
@@ -758,58 +781,58 @@
             )}
           </main>
 
-          <nav className="glass-nav fixed bottom-0 left-0 right-0 z-40 px-3 py-2.5">
+          <nav className="glass-nav fixed bottom-0 left-0 right-0 z-40 px-3 py-2">
             <div className="max-w-md mx-auto flex items-center justify-around gap-1">
               {ROUTINE_DATA.map(day => (
                 <button
                   key={day.id}
                   onClick={() => setActiveTab(day.id)}
-                  className={`flex-1 py-2 px-1 rounded-2xl text-[11px] font-extrabold flex flex-col items-center gap-0.5 transition ${activeTab === day.id ? 'bg-emerald-400 text-black shadow-[0_0_15px_rgba(16,185,129,0.4)]' : 'text-neutral-400 hover:text-white'}`}
+                  className={`flex-1 py-1.5 px-1 rounded-xl text-[10px] font-extrabold flex flex-col items-center gap-0.5 transition ${activeTab === day.id ? 'bg-emerald-400 text-black shadow-[0_0_15px_rgba(16,185,129,0.4)]' : 'text-neutral-400 hover:text-white'}`}
                 >
                   <span className="tracking-tighter">{day.label}</span>
-                  <span className="text-[9px] opacity-70 font-medium">{day.sub.split(' ')[1]}</span>
+                  <span className="text-[8px] opacity-70 font-medium">{day.sub.split(' ')[1]}</span>
                 </button>
               ))}
               <button
                 onClick={() => setActiveTab("progreso")}
-                className={`flex-1 py-2 px-1 rounded-2xl text-[11px] font-extrabold flex flex-col items-center gap-0.5 transition ${activeTab === "progreso" ? 'bg-emerald-400 text-black shadow-[0_0_15px_rgba(16,185,129,0.4)]' : 'text-neutral-400 hover:text-white'}`}
+                className={`flex-1 py-1.5 px-1 rounded-xl text-[10px] font-extrabold flex flex-col items-center gap-0.5 transition ${activeTab === "progreso" ? 'bg-emerald-400 text-black shadow-[0_0_15px_rgba(16,185,129,0.4)]' : 'text-neutral-400 hover:text-white'}`}
               >
                 <span className="tracking-tighter">CLOUD</span>
-                <span className="text-[9px] opacity-70 font-medium">DRIVE</span>
+                <span className="text-[8px] opacity-70 font-medium">DRIVE</span>
               </button>
             </div>
           </nav>
 
           {timer.active && (
-            <div className="fixed bottom-20 left-4 right-4 max-w-lg mx-auto glass-card border border-emerald-500/60 rounded-3xl p-4 shadow-[0_15px_35px_rgba(0,0,0,0.9)] flex items-center justify-between gap-3 z-50">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 mono font-black text-base shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+            <div className="fixed bottom-16 left-3 right-3 max-w-lg mx-auto glass-card border border-emerald-500/60 rounded-2xl p-3 shadow-2xl flex items-center justify-between gap-2 z-50">
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 mono font-black text-sm">
                   ⏱️
                 </div>
                 <div>
-                  <div className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider">{timer.exName}</div>
-                  <div className="text-xl font-black mono text-emerald-400 tracking-tight">
-                    {formatTime(timer.secondsLeft)} <span className="text-[10px] text-neutral-500 font-sans font-medium">DESCANSO</span>
+                  <div className="text-[9px] font-extrabold text-neutral-400 uppercase">{timer.exName}</div>
+                  <div className="text-lg font-black mono text-emerald-400 leading-none mt-0.5">
+                    {formatTime(timer.secondsLeft)}
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <button 
                   onClick={() => setTimer(prev => ({ ...prev, secondsLeft: Math.max(0, prev.secondsLeft - 30) }))}
-                  className="bg-neutral-900 border border-white/10 text-xs font-bold px-3 py-2 rounded-xl text-slate-300 active:bg-neutral-800"
+                  className="bg-neutral-900 border border-white/10 text-[10px] font-bold px-2.5 py-1.5 rounded-lg text-slate-300"
                 >
                   -30s
                 </button>
                 <button 
                   onClick={() => setTimer(prev => ({ ...prev, secondsLeft: prev.secondsLeft + 30 }))}
-                  className="bg-neutral-900 border border-white/10 text-xs font-bold px-3 py-2 rounded-xl text-slate-300 active:bg-neutral-800"
+                  className="bg-neutral-900 border border-white/10 text-[10px] font-bold px-2.5 py-1.5 rounded-lg text-slate-300"
                 >
                   +30s
                 </button>
                 <button 
                   onClick={() => setTimer(prev => ({ ...prev, active: false }))}
-                  className="bg-rose-500/20 border border-rose-500/40 text-rose-400 text-xs font-extrabold w-9 h-9 rounded-xl flex items-center justify-center ml-1 active:bg-rose-500/40"
+                  className="bg-rose-500/20 border border-rose-500/40 text-rose-400 text-xs font-black w-8 h-8 rounded-lg flex items-center justify-center ml-0.5"
                 >
                   ✕
                 </button>
