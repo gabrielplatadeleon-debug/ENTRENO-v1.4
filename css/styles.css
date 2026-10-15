@@ -18,17 +18,20 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-.focus-mode header,
-.focus-mode .tabs-bar {
-  display: none !important;
+.glass-card {
+  background: linear-gradient(135deg, rgba(18, 18, 22, 0.7) 0%, rgba(10, 10, 14, 0.8) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.focus-mode main {
-  padding-top: 12px !important;
+.glass-nav {
+  background: rgba(5, 5, 8, 0.85);
+  backdrop-filter: blur(25px);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 @keyframes neonPulse {
-  0% { box-shadow: 0 0 25px rgba(16,185,129,0.4); border-color: rgba(16,185,129,0.8); }
+  0% { box-shadow: 0 0 25px rgba(16,185,129,0.5); border-color: rgba(16,185,129,0.9); }
   100% { box-shadow: 0 0 10px rgba(16,185,129,0.2); border-color: rgba(16,185,129,0.4); }
 }
 
