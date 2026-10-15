@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>ENTRENO PRO 2026 - Bulletproof Edition</title>
+  <title>ENTRENO PRO 2026 - Bulletproof v3.3</title>
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#000000">
 
@@ -435,6 +435,17 @@
         setTimer({ active: true, secondsLeft: restSecs, totalSeconds: restSecs, exName: ex.nombre });
       };
 
+      const handleDeleteSet = (exId, index) => {
+        const newLogs = { ...logs };
+        if (newLogs[exId]) {
+          newLogs[exId].splice(index, 1);
+          if (newLogs[exId].length === 0) delete newLogs[exId];
+          setLogs(newLogs);
+          localStorage.setItem(`entreno_logs_${currentProfile}`, JSON.stringify(newLogs));
+          syncToDriveCloud(newLogs);
+        }
+      };
+
       const handleAddProfile = () => {
         const name = prompt("Nombre del nuevo perfil:");
         if (name && !profiles.includes(name)) {
@@ -487,7 +498,7 @@
                 </div>
                 <div>
                   <h1 className="text-emerald-400 font-extrabold text-sm tracking-tight mono leading-none">ENTRENO PRO</h1>
-                  <span className="text-[9px] text-neutral-400 font-bold tracking-widest uppercase">BULLETPROOF v3.2</span>
+                  <span className="text-[9px] text-neutral-400 font-bold tracking-widest uppercase">GRID PERFORMANCE v3.3</span>
                 </div>
               </div>
 
@@ -575,7 +586,8 @@
                     const exInput = inputs[ex.id] || { peso: 50, reps: 6, rir: 2 };
                     const exLogs = logs[ex.id] || [];
                     const isFlashing = flashExId === ex.id;
-                    const completedSetsCount = exLogs.filter(e => e.fecha === new Date().toISOString().split('T')[0]).length;
+                    const todayLogs = exLogs.filter(e => e.fecha === new Date().toISOString().split('T')[0]);
+                    const completedSetsCount = todayLogs.length;
                     const lastSet = exLogs[0];
 
                     return (
@@ -635,9 +647,41 @@
                               </div>
                             </div>
 
+                            {/* GRID DE RENDIMIENTO: Tabla de Series Registradas */}
+                            {todayLogs.length > 0 && (
+                              <div className="mt-3 space-y-2">
+                                <span className="font-black text-[10px] text-emerald-400 uppercase tracking-widest">SERIES REALIZADAS HOY</span>
+                                <div className="space-y-1.5">
+                                  {todayLogs.map((set, sIndex) => {
+                                    const originalIndex = exLogs.findIndex(item => item === set);
+                                    return (
+                                      <div key={sIndex} className="flex items-center justify-between bg-neutral-900/90 border border-white/10 rounded-2xl px-3.5 py-2.5 mono text-xs">
+                                        <div className="flex items-center gap-3">
+                                          <span className="w-6 h-6 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 font-black flex items-center justify-center text-[10px]">
+                                            {todayLogs.length - sIndex}
+                                          </span>
+                                          <span className="font-extrabold text-white">{set.peso} kg</span>
+                                          <span className="text-neutral-400">×</span>
+                                          <span className="font-extrabold text-slate-200">{set.reps} reps</span>
+                                          <span className="text-neutral-500 text-[10px]">(RIR {set.rir})</span>
+                                        </div>
+                                        <button 
+                                          onClick={() => handleDeleteSet(ex.id, originalIndex)}
+                                          className="text-neutral-500 hover:text-rose-400 font-black px-2 py-1 transition"
+                                          title="Eliminar serie"
+                                        >
+                                          ✕
+                                        </button>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
+
                             <div className="pt-2 space-y-3.5">
                               <div className="flex items-center justify-between px-0.5">
-                                <span className="font-black text-[10px] text-neutral-400 uppercase tracking-widest">REGISTRO DE SERIE ACTIVA</span>
+                                <span className="font-black text-[10px] text-neutral-400 uppercase tracking-widest">REGISTRO DE NUEVA SERIE</span>
                                 {lastSet && (
                                   <span className="text-[10px] text-cyan-300 mono font-bold bg-cyan-950/50 px-2.5 py-1 rounded-xl border border-cyan-500/30">
                                     💡 Anterior: {lastSet.peso}kg × {lastSet.reps} (RIR {lastSet.rir})
