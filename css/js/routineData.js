@@ -247,7 +247,7 @@ const ROUTINE_DATA = [
       },
       {
         id: "ext-cuadriceps",
-        nombre: "EXTENSIÓN CUÁDRICEPS",
+        nombre: "ENLACE CUÁDRICEPS",
         series: 2,
         repeticiones: "12 a 15",
         rir: "1",
