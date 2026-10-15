@@ -474,7 +474,6 @@
 
       const currentDay = ROUTINE_DATA.find(d => d.id === activeTab);
 
-      // Calcular volumen total de la sesión actual
       const totalSessionSets = currentDay ? currentDay.ejercicios.reduce((acc, ex) => {
         const exLogs = logs[ex.id] || [];
         return acc + exLogs.filter(e => e.fecha === new Date().toISOString().split('T')[0]).length;
@@ -775,7 +774,7 @@
       );
     }
 
-    ReactDOM.createRoot(getElementById('root')).render(<App />);
+    document.getElementById('root') && ReactDOM.createRoot(document.getElementById('root')).render(<App />);
   </script>
 </body>
 </html>
