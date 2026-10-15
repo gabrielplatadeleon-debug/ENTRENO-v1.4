@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>ENTRENO PRO 2026 - Bulletproof v3.5</title>
+  <title>ENTRENO PRO 2026 - Bulletproof v3.6</title>
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#000000">
 
@@ -483,7 +483,6 @@
 
       const currentDay = ROUTINE_DATA.find(d => d.id === activeTab);
 
-      // CÁLCULO DE MÉTRICAS DE SESIÓN
       const todayDate = new Date().toISOString().split('T')[0];
       let totalSessionSets = 0;
       let totalSessionVolume = 0;
@@ -510,7 +509,7 @@
                 </div>
                 <div>
                   <h1 className="text-emerald-400 font-extrabold text-sm tracking-tight mono leading-none">ENTRENO PRO</h1>
-                  <span className="text-[9px] text-neutral-400 font-bold tracking-widest uppercase">HIGH-DENSITY v3.5</span>
+                  <span className="text-[9px] text-neutral-400 font-bold tracking-widest uppercase">IN-LINE CHECK v3.6</span>
                 </div>
               </div>
 
@@ -618,7 +617,7 @@
                         >
                           <div className="flex-1">
                             <div className="flex items-center justify-between gap-2">
-                              <h3 className="text-xs font-black tracking-tight text-white uppercase">{ex.nombre}</h3>
+                              <h3 className="text-xs font-black tracking-tight text-emerald-400 uppercase">{ex.nombre}</h3>
                               
                               <div className="flex items-center gap-1">
                                 {Array.from({ length: ex.series }).map((_, i) => (
@@ -632,7 +631,7 @@
 
                             <div className="mt-1 text-[10px] text-neutral-400 flex items-center justify-between font-medium">
                               <div className="flex items-center gap-1.5">
-                                <span className="text-emerald-400 font-bold">{ex.series} series</span>
+                                <span className="text-slate-200 font-bold">{ex.series} series</span>
                                 <span>·</span>
                                 <span>{ex.repeticiones} reps</span>
                                 <span>·</span>
@@ -649,16 +648,16 @@
                         </button>
 
                         {isExpanded && (
-                          <div className="px-3 pb-3 pt-1 border-t border-white/5 bg-black/40 space-y-3 text-xs">
+                          <div className="px-3 pb-3 pt-1 border-t border-white/5 bg-black/40 space-y-2.5 text-xs">
                             
-                            {/* Botón Guía Táctica */}
+                            {/* Guía Táctica */}
                             <div>
                               <button
                                 onClick={() => setShowHelp(prev => ({ ...prev, [ex.id]: !prev[ex.id] }))}
-                                className="w-full bg-neutral-900/80 border border-white/10 hover:border-emerald-500/40 text-neutral-400 font-bold py-1.5 px-2.5 rounded-xl flex items-center justify-between text-[10px] transition"
+                                className="w-full bg-neutral-900/80 border border-white/10 hover:border-emerald-500/40 text-neutral-400 font-bold py-1 px-2.5 rounded-xl flex items-center justify-between text-[10px] transition"
                               >
                                 <span className="flex items-center gap-1.5 text-emerald-400">
-                                  <span>💡</span> Técnica Clave & Errores
+                                  <span>💡</span> Guía Técnica
                                 </span>
                                 <span className="text-neutral-500">{isHelpOpen ? '▲ Ocultar' : '▼ Ver'}</span>
                               </button>
@@ -684,7 +683,7 @@
                             {/* Series Realizadas Hoy */}
                             {todayLogs.length > 0 && (
                               <div className="space-y-1">
-                                <span className="font-black text-[9px] text-emerald-400 uppercase tracking-widest">SERIES HOY</span>
+                                <span className="font-black text-[9px] text-emerald-400 uppercase tracking-widest">SERIES COMPLETADAS</span>
                                 <div className="space-y-1">
                                   {todayLogs.map((set, sIndex) => {
                                     const originalIndex = exLogs.findIndex(item => item === set);
@@ -712,63 +711,63 @@
                               </div>
                             )}
 
-                            {/* CUADRÍCULA DE ENTRADA UNIFICADA (Alta Densidad) */}
-                            <div className="bg-neutral-950/80 border border-white/10 rounded-2xl p-2.5 space-y-2">
+                            {/* REGISTRO IN-LINE ULTRA-COMPACTO CON CHECK `✓` */}
+                            <div className="bg-neutral-950/90 border border-emerald-500/30 rounded-2xl p-2.5 space-y-2">
                               <div className="flex items-center justify-between">
-                                <span className="font-black text-[9px] text-neutral-400 uppercase tracking-widest">REGISTRO DE SERIE</span>
+                                <span className="font-black text-[9px] text-emerald-400 uppercase tracking-widest">NUEVA SERIE</span>
                                 {lastSet && (
                                   <span className="text-[9px] text-cyan-300 mono font-bold bg-cyan-950/50 px-2 py-0.5 rounded-lg border border-cyan-500/30">
-                                    💡 Ant: {lastSet.peso}kg × {lastSet.reps}
+                                    Ant: {lastSet.peso}kg × {lastSet.reps}
                                   </span>
                                 )}
                               </div>
 
-                              {/* Fila Única de Inputs Compactos */}
-                              <div className="grid grid-cols-3 gap-2">
+                              <div className="flex items-center gap-2">
                                 
                                 {/* PESO */}
-                                <div className="bg-neutral-900 rounded-xl p-2 border border-white/5 flex flex-col items-center">
+                                <div className="flex-1 bg-neutral-900 rounded-xl p-1.5 border border-white/5 flex flex-col items-center">
                                   <span className="text-[8px] font-black text-neutral-400 uppercase">PESO (KG)</span>
-                                  <div className="flex items-center justify-between w-full mt-1">
-                                    <button onClick={() => handleWeightChange(ex.id, -2.5)} className="w-6 h-6 bg-neutral-800 text-slate-300 rounded-lg text-xs font-black">-</button>
-                                    <span className="font-black text-sm text-emerald-400 mono">{exInput.peso}</span>
-                                    <button onClick={() => handleWeightChange(ex.id, 2.5)} className="w-6 h-6 bg-neutral-800 text-slate-300 rounded-lg text-xs font-black">+</button>
+                                  <div className="flex items-center justify-between w-full mt-0.5">
+                                    <button onClick={() => handleWeightChange(ex.id, -2.5)} className="w-5 h-5 bg-neutral-800 text-slate-300 rounded text-xs font-black">-</button>
+                                    <span className="font-black text-xs text-emerald-400 mono">{exInput.peso}</span>
+                                    <button onClick={() => handleWeightChange(ex.id, 2.5)} className="w-5 h-5 bg-neutral-800 text-slate-300 rounded text-xs font-black">+</button>
                                   </div>
                                 </div>
 
                                 {/* REPS */}
-                                <div className="bg-neutral-900 rounded-xl p-2 border border-white/5 flex flex-col items-center">
+                                <div className="flex-1 bg-neutral-900 rounded-xl p-1.5 border border-white/5 flex flex-col items-center">
                                   <span className="text-[8px] font-black text-neutral-400 uppercase">REPS</span>
-                                  <div className="flex items-center justify-between w-full mt-1">
-                                    <button onClick={() => handleStepChange(ex.id, 'reps', -1)} className="w-6 h-6 bg-neutral-800 text-slate-300 rounded-lg text-xs font-black">-</button>
-                                    <span className="font-black text-sm text-white mono">{exInput.reps}</span>
-                                    <button onClick={() => handleStepChange(ex.id, 'reps', 1)} className="w-6 h-6 bg-neutral-800 text-slate-300 rounded-lg text-xs font-black">+</button>
+                                  <div className="flex items-center justify-between w-full mt-0.5">
+                                    <button onClick={() => handleStepChange(ex.id, 'reps', -1)} className="w-5 h-5 bg-neutral-800 text-slate-300 rounded text-xs font-black">-</button>
+                                    <span className="font-black text-xs text-white mono">{exInput.reps}</span>
+                                    <button onClick={() => handleStepChange(ex.id, 'reps', 1)} className="w-5 h-5 bg-neutral-800 text-slate-300 rounded text-xs font-black">+</button>
                                   </div>
                                 </div>
 
                                 {/* RIR */}
-                                <div className="bg-neutral-900 rounded-xl p-2 border border-white/5 flex flex-col items-center">
+                                <div className="flex-1 bg-neutral-900 rounded-xl p-1.5 border border-white/5 flex flex-col items-center">
                                   <span className="text-[8px] font-black text-neutral-400 uppercase">RIR</span>
-                                  <div className="flex items-center justify-between w-full mt-1">
-                                    <button onClick={() => handleStepChange(ex.id, 'rir', -1)} className="w-6 h-6 bg-neutral-800 text-slate-300 rounded-lg text-xs font-black">-</button>
-                                    <span className="font-black text-sm text-white mono">{exInput.rir}</span>
-                                    <button onClick={() => handleStepChange(ex.id, 'rir', 1)} className="w-6 h-6 bg-neutral-800 text-slate-300 rounded-lg text-xs font-black">+</button>
+                                  <div className="flex items-center justify-between w-full mt-0.5">
+                                    <button onClick={() => handleStepChange(ex.id, 'rir', -1)} className="w-5 h-5 bg-neutral-800 text-slate-300 rounded text-xs font-black">-</button>
+                                    <span className="font-black text-xs text-white mono">{exInput.rir}</span>
+                                    <button onClick={() => handleStepChange(ex.id, 'rir', 1)} className="w-5 h-5 bg-neutral-800 text-slate-300 rounded text-xs font-black">+</button>
                                   </div>
                                 </div>
 
+                                {/* BOTÓN DE CHECK DIRECTO (Sustituye a la barra grande) */}
+                                <button 
+                                  onClick={() => handleSaveSet(ex)}
+                                  className="h-11 w-12 bg-emerald-400 hover:bg-emerald-300 active:scale-95 text-black font-black rounded-xl text-lg flex items-center justify-center shadow-lg shadow-emerald-400/30 transition"
+                                  title="Guardar Serie"
+                                >
+                                  ✓
+                                </button>
+
                               </div>
 
-                              <div className="flex items-center justify-between px-1 text-[9px] mono text-cyan-400">
-                                <span>⚖️ {getPlateBreakdown(exInput.peso)}</span>
+                              <div className="text-[9px] mono text-cyan-400 text-right px-0.5 font-semibold">
+                                ⚖️ {getPlateBreakdown(exInput.peso)}
                               </div>
-
-                              <button 
-                                onClick={() => handleSaveSet(ex)}
-                                className="w-full bg-emerald-400 hover:bg-emerald-300 active:scale-[0.98] text-black font-black py-3 rounded-xl text-xs tracking-wider uppercase transition shadow-lg shadow-emerald-400/20 flex items-center justify-center gap-1.5"
-                              >
-                                <span>GUARDAR SERIE</span>
-                                <span className="bg-black/15 px-2 py-0.5 rounded-md text-[10px] mono font-bold">{exInput.peso}kg × {exInput.reps}</span>
-                              </button>
                             </div>
 
                           </div>
