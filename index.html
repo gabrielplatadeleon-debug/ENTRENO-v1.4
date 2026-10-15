@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>ENTRENO PRO 2026 - Bulletproof v3.3</title>
+  <title>ENTRENO PRO 2026 - Bulletproof v3.4</title>
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#000000">
 
@@ -314,6 +314,7 @@
       const [currentProfile, setCurrentProfile] = React.useState("Perfil Principal");
       const [logs, setLogs] = React.useState({});
       const [expandedEx, setExpandedEx] = React.useState({});
+      const [showHelp, setShowHelp] = React.useState({});
       const [inputs, setInputs] = React.useState({});
       const [syncStatus, setSyncStatus] = React.useState("Desconectado de Drive");
       const [accessToken, setAccessToken] = React.useState(null);
@@ -498,7 +499,7 @@
                 </div>
                 <div>
                   <h1 className="text-emerald-400 font-extrabold text-sm tracking-tight mono leading-none">ENTRENO PRO</h1>
-                  <span className="text-[9px] text-neutral-400 font-bold tracking-widest uppercase">GRID PERFORMANCE v3.3</span>
+                  <span className="text-[9px] text-neutral-400 font-bold tracking-widest uppercase">MOBILE OPTIMIZED v3.4</span>
                 </div>
               </div>
 
@@ -583,6 +584,7 @@
                 <div className="space-y-3.5">
                   {currentDay.ejercicios.map((ex) => {
                     const isExpanded = expandedEx[ex.id];
+                    const isHelpOpen = showHelp[ex.id];
                     const exInput = inputs[ex.id] || { peso: 50, reps: 6, rir: 2 };
                     const exLogs = logs[ex.id] || [];
                     const isFlashing = flashExId === ex.id;
@@ -632,24 +634,39 @@
                         {isExpanded && (
                           <div className="px-4 pb-4 pt-1 border-t border-white/5 bg-black/40 space-y-4 text-xs">
                             
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
-                              <div className="bg-emerald-950/20 border border-emerald-500/20 rounded-2xl p-3.5">
-                                <span className="text-[10px] font-black text-emerald-400 tracking-wider uppercase">Técnica Clave</span>
-                                <ul className="list-disc list-inside text-slate-300 mt-1 space-y-1 text-[11px]">
-                                  {ex.como.map((c, i) => <li key={i}>{c}</li>)}
-                                </ul>
-                              </div>
-                              <div className="bg-rose-950/20 border border-rose-500/20 rounded-2xl p-3.5">
-                                <span className="text-[10px] font-black text-rose-400 tracking-wider uppercase">Errores a Evitar</span>
-                                <ul className="list-disc list-inside text-neutral-400 mt-1 space-y-1 text-[11px]">
-                                  {ex.errores.map((e, i) => <li key={i}>{e}</li>)}
-                                </ul>
-                              </div>
+                            {/* Botón de acordeón para Técnica y Errores (Optimización Móvil) */}
+                            <div className="pt-2">
+                              <button
+                                onClick={() => setShowHelp(prev => ({ ...prev, [ex.id]: !prev[ex.id] }))}
+                                className="w-full bg-neutral-900/80 border border-white/10 hover:border-emerald-500/40 text-neutral-300 font-extrabold py-2 px-3 rounded-xl flex items-center justify-between text-[11px] transition"
+                              >
+                                <span className="flex items-center gap-2 text-emerald-400">
+                                  <span>💡</span> Técnica Clave & Errores
+                                </span>
+                                <span className="text-neutral-500">{isHelpOpen ? '▲ Ocultar' : '▼ Ver guía'}</span>
+                              </button>
+
+                              {isHelpOpen && (
+                                <div className="grid grid-cols-1 gap-2.5 mt-2.5 animate-fadeIn">
+                                  <div className="bg-emerald-950/20 border border-emerald-500/20 rounded-2xl p-3">
+                                    <span className="text-[10px] font-black text-emerald-400 tracking-wider uppercase">Técnica Clave</span>
+                                    <ul className="list-disc list-inside text-slate-300 mt-1 space-y-1 text-[11px]">
+                                      {ex.como.map((c, i) => <li key={i}>{c}</li>)}
+                                    </ul>
+                                  </div>
+                                  <div className="bg-rose-950/20 border border-rose-500/20 rounded-2xl p-3">
+                                    <span className="text-[10px] font-black text-rose-400 tracking-wider uppercase">Errores a Evitar</span>
+                                    <ul className="list-disc list-inside text-neutral-400 mt-1 space-y-1 text-[11px]">
+                                      {ex.errores.map((e, i) => <li key={i}>{e}</li>)}
+                                    </ul>
+                                  </div>
+                                </div>
+                              )}
                             </div>
 
-                            {/* GRID DE RENDIMIENTO: Tabla de Series Registradas */}
+                            {/* Grid de Rendimiento: Series Realizadas Hoy */}
                             {todayLogs.length > 0 && (
-                              <div className="mt-3 space-y-2">
+                              <div className="space-y-2">
                                 <span className="font-black text-[10px] text-emerald-400 uppercase tracking-widest">SERIES REALIZADAS HOY</span>
                                 <div className="space-y-1.5">
                                   {todayLogs.map((set, sIndex) => {
@@ -679,7 +696,7 @@
                               </div>
                             )}
 
-                            <div className="pt-2 space-y-3.5">
+                            <div className="space-y-3.5">
                               <div className="flex items-center justify-between px-0.5">
                                 <span className="font-black text-[10px] text-neutral-400 uppercase tracking-widest">REGISTRO DE NUEVA SERIE</span>
                                 {lastSet && (
