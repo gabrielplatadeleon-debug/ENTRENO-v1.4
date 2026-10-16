@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>ENTRENO PRO 2026 - Bulletproof v3.9</title>
+  <title>ENTRENO PRO 2026 - Bulletproof v4.0</title>
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#000000">
 
@@ -46,12 +46,12 @@
   <div id="root"></div>
 
   <script type="text/babel">
-    const ROUTINE_DATA = [
-      {
-        id: "lunes",
+    // BASE DE DATOS DE EJERCICIOS CON VARIANTES SEMANALES (A y B)
+    const ROUTINE_VARIANTS = {
+      lunes: {
         label: "LUNES",
         sub: "UPPER",
-        ejercicios: [
+        semanaA: [
           {
             id: "press-banca",
             nombre: "PRESS BANCA",
@@ -87,13 +87,49 @@
             como: ["Mancuernas a lados, codo semi flexionado", "Eleva hasta altura hombro liderando codo", "Baja 2s sin balanceo"],
             errores: ["Usar trapecio superior", "Balancear tronco para impulso"]
           }
+        ],
+        semanaB: [
+          {
+            id: "press-banca",
+            nombre: "PRESS BANCA",
+            series: 4,
+            como: ["Retrae escápulas y pies firmes en el suelo", "Baja controlado al pecho medio, codos 45°", "Presiona vertical sin rebotar, bloquea arriba"],
+            errores: ["Arquear lumbar excesivo o rebotar barra", "Codos totalmente abiertos a 90°"]
+          },
+          {
+            id: "remo-pecho-apoyado",
+            nombre: "REMO EN PECHO APOYADO (Variante B)",
+            series: 4,
+            como: ["Pecho apoyado en banco inclinado", "Tira de los codos hacia atrás contrayendo", "Controla la bajada sin inercia"],
+            errores: ["Separar el pecho del banco", "Rango de movimiento incompleto"]
+          },
+          {
+            id: "press-declinado-o-fondo",
+            nombre: "FONDOS EN PARALELAS (Variante B)",
+            series: 3,
+            como: ["Inclinación leve al frente para pecho", "Baja controlando a 90° de codo", "Empuja verticalmente"],
+            errores: ["Encoger los hombros hacia las orejas", "Rango parcial"]
+          },
+          {
+            id: "dominadas-o-jalon-al-pecho",
+            nombre: "JALÓN AL PECHO PRONO (Variante B)",
+            series: 3,
+            como: ["Agarre ancho pronado, pecho elevado", "Lleva la barra hacia la parte alta del pecho", "Estira completo arriba"],
+            errores: ["Balanceo excesivo del torso", "Tirar con los brazos en lugar de la espalda"]
+          },
+          {
+            id: "elevacion-lateral-polea",
+            nombre: "ELEVACIÓN LATERAL EN POLEA (Variante B)",
+            series: 2,
+            como: ["Cable cruzado por detrás", "Eleva de forma fluida manteniendo tensión constante"],
+            errores: ["Usar tirones bruscos", "Pasar de la horizontalidad"]
+          }
         ]
       },
-      {
-        id: "martes",
+      martes: {
         label: "MARTES",
         sub: "LOWER",
-        ejercicios: [
+        semanaA: [
           {
             id: "sentadilla",
             nombre: "SENTADILLA",
@@ -129,117 +165,97 @@
             como: ["Apoyo antepié, estira abajo completo", "Pausa 1s arriba contrayendo fuerte", "Rodilla extendida sin bloqueo"],
             errores: ["Rebotar sin control", "No estirar abajo"]
           }
+        ],
+        semanaB: [
+          {
+            id: "sentadilla",
+            nombre: "SENTADILLA",
+            series: 4,
+            como: ["Barra media-trapecio, pies ancho hombros", "Rodillas hacia afuera, rompe paralelo", "Sube empujando suelo, cadera y hombros a la vez"],
+            errores: ["Talones se levantan o rodillas colapsan dentro", "Perder tensión lumbar abajo"]
+          },
+          {
+            id: "hip-thrust-pesado",
+            nombre: "HIP THRUST PESADO (Variante B)",
+            series: 3,
+            como: ["Escápulas apoyadas, empuje de cadera potente", "Pausa de 1s arriba"],
+            errores: ["Hiperextensión lumbar", "Colocación incorrecta de los pies"]
+          },
+          {
+            id: "zancadas-bulgaras",
+            nombre: "ZANCADAS BÚLGARAS (Variante B)",
+            series: 2,
+            como: ["Pie trasero elevado, torso vertical", "Descenso profundo y controlado"],
+            errores: ["Pérdida de equilibrio", "Rodilla adelantada excesiva"]
+          },
+          {
+            id: "curl-femoral-sentado",
+            nombre: "CURL FEMORAL SENTADO (Variante B)",
+            series: 3,
+            como: ["Alineado con el eje de la máquina", "Flexión máxima y control excéntrico"],
+            errores: ["Despegar el glúteo del asiento", "Inercia"]
+          },
+          {
+            id: "gemelo-sentado",
+            nombre: "GEMELO SENTADO (Variante B)",
+            series: 4,
+            como: ["Estiramiento completo abajo, contracción limpia arriba"],
+            errores: ["Rebote rápido sin pausa"]
+          }
         ]
       },
-      {
-        id: "jueves",
+      jueves: {
         label: "JUEVES",
         sub: "UPPER",
-        ejercicios: [
-          {
-            id: "press-militar",
-            nombre: "PRESS MILITAR",
-            series: 3,
-            como: ["Glúteo apretado, costillas abajo", "Barra de clavícula a sobre cabeza recto", "Cabeza pasa al frente al final"],
-            errores: ["Arquear lumbar excesivo", "Barra se va muy al frente"]
-          },
-          {
-            id: "remo-polea",
-            nombre: "REMO POLEA",
-            series: 3,
-            como: ["Torso vertical, agarre medio", "Codos atrás, pausa 1s contra abdomen", "Estira dorsal sin encorvar"],
-            errores: ["Jalar con impulso de tronco", "No retraer escápula"]
-          },
-          {
-            id: "fondos",
-            nombre: "FONDOS",
-            series: 3,
-            como: ["Hombros deprimidos, leve inclinación", "Baja hasta 90° codo, pecho estirado", "Sube bloqueando sin encoger"],
-            errores: ["Hombros hacia orejas", "Rango muy corto"]
-          },
-          {
-            id: "curl-inclinado",
-            nombre: "CURL INCLINADO",
-            series: 3,
-            como: ["Banco 60°, hombros atrás", "Curl sin mover hombro, supina completo", "Baja lento estirando bíceps"],
-            errores: ["Balancear mancuerna con hombro", "No extender abajo"]
-          },
-          {
-            id: "pajaros-maquina",
-            nombre: "PÁJAROS MÁQUINA",
-            series: 3,
-            como: ["Pecho apoyado, agarre neutro", "Abre codos atrás hasta línea hombro", "Aprieta deltoide posterior arriba"],
-            errores: ["Usar trapecio superior", "Rango excesivo hiperextendiendo"]
-          }
+        semanaA: [
+          { id: "press-militar", nombre: "PRESS MILITAR", series: 3, como: ["Glúteo apretado, costillas abajo"], errores: ["Arquear lumbar"] },
+          { id: "remo-polea", nombre: "REMO POLEA", series: 3, como: ["Torso vertical, agarre medio"], errores: ["Impulso de tronco"] },
+          { id: "fondos", nombre: "FONDOS", series: 3, como: ["Hombros deprimidos"], errores: ["Rango corto"] },
+          { id: "curl-inclinado", nombre: "CURL INCLINADO", series: 3, como: ["Banco 60°, sin mover hombro"], errores: ["Balanceo"] },
+          { id: "pajaros-maquina", nombre: "PÁJAROS MÁQUINA", series: 3, como: ["Pecho apoyado"], errores: ["Usar trapecio"] }
+        ],
+        semanaB: [
+          { id: "press-militar-mancuernas", nombre: "PRESS ARNOLD O MANCUERNAS (Var B)", series: 3, como: ["Rotación limpia en el recorrido"], errores: ["Inercia excesiva"] },
+          { id: "jalon-al-pecho-unilateral", nombre: "JALÓN UNILATERAL (Var B)", series: 3, como: ["Foco en dorsal ancho"], errores: ["Rotación de cadera"] },
+          { id: "press-banca-cerrado", nombre: "PRESS BANCA AGARRE CERRADO (Var B)", series: 3, como: ["Codos pegados al cuerpo"], errores: ["Separar codos"] },
+          { id: "curl-banco-scott", nombre: "CURL EN BANCO SCOTT (Var B)", series: 3, como: ["Axilas apoyadas firmes"], errores: ["Separar codos del pad"] },
+          { id: "face-pull", nombre: "FACE PULL (Var B)", series: 2, como: ["Rotación externa al final"], errores: ["Tirar hacia abajo"] }
         ]
       },
-      {
-        id: "viernes",
+      viernes: {
         label: "VIERNES",
         sub: "LOWER",
-        ejercicios: [
-          {
-            id: "hack-squat",
-            nombre: "HACK SQUAT",
-            series: 3,
-            como: ["Espalda pegada, pies medio-altos", "Baja profundo controlado", "Empuja con talón sin despegar lumbar"],
-            errores: ["Rodillas dentro o talones arriba", "Descenso a medias"]
-          },
-          {
-            id: "hip-thrust",
-            nombre: "HIP THRUST",
-            series: 3,
-            como: ["Escápulas en banco, barbilla neutra", "Sube cadera hasta línea rodilla-hombro", "Aprieta glúteo 1s arriba"],
-            errores: ["Hiperextender lumbar arriba", "Pies muy lejos/cerca"]
-          },
-          {
-            id: "bulgara",
-            nombre: "ZANCADA BÚLGARA",
-            series: 2,
-            como: ["Pie trasero en banco, tronco recto", "Baja rodilla trasera casi al suelo", "Sube con pierna delantera sin impulso"],
-            errores: ["Tronco se inclina excesivo", "Rodilla delantera colapsa dentro"]
-          },
-          {
-            id: "ext-cuadriceps",
-            nombre: "EXTENSIÓN CUÁDRICEPS",
-            series: 2,
-            como: ["Respaldo firme, punta pie neutra", "Extiende hasta casi bloqueo controlado", "Baja 2s sin dejar caer"],
-            errores: ["Arrancar con tirón de cadera", "Dejar caer el peso en la bajada"]
-          }
+        semanaA: [
+          { id: "hack-squat", nombre: "HACK SQUAT", series: 3, como: ["Espalda pegada"], errores: ["Talones arriba"] },
+          { id: "hip-thrust", nombre: "HIP THRUST", series: 3, como: ["Escápulas en banco"], errores: ["Lumbar"] },
+          { id: "bulgara", nombre: "ZANCADA BÚLGARA", series: 2, como: ["Tronco recto"], errores: ["Inclinación"] },
+          { id: "ext-cuadriceps", nombre: "EXTENSIÓN CUÁDRICEPS", series: 2, como: ["Respaldo firme"], errores: ["Tirón de cadera"] }
+        ],
+        semanaB: [
+          { id: "prensa-pies-bajos", nombre: "PRENSA PIES BAJOS (Var B)", series: 3, como: ["Mayor énfasis en cuádriceps"], errores: ["Despegar glúteo"] },
+          { id: "peso-muerto-sumo", nombre: "PESO MUERTO SUMO (Var B)", series: 3, como: ["Apertura amplia de piernas"], errores: ["Redondear espalda"] },
+          { id: "curl-femoral-de-pie", nombre: "CURL FEMORAL DE PIE (Var B)", series: 2, como: ["Aislamiento femoral estricto"], errores: ["Balancear torso"] },
+          { id: "ext-cuadriceps-unilateral", nombre: "EXTENSIÓN UNILATERAL (Var B)", series: 2, como: ["Contracción de 1s arriba"], errores: ["Velocidad descontrolada"] }
         ]
       }
-    ];
+    };
 
     const MODE_CONFIGS = {
-      fuerza: {
-        label: "FUERZA",
-        repsDefault: 4,
-        repsRange: "3-5",
-        rirDefault: 2,
-        restDefault: 180,
-        desc: "Alta Carga · Descanso Largo"
-      },
-      hipertrofia: {
-        label: "HIPERTROFIA",
-        repsDefault: 8,
-        repsRange: "6-12",
-        rirDefault: 1,
-        restDefault: 90,
-        desc: "Volumen Óptimo · Tensión Estructurada"
-      },
-      resistencia: {
-        label: "RESISTENCIA",
-        repsDefault: 15,
-        repsRange: "12-20",
-        rirDefault: 0,
-        restDefault: 60,
-        desc: "Densidad Metabólica · Fallo Controlado"
-      }
+      fuerza: { label: "FUERZA", repsDefault: 4, repsRange: "3-5", rirDefault: 2, restDefault: 180, desc: "Alta Carga · Descanso Largo" },
+      hipertrofia: { label: "HIPERTROFIA", repsDefault: 8, repsRange: "6-12", rirDefault: 1, restDefault: 90, desc: "Volumen Óptimo · Tensión Estructurada" },
+      resistencia: { label: "RESISTENCIA", repsDefault: 15, repsRange: "12-20", rirDefault: 0, restDefault: 60, desc: "Densidad Metabólica · Fallo Controlado" }
     };
 
     function App() {
       const [activeTab, setActiveTab] = React.useState("lunes");
       const [trainingMode, setTrainingMode] = React.useState("hipertrofia");
+      const [weekVariant, setWeekVariant] = React.useState(() => {
+        // Cálculo automático de semana A o B según la semana del año
+        const d = new Date();
+        const onejan = new Date(d.getFullYear(), 0, 1);
+        const weekNum = Math.ceil((((d - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+        return weekNum % 2 === 0 ? "semanaB" : "semanaA";
+      });
       const [profiles, setProfiles] = React.useState(["Perfil Principal"]);
       const [currentProfile, setCurrentProfile] = React.useState("Perfil Principal");
       const [logs, setLogs] = React.useState({});
@@ -277,7 +293,6 @@
         return () => clearInterval(interval);
       }, [timer.active, timer.secondsLeft]);
 
-      // RESOLUCIÓN Y CREACIÓN DE CARPETA DEDICADA 'ENTRENO_PRO_DATA'
       const getOrCreateAppFolder = async (token) => {
         try {
           const searchFolder = await fetch(
@@ -298,7 +313,6 @@
             return created.id;
           }
         } catch (err) {
-          console.error("Error al resolver la carpeta en Drive:", err);
           return null;
         }
       };
@@ -310,11 +324,11 @@
           callback: async (response) => {
             if (response.access_token) {
               setAccessToken(response.access_token);
-              setSyncStatus("Buscando carpeta ENTRENO_PRO_DATA...");
+              setSyncStatus("Conectando con Drive...");
               const fId = await getOrCreateAppFolder(response.access_token);
               setFolderId(fId);
-              setSyncStatus(fId ? "Conectado a /ENTRENO_PRO_DATA ☁️" : "Conectado (Raíz)");
-              alert("¡Conectado exitosamente con Google Drive! Carpeta dedicada activa.");
+              setSyncStatus(fId ? "Conectado a /ENTRENO_PRO_DATA/ ☁️" : "Conectado (Raíz)");
+              alert("¡Conectado exitosamente con Google Drive!");
             }
           },
         });
@@ -451,14 +465,16 @@
         return `${m}:${s < 10 ? '0' : ''}${s}`;
       };
 
-      const currentDay = ROUTINE_DATA.find(d => d.id === activeTab);
+      const dayConfig = ROUTINE_VARIANTS[activeTab];
+      const currentExercises = dayConfig ? dayConfig[weekVariant] : [];
 
       const todayDate = new Date().toISOString().split('T')[0];
       let totalSessionSets = 0;
       let totalSessionVolume = 0;
 
-      if (currentDay) {
-        currentDay.ejercicios.forEach(ex => {
+      if (dayConfig) {
+        const allPossibleEx = [...dayConfig.semanaA, ...dayConfig.semanaB];
+        allPossibleEx.forEach(ex => {
           const exLogs = logs[ex.id] || [];
           const todayLogs = exLogs.filter(e => e.fecha === todayDate);
           totalSessionSets += todayLogs.length;
@@ -479,7 +495,7 @@
                 </div>
                 <div>
                   <h1 className="text-emerald-400 font-extrabold text-sm tracking-tight mono leading-none">ENTRENO PRO</h1>
-                  <span className="text-[9px] text-neutral-400 font-bold tracking-widest uppercase">ISOLATED DRIVE v3.9</span>
+                  <span className="text-[9px] text-neutral-400 font-bold tracking-widest uppercase">ROTATOR v4.0</span>
                 </div>
               </div>
 
@@ -488,12 +504,12 @@
                   onClick={() => setShowGlossary(true)}
                   className="bg-neutral-900/90 border border-emerald-500/40 text-xs px-2.5 py-1.5 rounded-xl text-emerald-400 font-black flex items-center gap-1 shadow-[0_0_10px_rgba(16,185,129,0.15)]"
                 >
-                  <span>❓</span> Glosario
+                  <span>❓</span>
                 </button>
                 <select 
                   value={currentProfile}
                   onChange={(e) => setCurrentProfile(e.target.value)}
-                  className="bg-neutral-900/90 border border-white/10 text-xs font-bold rounded-xl px-2.5 py-1.5 text-slate-200 outline-none focus:border-emerald-500"
+                  className="bg-neutral-900/90 border border-white/10 text-xs font-bold rounded-xl px-2 py-1.5 text-slate-200 outline-none focus:border-emerald-500"
                 >
                   {profiles.map(p => <option key={p} value={p}>{p}</option>)}
                 </select>
@@ -513,7 +529,7 @@
               <div className="glass-card border border-emerald-500/40 rounded-3xl p-5 max-w-md w-full space-y-4 shadow-2xl animate-fadeIn">
                 <div className="flex items-center justify-between border-b border-white/10 pb-3">
                   <h3 className="text-emerald-400 font-black text-sm uppercase tracking-wider flex items-center gap-2">
-                    <span>📖</span> Glosario Técnico de Entrenamiento
+                    <span>📖</span> Glosario Técnico
                   </h3>
                   <button 
                     onClick={() => setShowGlossary(false)}
@@ -525,12 +541,12 @@
 
                 <div className="space-y-3 text-xs text-slate-300 max-h-[60vh] overflow-y-auto pr-1">
                   <div className="bg-neutral-900/90 p-3 rounded-2xl border border-white/5 space-y-1">
-                    <strong className="text-emerald-400 font-extrabold">RIR (Reps in Reserve):</strong>
-                    <p className="text-neutral-400 text-[11px]">Repeticiones que te quedan en recámara antes del fallo técnico absoluto.</p>
+                    <strong className="text-emerald-400 font-extrabold">Rotación Semanal (Semana A / B):</strong>
+                    <p className="text-neutral-400 text-[11px]">Alterna automáticamente los ejercicios accesorios para estimular fibras desde nuevos ángulos sin perder continuidad.</p>
                   </div>
                   <div className="bg-neutral-900/90 p-3 rounded-2xl border border-white/5 space-y-1">
-                    <strong className="text-cyan-400 font-extrabold">Tonelaje / Volumen:</strong>
-                    <p className="text-neutral-400 text-[11px]">Suma total de Peso × Repeticiones completadas en la sesión.</p>
+                    <strong className="text-cyan-400 font-extrabold">RIR (Reps in Reserve):</strong>
+                    <p className="text-neutral-400 text-[11px]">Repeticiones restantes antes del fallo muscular real.</p>
                   </div>
                 </div>
 
@@ -544,33 +560,55 @@
             </div>
           )}
 
-          {activeTab !== "progreso" && currentDay && (
+          {activeTab !== "progreso" && dayConfig && (
             <div className="max-w-4xl mx-auto w-full px-4 pt-3 space-y-2">
               
-              <div className="glass-card rounded-2xl p-2.5 border border-white/10 shadow-xl flex items-center justify-between gap-2">
-                <span className="text-[9px] font-black uppercase tracking-widest text-neutral-400 pl-1">ENFOQUE</span>
-                <div className="flex items-center gap-1.5 flex-1 max-w-xs">
-                  {Object.keys(MODE_CONFIGS).map(modeKey => {
-                    const cfg = MODE_CONFIGS[modeKey];
-                    const isActive = trainingMode === modeKey;
-                    return (
-                      <button
-                        key={modeKey}
-                        onClick={() => setTrainingMode(modeKey)}
-                        className={`flex-1 py-1.5 px-2 rounded-xl text-[10px] font-black uppercase transition-all ${isActive ? 'bg-emerald-400 text-black shadow-[0_0_12px_rgba(16,185,129,0.4)] scale-105' : 'bg-neutral-900 text-neutral-400 hover:text-white border border-white/5'}`}
-                      >
-                        {cfg.label}
-                      </button>
-                    );
-                  })}
+              {/* SELECTOR DE MODO Y ROTACIÓN SEMANAL */}
+              <div className="glass-card rounded-2xl p-2.5 border border-white/10 shadow-xl flex flex-col gap-2">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[9px] font-black uppercase tracking-widest text-neutral-400 pl-1">ENFOQUE</span>
+                  <div className="flex items-center gap-1 flex-1">
+                    {Object.keys(MODE_CONFIGS).map(modeKey => {
+                      const cfg = MODE_CONFIGS[modeKey];
+                      const isActive = trainingMode === modeKey;
+                      return (
+                        <button
+                          key={modeKey}
+                          onClick={() => setTrainingMode(modeKey)}
+                          className={`flex-1 py-1.5 px-1 rounded-xl text-[9px] font-black uppercase transition-all ${isActive ? 'bg-emerald-400 text-black shadow-[0_0_12px_rgba(16,185,129,0.4)] scale-105' : 'bg-neutral-900 text-neutral-400 hover:text-white border border-white/5'}`}
+                        >
+                          {cfg.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between gap-2 pt-1 border-t border-white/5">
+                  <span className="text-[9px] font-black uppercase tracking-widest text-emerald-400 pl-1">BLOQUE</span>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => setWeekVariant("semanaA")}
+                      className={`py-1 px-3 rounded-xl text-[10px] font-black transition ${weekVariant === "semanaA" ? 'bg-cyan-400 text-black shadow' : 'bg-neutral-900 text-neutral-400 border border-white/5'}`}
+                    >
+                      Semana A
+                    </button>
+                    <button
+                      onClick={() => setWeekVariant("semanaB")}
+                      className={`py-1 px-3 rounded-xl text-[10px] font-black transition ${weekVariant === "semanaB" ? 'bg-cyan-400 text-black shadow' : 'bg-neutral-900 text-neutral-400 border border-white/5'}`}
+                    >
+                      Semana B (Variante)
+                    </button>
+                  </div>
                 </div>
               </div>
 
+              {/* MÉTROLOGÍA DE SESIÓN */}
               <div className="glass-card rounded-2xl p-3 flex items-center justify-between border border-white/10 shadow-xl">
                 <div>
                   <div className="text-[9px] font-black uppercase tracking-widest text-neutral-400">SESIÓN ACTIVA</div>
-                  <div className="text-xs font-extrabold text-slate-200 mt-0.5">{currentDay.label} · <span className="text-emerald-400">{currentMode.label}</span></div>
-                  <div className="text-[9px] text-cyan-400 font-semibold mt-0.5">{currentMode.desc}</div>
+                  <div className="text-xs font-extrabold text-slate-200 mt-0.5">{dayConfig.label} · <span className="text-emerald-400">{currentMode.label}</span></div>
+                  <div className="text-[9px] text-cyan-400 font-semibold mt-0.5">Rotación: {weekVariant === 'semanaA' ? 'Bloque Base' : 'Bloque Accesorio Variado'}</div>
                 </div>
                 <div className="flex items-center gap-4 text-right">
                   <div>
@@ -602,7 +640,7 @@
                       Conectar Google Drive (/ENTRENO_PRO_DATA/)
                     </button>
                   ) : (
-                    <p className="text-xs text-emerald-300 font-bold">¡Conectado! Archivos resguardados aisladamente en la carpeta /ENTRENO_PRO_DATA/.</p>
+                    <p className="text-xs text-emerald-300 font-bold">¡Conectado! Archivos resguardados en /ENTRENO_PRO_DATA/.</p>
                   )}
                 </div>
 
@@ -630,9 +668,9 @@
                 </div>
               </div>
             ) : (
-              currentDay && (
+              dayConfig && (
                 <div className="space-y-3">
-                  {currentDay.ejercicios.map((ex) => {
+                  {currentExercises.map((ex) => {
                     const isExpanded = expandedEx[ex.id];
                     const isHelpOpen = showHelp[ex.id];
                     const exInput = inputs[ex.id] || { peso: 50, reps: currentMode.repsDefault, rir: currentMode.rirDefault };
@@ -684,34 +722,38 @@
                         {isExpanded && (
                           <div className="px-3 pb-3 pt-1 border-t border-white/5 bg-black/40 space-y-2.5 text-xs">
                             
-                            <div>
-                              <button
-                                onClick={() => setShowHelp(prev => ({ ...prev, [ex.id]: !prev[ex.id] }))}
-                                className="w-full bg-neutral-900/80 border border-white/10 hover:border-emerald-500/40 text-neutral-400 font-bold py-1 px-2.5 rounded-xl flex items-center justify-between text-[10px] transition"
-                              >
-                                <span className="flex items-center gap-1.5 text-emerald-400">
-                                  <span>💡</span> Guía Técnica
-                                </span>
-                                <span className="text-neutral-500">{isHelpOpen ? '▲ Ocultar' : '▼ Ver'}</span>
-                              </button>
+                            {ex.como && ex.como.length > 0 && (
+                              <div>
+                                <button
+                                  onClick={() => setShowHelp(prev => ({ ...prev, [ex.id]: !prev[ex.id] }))}
+                                  className="w-full bg-neutral-900/80 border border-white/10 hover:border-emerald-500/40 text-neutral-400 font-bold py-1 px-2.5 rounded-xl flex items-center justify-between text-[10px] transition"
+                                >
+                                  <span className="flex items-center gap-1.5 text-emerald-400">
+                                    <span>💡</span> Guía Técnica
+                                  </span>
+                                  <span className="text-neutral-500">{isHelpOpen ? '▲ Ocultar' : '▼ Ver'}</span>
+                                </button>
 
-                              {isHelpOpen && (
-                                <div className="grid grid-cols-1 gap-2 mt-2">
-                                  <div className="bg-emerald-950/20 border border-emerald-500/20 rounded-xl p-2.5">
-                                    <span className="text-[9px] font-black text-emerald-400 uppercase">Técnica Clave</span>
-                                    <ul className="list-disc list-inside text-slate-300 mt-0.5 space-y-0.5 text-[10px]">
-                                      {ex.como.map((c, i) => <li key={i}>{c}</li>)}
-                                    </ul>
+                                {isHelpOpen && (
+                                  <div className="grid grid-cols-1 gap-2 mt-2">
+                                    <div className="bg-emerald-950/20 border border-emerald-500/20 rounded-xl p-2.5">
+                                      <span className="text-[9px] font-black text-emerald-400 uppercase">Técnica Clave</span>
+                                      <ul className="list-disc list-inside text-slate-300 mt-0.5 space-y-0.5 text-[10px]">
+                                        {ex.como.map((c, i) => <li key={i}>{c}</li>)}
+                                      </ul>
+                                    </div>
+                                    {ex.errores && (
+                                      <div className="bg-rose-950/20 border border-rose-500/20 rounded-xl p-2.5">
+                                        <span className="text-[9px] font-black text-rose-400 uppercase">Errores a Evitar</span>
+                                        <ul className="list-disc list-inside text-neutral-400 mt-0.5 space-y-0.5 text-[10px]">
+                                          {ex.errores.map((e, i) => <li key={i}>{e}</li>)}
+                                        </ul>
+                                      </div>
+                                    )}
                                   </div>
-                                  <div className="bg-rose-950/20 border border-rose-500/20 rounded-xl p-2.5">
-                                    <span className="text-[9px] font-black text-rose-400 uppercase">Errores a Evitar</span>
-                                    <ul className="list-disc list-inside text-neutral-400 mt-0.5 space-y-0.5 text-[10px]">
-                                      {ex.errores.map((e, i) => <li key={i}>{e}</li>)}
-                                    </ul>
-                                  </div>
-                                </div>
-                              )}
-                            </div>
+                                )}
+                              </div>
+                            )}
 
                             {todayLogs.length > 0 && (
                               <div className="space-y-1">
@@ -809,16 +851,19 @@
 
           <nav className="glass-nav fixed bottom-0 left-0 right-0 z-40 px-3 py-2">
             <div className="max-w-md mx-auto flex items-center justify-around gap-1">
-              {ROUTINE_DATA.map(day => (
-                <button
-                  key={day.id}
-                  onClick={() => setActiveTab(day.id)}
-                  className={`flex-1 py-1.5 px-1 rounded-xl text-[10px] font-extrabold flex flex-col items-center gap-0.5 transition ${activeTab === day.id ? 'bg-emerald-400 text-black shadow-[0_0_15px_rgba(16,185,129,0.4)]' : 'text-neutral-400 hover:text-white'}`}
-                >
-                  <span className="tracking-tighter">{day.label}</span>
-                  <span className="text-[8px] opacity-70 font-medium">{day.sub}</span>
-                </button>
-              ))}
+              {Object.keys(ROUTINE_VARIANTS).map(dayKey => {
+                const d = ROUTINE_VARIANTS[dayKey];
+                return (
+                  <button
+                    key={dayKey}
+                    onClick={() => setActiveTab(dayKey)}
+                    className={`flex-1 py-1.5 px-1 rounded-xl text-[10px] font-extrabold flex flex-col items-center gap-0.5 transition ${activeTab === dayKey ? 'bg-emerald-400 text-black shadow-[0_0_15px_rgba(16,185,129,0.4)]' : 'text-neutral-400 hover:text-white'}`}
+                  >
+                    <span className="tracking-tighter">{d.label}</span>
+                    <span className="text-[8px] opacity-70 font-medium">{d.sub}</span>
+                  </button>
+                );
+              })}
               <button
                 onClick={() => setActiveTab("progreso")}
                 className={`flex-1 py-1.5 px-1 rounded-xl text-[10px] font-extrabold flex flex-col items-center gap-0.5 transition ${activeTab === "progreso" ? 'bg-emerald-400 text-black shadow-[0_0_15px_rgba(16,185,129,0.4)]' : 'text-neutral-400 hover:text-white'}`}
