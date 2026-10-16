@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>ENTRENO PRO 2026 - Bulletproof v3.6</title>
+  <title>ENTRENO PRO 2026 - Bulletproof v3.7</title>
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#000000">
 
@@ -105,7 +105,7 @@
             descanso: "75",
             descansoTxt: "75s",
             como: ["Mancuernas a lados, codo semi flexionado", "Eleva hasta altura hombro liderando codo", "Baja 2s sin balanceo"],
-            errores: ["Usar trapecio para subir", "Balancear tronco para impulso"]
+            errores: ["Usar trapecio superior", "Balancear tronco para impulso"]
           }
         ]
       },
@@ -315,6 +315,7 @@
       const [logs, setLogs] = React.useState({});
       const [expandedEx, setExpandedEx] = React.useState({});
       const [showHelp, setShowHelp] = React.useState({});
+      const [showGlossary, setShowGlossary] = React.useState(false);
       const [inputs, setInputs] = React.useState({});
       const [syncStatus, setSyncStatus] = React.useState("Desconectado de Drive");
       const [accessToken, setAccessToken] = React.useState(null);
@@ -509,11 +510,17 @@
                 </div>
                 <div>
                   <h1 className="text-emerald-400 font-extrabold text-sm tracking-tight mono leading-none">ENTRENO PRO</h1>
-                  <span className="text-[9px] text-neutral-400 font-bold tracking-widest uppercase">IN-LINE CHECK v3.6</span>
+                  <span className="text-[9px] text-neutral-400 font-bold tracking-widest uppercase">GLOSSARY v3.7</span>
                 </div>
               </div>
 
               <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => setShowGlossary(true)}
+                  className="bg-neutral-900/90 border border-emerald-500/40 text-xs px-2.5 py-1.5 rounded-xl text-emerald-400 font-black flex items-center gap-1 shadow-[0_0_10px_rgba(16,185,129,0.15)]"
+                >
+                  <span>❓</span> Glosario
+                </button>
                 <select 
                   value={currentProfile}
                   onChange={(e) => setCurrentProfile(e.target.value)}
@@ -530,6 +537,54 @@
               </div>
             </div>
           </header>
+
+          {/* MODAL DE GLOSARIO TÉCNICO */}
+          {showGlossary && (
+            <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+              <div className="glass-card border border-emerald-500/40 rounded-3xl p-5 max-w-md w-full space-y-4 shadow-2xl animate-fadeIn">
+                <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                  <h3 className="text-emerald-400 font-black text-sm uppercase tracking-wider flex items-center gap-2">
+                    <span>📖</span> Glosario Técnico de Entrenamiento
+                  </h3>
+                  <button 
+                    onClick={() => setShowGlossary(false)}
+                    className="w-8 h-8 rounded-xl bg-neutral-900 text-neutral-400 hover:text-white flex items-center justify-center font-black"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <div className="space-y-3 text-xs text-slate-300 max-h-[60vh] overflow-y-auto pr-1">
+                  <div className="bg-neutral-900/90 p-3 rounded-2xl border border-white/5 space-y-1">
+                    <strong className="text-emerald-400 font-extrabold">RIR (Reps in Reserve / Repeticiones en recámara):</strong>
+                    <p className="text-neutral-400 text-[11px]">Indica cuántas repeticiones adicionales podrías haber hecho al fallo muscular con buena técnica. Un RIR 2 significa que terminaste la serie sintiendo que podías hacer 2 repeticiones más.</p>
+                  </div>
+
+                  <div className="bg-neutral-900/90 p-3 rounded-2xl border border-white/5 space-y-1">
+                    <strong className="text-cyan-400 font-extrabold">Tonelaje / Volumen Total:</strong>
+                    <p className="text-neutral-400 text-[11px]">Es la suma total del peso multiplicado por las repeticiones de todas tus series ejecutadas en la sesión. Es el indicador principal de tu carga de trabajo total.</p>
+                  </div>
+
+                  <div className="bg-neutral-900/90 p-3 rounded-2xl border border-white/5 space-y-1">
+                    <strong className="text-emerald-400 font-extrabold">Sobrecarga Progresiva:</strong>
+                    <p className="text-neutral-400 text-[11px]">El principio fundamental de la hipertrofia: aumentar gradualmente el peso, las repeticiones o la calidad técnica sesión tras sesión para obligar al músculo a crecer.</p>
+                  </div>
+
+                  <div className="bg-neutral-900/90 p-3 rounded-2xl border border-white/5 space-y-1">
+                    <strong className="text-cyan-400 font-extrabold">RPE (Rate of Perceived Exertion):</strong>
+                    <p className="text-neutral-400 text-[11px]">Escala del 1 al 10 que mide el esfuerzo percibido de la serie. Un RPE 10 equivale al fallo absoluto (0 RIR).</p>
+                  </div>
+                </div>
+
+                <button 
+                  onClick={() => setShowGlossary(false)}
+                  className="w-full bg-emerald-400 text-black font-black py-3 rounded-2xl text-xs uppercase tracking-wider shadow-lg shadow-emerald-400/20"
+                >
+                  Entendido
+                </button>
+              </div>
+            </div>
+          )}
 
           {activeTab !== "progreso" && currentDay && (
             <div className="max-w-4xl mx-auto w-full px-4 pt-3">
@@ -650,7 +705,6 @@
                         {isExpanded && (
                           <div className="px-3 pb-3 pt-1 border-t border-white/5 bg-black/40 space-y-2.5 text-xs">
                             
-                            {/* Guía Táctica */}
                             <div>
                               <button
                                 onClick={() => setShowHelp(prev => ({ ...prev, [ex.id]: !prev[ex.id] }))}
@@ -680,7 +734,6 @@
                               )}
                             </div>
 
-                            {/* Series Realizadas Hoy */}
                             {todayLogs.length > 0 && (
                               <div className="space-y-1">
                                 <span className="font-black text-[9px] text-emerald-400 uppercase tracking-widest">SERIES COMPLETADAS</span>
@@ -711,7 +764,6 @@
                               </div>
                             )}
 
-                            {/* REGISTRO IN-LINE ULTRA-COMPACTO CON CHECK `✓` */}
                             <div className="bg-neutral-950/90 border border-emerald-500/30 rounded-2xl p-2.5 space-y-2">
                               <div className="flex items-center justify-between">
                                 <span className="font-black text-[9px] text-emerald-400 uppercase tracking-widest">NUEVA SERIE</span>
@@ -724,7 +776,6 @@
 
                               <div className="flex items-center gap-2">
                                 
-                                {/* PESO */}
                                 <div className="flex-1 bg-neutral-900 rounded-xl p-1.5 border border-white/5 flex flex-col items-center">
                                   <span className="text-[8px] font-black text-neutral-400 uppercase">PESO (KG)</span>
                                   <div className="flex items-center justify-between w-full mt-0.5">
@@ -734,7 +785,6 @@
                                   </div>
                                 </div>
 
-                                {/* REPS */}
                                 <div className="flex-1 bg-neutral-900 rounded-xl p-1.5 border border-white/5 flex flex-col items-center">
                                   <span className="text-[8px] font-black text-neutral-400 uppercase">REPS</span>
                                   <div className="flex items-center justify-between w-full mt-0.5">
@@ -744,7 +794,6 @@
                                   </div>
                                 </div>
 
-                                {/* RIR */}
                                 <div className="flex-1 bg-neutral-900 rounded-xl p-1.5 border border-white/5 flex flex-col items-center">
                                   <span className="text-[8px] font-black text-neutral-400 uppercase">RIR</span>
                                   <div className="flex items-center justify-between w-full mt-0.5">
@@ -754,7 +803,6 @@
                                   </div>
                                 </div>
 
-                                {/* BOTÓN DE CHECK DIRECTO (Sustituye a la barra grande) */}
                                 <button 
                                   onClick={() => handleSaveSet(ex)}
                                   className="h-11 w-12 bg-emerald-400 hover:bg-emerald-300 active:scale-95 text-black font-black rounded-xl text-lg flex items-center justify-center shadow-lg shadow-emerald-400/30 transition"
