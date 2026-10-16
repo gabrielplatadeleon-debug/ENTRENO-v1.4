@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>ENTRENO PRO 2026 - Bulletproof v3.8</title>
+  <title>ENTRENO PRO 2026 - Bulletproof v3.9</title>
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#000000">
 
@@ -249,6 +249,7 @@
       const [inputs, setInputs] = React.useState({});
       const [syncStatus, setSyncStatus] = React.useState("Desconectado de Drive");
       const [accessToken, setAccessToken] = React.useState(null);
+      const [folderId, setFolderId] = React.useState(null);
       const [flashExId, setFlashExId] = React.useState(null);
       const [timer, setTimer] = React.useState({ active: false, secondsLeft: 0, totalSeconds: 0, exName: "" });
 
@@ -276,15 +277,44 @@
         return () => clearInterval(interval);
       }, [timer.active, timer.secondsLeft]);
 
+      // RESOLUCIÓN Y CREACIÓN DE CARPETA DEDICADA 'ENTRENO_PRO_DATA'
+      const getOrCreateAppFolder = async (token) => {
+        try {
+          const searchFolder = await fetch(
+            `https://www.googleapis.com/drive/v3/files?q=name='ENTRENO_PRO_DATA' and mimeType='application/vnd.google-apps.folder' and trashed=false`,
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          const data = await searchFolder.json();
+          if (data.files && data.files.length > 0) {
+            return data.files[0].id;
+          } else {
+            const meta = { name: 'ENTRENO_PRO_DATA', mimeType: 'application/vnd.google-apps.folder' };
+            const createRes = await fetch('https://www.googleapis.com/drive/v3/files', {
+              method: 'POST',
+              headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+              body: JSON.stringify(meta)
+            });
+            const created = await createRes.json();
+            return created.id;
+          }
+        } catch (err) {
+          console.error("Error al resolver la carpeta en Drive:", err);
+          return null;
+        }
+      };
+
       const handleGoogleLogin = () => {
         const client = google.accounts.oauth2.initTokenClient({
           client_id: '743772639737-jrf3qhna3putebqeve97i7p1krftd6j3.apps.googleusercontent.com',
           scope: 'https://www.googleapis.com/auth/drive.file',
-          callback: (response) => {
+          callback: async (response) => {
             if (response.access_token) {
               setAccessToken(response.access_token);
-              setSyncStatus("Conectado a Drive ☁️");
-              alert("¡Conectado correctamente con Google Drive!");
+              setSyncStatus("Buscando carpeta ENTRENO_PRO_DATA...");
+              const fId = await getOrCreateAppFolder(response.access_token);
+              setFolderId(fId);
+              setSyncStatus(fId ? "Conectado a /ENTRENO_PRO_DATA ☁️" : "Conectado (Raíz)");
+              alert("¡Conectado exitosamente con Google Drive! Carpeta dedicada activa.");
             }
           },
         });
@@ -298,9 +328,11 @@
           const fileContent = JSON.stringify({ profile: currentProfile, logs: updatedLogs, updatedAt: new Date().toISOString() }, null, 2);
           const fileName = `entreno_backup_${currentProfile}.json`;
 
-          const searchRes = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='${fileName}' and mimeType='application/json'`, {
-            headers: { Authorization: `Bearer ${accessToken}` }
-          });
+          const parentQuery = folderId ? `'${folderId}' in parents and ` : '';
+          const searchRes = await fetch(
+            `https://www.googleapis.com/drive/v3/files?q=${parentQuery}name='${fileName}' and mimeType='application/json' and trashed=false`,
+            { headers: { Authorization: `Bearer ${accessToken}` } }
+          );
           const searchData = await searchRes.json();
 
           if (searchData.files && searchData.files.length > 0) {
@@ -311,7 +343,11 @@
               body: fileContent
             });
           } else {
-            const metadata = { name: fileName, mimeType: 'application/json' };
+            const metadata = {
+              name: fileName,
+              mimeType: 'application/json',
+              ...(folderId ? { parents: [folderId] } : {})
+            };
             const form = new FormData();
             form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
             form.append('file', new Blob([fileContent], { type: 'application/json' }));
@@ -324,7 +360,7 @@
           }
           setSyncStatus("Sincronizado ✔️");
         } catch (err) {
-          setSyncStatus("Error Drive ⚠️");
+          setSyncStatus("Error Sincronización ⚠️");
         }
       };
 
@@ -443,7 +479,7 @@
                 </div>
                 <div>
                   <h1 className="text-emerald-400 font-extrabold text-sm tracking-tight mono leading-none">ENTRENO PRO</h1>
-                  <span className="text-[9px] text-neutral-400 font-bold tracking-widest uppercase">MODE ENGINE v3.8</span>
+                  <span className="text-[9px] text-neutral-400 font-bold tracking-widest uppercase">ISOLATED DRIVE v3.9</span>
                 </div>
               </div>
 
@@ -511,7 +547,6 @@
           {activeTab !== "progreso" && currentDay && (
             <div className="max-w-4xl mx-auto w-full px-4 pt-3 space-y-2">
               
-              {/* SELECTOR DE MODO DE ENTRENAMIENTO */}
               <div className="glass-card rounded-2xl p-2.5 border border-white/10 shadow-xl flex items-center justify-between gap-2">
                 <span className="text-[9px] font-black uppercase tracking-widest text-neutral-400 pl-1">ENFOQUE</span>
                 <div className="flex items-center gap-1.5 flex-1 max-w-xs">
@@ -531,7 +566,6 @@
                 </div>
               </div>
 
-              {/* MÉTROLOGÍA DE SESIÓN */}
               <div className="glass-card rounded-2xl p-3 flex items-center justify-between border border-white/10 shadow-xl">
                 <div>
                   <div className="text-[9px] font-black uppercase tracking-widest text-neutral-400">SESIÓN ACTIVA</div>
@@ -556,7 +590,7 @@
             {activeTab === "progreso" ? (
               <div className="space-y-4">
                 <div className="glass-card rounded-3xl p-6 shadow-2xl">
-                  <h3 className="text-xs font-black uppercase tracking-widest text-emerald-400 mb-2">Sincronización en la Nube</h3>
+                  <h3 className="text-xs font-black uppercase tracking-widest text-emerald-400 mb-2">Sincronización Aislada de Drive</h3>
                   <p className="text-xs text-neutral-400 mb-4">
                     Estado: <strong className="text-slate-200 font-bold">{syncStatus}</strong>
                   </p>
@@ -565,10 +599,10 @@
                       onClick={handleGoogleLogin}
                       className="bg-sky-400 text-black font-extrabold text-xs px-5 py-3 rounded-2xl shadow-lg shadow-sky-400/20 hover:bg-sky-300 transition"
                     >
-                      Conectar Google Drive
+                      Conectar Google Drive (/ENTRENO_PRO_DATA/)
                     </button>
                   ) : (
-                    <p className="text-xs text-emerald-300 font-bold">¡Conectado! Sincronización activa en tiempo real.</p>
+                    <p className="text-xs text-emerald-300 font-bold">¡Conectado! Archivos resguardados aisladamente en la carpeta /ENTRENO_PRO_DATA/.</p>
                   )}
                 </div>
 
