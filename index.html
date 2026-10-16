@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>ENTRENO PRO 2026 - Bulletproof v4.1</title>
+  <title>ENTRENO PRO 2026 - Bulletproof v4.2</title>
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#000000">
 
@@ -146,7 +146,10 @@
       const [folderId, setFolderId] = React.useState(null);
       const [flashExId, setFlashExId] = React.useState(null);
       const [lastPrMessage, setLastPrMessage] = React.useState(null);
-      const [timer, setTimer] = React.useState({ active: false, secondsLeft: 0, totalSeconds: 0, exName: "" });
+      
+      // Motor de temporizador con Wake Lock y Timestamp Absoluto
+      const [timer, setTimer] = React.useState({ active: false, targetTimestamp: 0, secondsLeft: 0, exName: "" });
+      const wakeLockRef = React.useRef(null);
 
       const currentMode = MODE_CONFIGS[trainingMode];
 
@@ -159,18 +162,54 @@
         }
       }, [currentProfile]);
 
+      // Gestión inteligente de Wake Lock y Temporizador Absoluto
       React.useEffect(() => {
         let interval = null;
-        if (timer.active && timer.secondsLeft > 0) {
+        if (timer.active) {
+          // Solicitar Wake Lock para mantener pantalla despierta durante el descanso
+          if ('wakeLock' in navigator && !wakeLockRef.current) {
+            navigator.wakeLock.request('screen').then(lock => {
+              wakeLockRef.current = lock;
+            }).catch(err => console.log("Wake lock error:", err));
+          }
+
           interval = setInterval(() => {
-            setTimer(prev => ({ ...prev, secondsLeft: prev.secondsLeft - 1 }));
-          }, 1000);
-        } else if (timer.secondsLeft === 0 && timer.active) {
-          setTimer(prev => ({ ...prev, active: false }));
-          if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+            const now = Date.now();
+            const left = Math.max(0, Math.ceil((timer.targetTimestamp - now) / 1000));
+            if (left > 0) {
+              setTimer(prev => ({ ...prev, secondsLeft: left }));
+            } else {
+              setTimer(prev => ({ ...prev, active: false, secondsLeft: 0 }));
+              if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 300]);
+              releaseWakeLock();
+            }
+          }, 500);
+        } else {
+          releaseWakeLock();
         }
         return () => clearInterval(interval);
-      }, [timer.active, timer.secondsLeft]);
+      }, [timer.active, timer.targetTimestamp]);
+
+      const releaseWakeLock = () => {
+        if (wakeLockRef.current) {
+          wakeLockRef.current.release().then(() => {
+            wakeLockRef.current = null;
+          }).catch(err => console.log());
+        }
+      };
+
+      const startTimerWithSeconds = (secs, exName) => {
+        const target = Date.now() + (secs * 1000);
+        setTimer({ active: true, targetTimestamp: target, secondsLeft: secs, exName });
+      };
+
+      const adjustTimerTime = (deltaSecs) => {
+        setTimer(prev => {
+          const newTarget = prev.targetTimestamp + (deltaSecs * 1000);
+          const left = Math.max(0, Math.ceil((newTarget - Date.now()) / 1000));
+          return { ...prev, targetTimestamp: newTarget, secondsLeft: left };
+        });
+      };
 
       const getOrCreateAppFolder = async (token) => {
         try {
@@ -263,10 +302,8 @@
         });
       };
 
-      // VERIFICACIÓN AUTOMÁTICA DE PR (Récord Personal)
       const checkAndTriggerPR = (exId, exName, newPeso, newReps) => {
         const exLogs = logs[exId] || [];
-        // Si hay registros previos, evaluamos si superó el peso o el volumen en una sola serie
         let isPR = false;
         if (exLogs.length === 0) {
           isPR = true;
@@ -275,7 +312,6 @@
           if (newPeso > maxPreviousWeight) {
             isPR = true;
           } else {
-            // Comprobar si iguala peso pero con más reps
             const sameWeightLogs = exLogs.filter(e => e.peso === newPeso);
             if (sameWeightLogs.length > 0) {
               const maxRepsAtWeight = Math.max(...sameWeightLogs.map(e => e.reps || 0));
@@ -294,7 +330,6 @@
         const exId = ex.id;
         const setInput = inputs[exId] || { peso: 50, reps: currentMode.repsDefault, rir: currentMode.rirDefault };
         
-        // Evaluar PR antes de guardar
         checkAndTriggerPR(exId, ex.nombre, setInput.peso, setInput.reps);
 
         const newLogs = { ...logs };
@@ -314,8 +349,7 @@
         setFlashExId(exId);
         setTimeout(() => setFlashExId(null), 600);
 
-        const restSecs = currentMode.restDefault;
-        setTimer({ active: true, secondsLeft: restSecs, totalSeconds: restSecs, exName: ex.nombre });
+        startTimerWithSeconds(currentMode.restDefault, ex.nombre);
       };
 
       const handleDeleteSet = (exId, index) => {
@@ -393,7 +427,7 @@
                 </div>
                 <div>
                   <h1 className="text-emerald-400 font-extrabold text-sm tracking-tight mono leading-none">ENTRENO PRO</h1>
-                  <span className="text-[9px] text-neutral-400 font-bold tracking-widest uppercase">ANALYTICS v4.1</span>
+                  <span className="text-[9px] text-neutral-400 font-bold tracking-widest uppercase">BULLETPROOF V4.2</span>
                 </div>
               </div>
 
@@ -421,7 +455,7 @@
             </div>
           </header>
 
-          {/* BANNER FLOTANTE DE PR (RÉCORD PERSONAL) */}
+          {/* BANNER FLOTANTE DE PR */}
           {lastPrMessage && (
             <div className="fixed top-16 left-4 right-4 z-50 max-w-md mx-auto bg-amber-400 text-black font-black text-xs px-4 py-3 rounded-2xl shadow-[0_0_30px_rgba(251,191,36,0.6)] flex items-center justify-center gap-2 pr-badge text-center">
               <span>{lastPrMessage}</span>
@@ -434,7 +468,7 @@
               <div className="glass-card border border-emerald-500/40 rounded-3xl p-5 max-w-md w-full space-y-4 shadow-2xl animate-fadeIn">
                 <div className="flex items-center justify-between border-b border-white/10 pb-3">
                   <h3 className="text-emerald-400 font-black text-sm uppercase tracking-wider flex items-center gap-2">
-                    <span>📖</span> Glosario Técnico & PRs
+                    <span>📖</span> Glosario & Wake Lock API
                   </h3>
                   <button 
                     onClick={() => setShowGlossary(false)}
@@ -446,12 +480,12 @@
 
                 <div className="space-y-3 text-xs text-slate-300 max-h-[60vh] overflow-y-auto pr-1">
                   <div className="bg-neutral-900/90 p-3 rounded-2xl border border-white/5 space-y-1">
-                    <strong className="text-amber-400 font-extrabold">PR (Personal Record):</strong>
-                    <p className="text-neutral-400 text-[11px]">Se activa automáticamente cuando bates tu récord de peso o repeticiones en cualquier ejercicio.</p>
+                    <strong className="text-emerald-400 font-extrabold">Temporizador con Wake Lock:</strong>
+                    <p className="text-neutral-400 text-[11px]">Mantiene el descanso sincronizado al milisegundo mediante marcas de tiempo reales, evitando congelamientos en segundo plano.</p>
                   </div>
                   <div className="bg-neutral-900/90 p-3 rounded-2xl border border-white/5 space-y-1">
-                    <strong className="text-cyan-400 font-extrabold">Analítica y Gráficas:</strong>
-                    <p className="text-neutral-400 text-[11px]">Pestaña STATS para visualizar tu progresión de tonelaje histórico y marcas de fuerza.</p>
+                    <strong className="text-amber-400 font-extrabold">Detección de PRs:</strong>
+                    <p className="text-neutral-400 text-[11px]">Celebra automáticamente cada récord personal superado en peso o repeticiones.</p>
                   </div>
                 </div>
 
@@ -536,7 +570,7 @@
                   </h3>
                   
                   {Object.keys(logs).length === 0 ? (
-                    <p className="text-xs text-neutral-500 italic">Registra tus primeras series para ver las gráficas de progresión y PRs.</p>
+                    <p className="text-xs text-neutral-500 italic">Registra tus primeras series para ver las estadísticas y PRs.</p>
                   ) : (
                     <div className="space-y-3">
                       {Object.entries(logs).map(([exId, entries]) => {
@@ -819,13 +853,13 @@
 
               <div className="flex items-center gap-1.5">
                 <button 
-                  onClick={() => setTimer(prev => ({ ...prev, secondsLeft: Math.max(0, prev.secondsLeft - 30) }))}
+                  onClick={() => adjustTimerTime(-30)}
                   className="bg-neutral-900 border border-white/10 text-[10px] font-bold px-2.5 py-1.5 rounded-lg text-slate-300"
                 >
                   -30s
                 </button>
                 <button 
-                  onClick={() => setTimer(prev => ({ ...prev, secondsLeft: prev.secondsLeft + 30 }))}
+                  onClick={() => adjustTimerTime(30)}
                   className="bg-neutral-900 border border-white/10 text-[10px] font-bold px-2.5 py-1.5 rounded-lg text-slate-300"
                 >
                   +30s
